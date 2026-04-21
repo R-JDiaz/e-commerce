@@ -27,10 +27,15 @@ export const cartFullDTO = (rows) => {
     return acc + (item.quantity || 0);
   }, 0);
 
+  const totalPrice = mapped.reduce((acc, item) => {
+    return acc + (item.quantity * item.price|| 0);
+  }, 0);
+
   return {
     id: first.cart_id,
     user_id: first.user_id,
     products: mapped,
     total_items: totalItems,
+    total_price: totalPrice
   };
 }
