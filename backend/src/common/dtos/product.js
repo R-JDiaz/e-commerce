@@ -49,5 +49,5 @@ export const productOrderDTO = (product) => ({
 export const productCartDTO = (product) => ({
   ...productOrderDTO(product),
   description: product.description ?? null,
-  stock: product.stock ?? 0,
+  stock: product.stock ?? 0
 });

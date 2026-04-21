@@ -44,7 +44,8 @@ export default class BaseModel {
       values
     );
 
-    return this.findById(result.insertId);
+    return result;
+
   }
 
   static async update(id, data) {
