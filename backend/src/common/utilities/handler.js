@@ -14,3 +14,21 @@ export const globalErrorHandler = (err, req, res, next) => {
     });
 }
 
+export async function withTransaction(pool, callback) {
+    const conn = await pool.getConnection();
+
+    try {
+        await conn.beginTransaction();
+
+        const result = await callback(conn); 
+
+        await conn.commit();
+
+        return result;
+    } catch (err) {
+        await conn.rollback();
+        throw err;
+    } finally {
+        conn.release();
+    }
+}
