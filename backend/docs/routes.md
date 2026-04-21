@@ -42,4 +42,3 @@ PUT    /api/orders/:id/status    // update status (admin)
 POST   /api/payments/checkout
 POST   /api/payments/webhook     // for payment gateway callbacks
 GET    /api/payments/:id         // payment details
-

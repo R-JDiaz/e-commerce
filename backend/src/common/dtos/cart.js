@@ -17,6 +17,7 @@ export const cartItemFullDTO = (item, product) => {
   };
 };
 
+
 export const cartFullDTO = (rows) => {
   const first = rows[0];
 

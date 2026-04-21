@@ -3,7 +3,8 @@ import { CartService } from "./cart.service.js";
 export const CartController = {
   async getCart(req, res, next) {
     try {
-      const userId = 3; // assuming auth middleware
+      const userId = 3;
+
       const cart = await CartService.getCart(userId);
 
       res.json({
@@ -17,10 +18,11 @@ export const CartController = {
 
   async addItem(req, res, next) {
     try {
-      const userId = req.user.id;
+      const userId = 3;
+
       const { productId, quantity } = req.body;
 
-      const result = await CartService.addItemToCart(
+      const result = await CartService.addProduct(
         userId,
         productId,
         quantity
@@ -37,10 +39,15 @@ export const CartController = {
 
   async updateItem(req, res, next) {
     try {
-      const { itemId } = req.params;
-      const { quantity } = req.body;
+      const userId = 3;
 
-      const result = await CartService.updateCartItem(itemId, quantity);
+      const { productId, quantity } = req.body;
+
+      const result = await CartService.updateProductQuantity(
+        userId,
+        productId,
+        quantity
+      );
 
       res.json({
         success: true,
@@ -53,9 +60,14 @@ export const CartController = {
 
   async removeItem(req, res, next) {
     try {
-      const { itemId } = req.params;
+      const userId = 3;
 
-      const result = await CartService.removeCartItem(itemId);
+      const { productId } = req.body;
+
+      const result = await CartService.deleteProduct(
+        userId,
+        productId
+      );
 
       res.json({
         success: true,
@@ -70,7 +82,7 @@ export const CartController = {
     try {
       const userId = req.user.id;
 
-      const result = await CartService.clearCart(userId);
+      const result = await CartService.deleteCart(userId);
 
       res.json({
         success: true,

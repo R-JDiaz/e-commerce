@@ -36,28 +36,11 @@ export default class CartRepository extends BaseModel {
         return rows;
     }
 
-    static async findAllFull() {
-        const [rows] = await this.pool.query(
-            `SELECT 
-                c.id,
-                c.user_id,
-                c.created_at,
-                ci.cart_id,
-                ci.product_id,
-                ci.quantity
-            FROM carts c
-            LEFT JOIN cart_items ci ON ci.cart_id = c.id`
-        );
-
-        return rows;
-    }
-
     static async findByUserId(userId) {
         const [rows] = await this.pool.query(
         `SELECT * FROM ${this.table} WHERE user_id = ?`,
         [userId]
         );
-        return rows;
+        return rows[0];
     }
-    
 }

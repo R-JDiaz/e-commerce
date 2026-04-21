@@ -14,7 +14,7 @@ export default class BaseModel {
       `SELECT * FROM ${this.table} WHERE id = ? LIMIT 1`,
       [id]
     );
-    return rows[0] || null;
+    return rows[0];
   }
 
   static async findByIdSafe(id) {

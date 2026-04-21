@@ -1,10 +1,19 @@
 import { cartFullDTO } from "../../common/dtos/cart.js";
 import { productCartDTO } from "../../common/dtos/product.js";
-import ProductRepository from "../products/product.repository.js";
 import CartRepository from "./cart.repository.js";
 import CartItemRepository from "./cart_item/cart_item.repository.js";
 
 export const CartService = {
+  async getOrCreate(userId) {
+    let cart = await CartRepository.findByUserId(userId);
+
+    if (!cart) {
+      cart = await CartRepository.create({ user_id: userId });
+    }
+
+    return cart;
+  },
+
   async getCart(userId) {
     const result = await CartRepository.findFullByUserId(userId);
 
@@ -15,48 +24,71 @@ export const CartService = {
     return cartFullDTO(result);
   },
 
-  async addItemToCart(userId, productId, quantity) {
-    const cart = await CartRepository.isUserIdHaveCart(userId);
+  async addProduct(userId, productId, quantity) {
 
-    if (!cart) {
-      const cart = await CartRepository.create(userId);
+    const cart = await this.getOrCreate(userId);
+
+    const existingItem = await CartItemRepository.findItemByCartId(
+      cart.id,
+      productId
+    );
+    
+    let cart_item;
+
+    if (!existingItem) {
+      cart_item = await CartItemRepository.create({
+        cart_id: cart.id,
+        product_id: productId,
+        quantity
+      });
+    } else {
+      cart_item = await CartItemRepository.updateItemQuantityByCartId(
+        cart.id,
+        productId,
+        quantity + existingItem.quantity
+      );
     }
 
-    const result = await CartItemRepository.findByCartId(cart.id);
+    if (!cart_item) throw new Error("Failed to add product");
 
-    if (!result) {
-      const res = await CartItemRepository.create({cart_id: cart.id, product_id: productId,quantity});
-    }
-    const new_qty = quantity + result.quantity;
-
-    const res = await CartItemRepository.update(cart.id, {productId, new_qty});
-
-    return res;
+    return this.getCart(userId);
   },
 
-  async updateCartItem(cartId,productId, quantity) {
-    const item = await CartItemModel.findById(productId);
-    if (!item) throw new Error("Cart item not found");
+  async updateProductQuantity(userId, productId, quantity) {
 
-    const updated = await CartItemRepository.update(cartId, {product_id: productId, quantity: quantity});
+    const cart = await this.getOrCreate(userId);
 
-    return updated;
+    const existing = await CartItemRepository.findItemByCartId(
+      cart.id,
+      productId
+    );
+
+    if (!existing) throw new Error("Item not found in cart");
+
+    await CartItemRepository.updateItemQuantityByCartId(
+      cart.id,
+      productId,
+      quantity
+    );
+
+    return this.getCart(userId);
   },
 
-  async removeCartItem(cartId, productId) {
-    const item = await CartItemModel.findById(cartId, productId);
-    if (!item) throw new Error("Cart item not found");
+  async deleteProduct(userId, productId) {
 
-    await CartItemRepository.deleteProductInCart(cartId, productId);
+      const cart = await this.getOrCreate(userId);
 
-    return true;
+      await CartItemRepository.deleteItemByCartId(cart.id, productId);
+
+      return this.getCart(userId);
   },
 
-  async clearCart(userId) {
-    const cart = await CartModel.findByUserId(userId);
-    if (!cart) return null;
+  async deleteCart(userId) {
+    const cart = await CartRepository.findByUserId(userId);
+    if (!cart) throw new Error("Cart not found");
 
-    await CartItemRepository.clearCart(cart.id);
+    await CartItemRepository.deleteByCartId(cart.id);
+    await CartRepository.delete(cart.id);
 
     return true;
   }
