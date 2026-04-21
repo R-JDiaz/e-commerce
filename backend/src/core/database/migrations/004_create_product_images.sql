@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS product_images (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  product_id BIGINT UNSIGNED NOT NULL,
+  image_url TEXT NOT NULL,
+  is_primary BOOLEAN DEFAULT FALSE,
+
+  CONSTRAINT fk_product_images
+    FOREIGN KEY (product_id)
+    REFERENCES products(id)
+    ON DELETE CASCADE
+);
