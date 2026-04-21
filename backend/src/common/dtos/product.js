@@ -38,12 +38,16 @@ export const productDetailDTO = (product, category, images = []) => ({
   updated_at: product.updated_at
 });
 
-export const productCartDTO = (product) => ({
+export const productOrderDTO = (product) => ({
   id: product.product_id,
   name: product.name,
-  description: product.description,
   price: product.price,
-  stock: product.stock,
-  quantity: product.quantity, 
-  image_url: product.image_url,
+  quantity: product.quantity ?? 0,
+  image_url: product.image_url ?? null
+});
+
+export const productCartDTO = (product) => ({
+  ...productOrderDTO(product),
+  description: product.description ?? null,
+  stock: product.stock ?? 0,
 });
