@@ -1,0 +1,42 @@
+import BaseModel from "../../../common/model/orm/base.js";
+
+export default class OrderItemRepository extends BaseModel {
+    static table = "order_items"
+
+    static async createBulk(orderId, items, conn=null) {
+        if (!items.length) return;
+
+        const values = items.map(item => [
+        orderId,
+        item.product_id,
+        item.quantity,
+        item.price
+        ]);
+        
+        const db = conn ?? this.pool;
+        const [rows] = await conn.query(
+            `INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ?`,
+            [values]
+        );
+
+        return rows;
+    }
+
+    static async findByOrderId(orderId) {
+        const [rows] = await this.pool.query(
+            `SELECT * FROM ${this.table} WHERE order_id = ?`,
+            [orderId]
+        );
+
+        return rows;
+    }
+
+    static async deleteByOrderId(orderId) {
+        const [result] = await this.pool.query(
+            `DELETE FROM ${this.table} WHERE order_id = ?`,
+            [orderId]
+        );
+
+        return result;
+    }
+}
