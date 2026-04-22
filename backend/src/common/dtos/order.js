@@ -1,24 +1,50 @@
-// List view
-export const orderListDTO = (order) => ({
-  id: order.id,
-  total_amount: order.total_amount,
-  status: order.status,
-  created_at: order.created_at
-});
+// 🔹 LIST VIEW (for grouped rows)
+export const orderListDTO = (rows) => {
+  const first = rows[0];
 
-// Full details
-export const orderDetailDTO = (order, items = []) => ({
-  id: order.id,
-  user_id: order.user_id,
-  total_amount: order.total_amount,
-  status: order.status,
-  shipping_addr: order.shipping_addr,
-  items: items.map(item => ({
-    id: item.id,
-    product_id: item.product_id,
-    name: item.name,
-    price: item.price,
-    quantity: item.quantity
-  })),
-  created_at: order.created_at
-});
+  return {
+    id: first.order_id,
+    total_amount: first.total_amount,
+    status: first.status,
+    created_at: first.created_at
+  };
+};
+
+
+// 🔹 DETAIL VIEW
+export const orderDetailDTO = (rows) => {
+  console.log(rows[0]);
+  const first = rows[0];
+
+  const mapped = rows
+    .filter(item => item.order_item_id) // avoid null rows (LEFT JOIN)
+    .map(item => orderItemFullDTO(item));
+
+  return {
+    id: first.order_id,
+    user_id: first.user_id,
+    total_amount: first.total_amount,
+    status: first.status,
+    shipping_addr: first.shipping_addr,
+    items: mapped,
+    created_at: first.created_at
+  };
+};
+
+
+// 🔹 ORDER ITEM
+export const orderItemFullDTO = (item) => {
+  const price = item.product_price ?? item.price; // fallback safety
+  const subtotal = price * item.quantity;
+
+  return {
+    id: item.order_item_id,
+    product: {
+      id: item.product_id,
+      name: item.name,
+      price
+    },
+    quantity: item.quantity,
+    subtotal
+  };
+};
