@@ -39,7 +39,7 @@ export const productDetailDTO = (product, category, images = []) => ({
 });
 
 export const productOrderDTO = (product) => ({
-  id: product.product_id,
+  product_id: product.product_id,
   name: product.name,
   price: product.price,
   quantity: product.quantity ?? 0,

@@ -1,5 +1,5 @@
-export const authResponseDTO = (user, tokens) => ({
+export const authDTO = (user, tokens) => ({
   user: publicUserDTO(user),
   access_token: tokens.accessToken,
   refresh_token: tokens.refreshToken
-});
+})
