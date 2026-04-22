@@ -8,6 +8,7 @@
 | password_hash  | TEXT            | NOT NULL                            |
 | first_name     | VARCHAR(100)    |                                     |
 | last_name      | VARCHAR(100)    |                                     |
+
 | role           | VARCHAR(20)     | DEFAULT 'customer'                  |
 | created_at     | TIMESTAMP       | DEFAULT CURRENT_TIMESTAMP           |
 | updated_at     | TIMESTAMP       |                                     |
