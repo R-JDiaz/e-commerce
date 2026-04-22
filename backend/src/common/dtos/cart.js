@@ -35,7 +35,7 @@ export const cartFullDTO = (rows) => {
     id: first.cart_id,
     user_id: first.user_id,
     products: mapped,
-    total_items: totalItems,
-    total_price: totalPrice
+    total_items: totalItems ?? 0,
+    total_price: totalPrice ?? 0
   };
 }

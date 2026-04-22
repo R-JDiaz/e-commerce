@@ -34,11 +34,13 @@ export default class BaseModel {
     return getSafe(data, this.publicFields);
   }
 
-  static async create(data) {
+  static async create(data, conn = null) {
+    const db = conn ?? this.pool;
+
     const keys = Object.keys(data);
     const values = Object.values(data);
 
-    const [result] = await this.pool.query(
+    const [result] = await db.query(
       `INSERT INTO ${this.table} (${keys.join(",")})
        VALUES (${keys.map(() => "?").join(",")})`,
       values
