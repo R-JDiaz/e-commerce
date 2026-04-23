@@ -4,21 +4,22 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Product } from '@common/models/product';
+import { Product, ProductListItem } from '@common/models/product';
 import { CartItem, CartService } from '@common/services/managers/cart/cart';
 import { Order, OrderService } from '@common/services/managers/order/order';
 import { ProductService } from '@common/services/managers/product/product';
 import { Auth } from '@common/services/managers/auth/auth';
+import { Products } from '../products/products';
 
 @Component({
   selector: 'app-user-dashboard',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Products],
   templateUrl: './user-dashboard.html',
   styleUrl: './user-dashboard.scss',
 })
 export class UserDashboard implements OnInit, OnDestroy {
-  products: Product[] = [];
-  filteredProducts: Product[] = [];
+  products: ProductListItem[] = [];
+  filteredProducts: ProductListItem[] = [];
   cartItems: CartItem[] = [];
   searchQuery: string = '';
   selectedCategory: string = 'all';
@@ -82,7 +83,8 @@ export class UserDashboard implements OnInit, OnDestroy {
     }
   }
 
-  onSearch() {
+  onSearch(query: string) {
+    this.searchQuery = query;
     if (this.searchQuery.trim()) {
       this.productService.searchProducts(this.searchQuery).subscribe({
         next: (products) => {
@@ -144,9 +146,5 @@ export class UserDashboard implements OnInit, OnDestroy {
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
-  }
-
-  getStarRating(rating: number, star: number): boolean {
-    return star <= Math.floor(rating);
   }
 }
