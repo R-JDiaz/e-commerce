@@ -1,36 +1,91 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Product } from '@common/models/product';
+
+import { ProductListItem } from '@common/models/product';
+import { ProductManager } from '@common/services/managers/product/product';
+import { CategoryManager } from '@common/services/managers/category/category';
+import { CategoryItem } from '@common/services/api/category/category-api.service';
+
+import { ProductCardComponent } from '../product-card/product-card';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProductCardComponent],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
-export class Products {
-  @Input() products: Product[] = [];
-  @Input() filteredProducts: Product[] = [];
-  @Input() isLoading: boolean = false;
-  @Input() errorMessage: string = '';
-  @Input() searchQuery: string = '';
-  @Input() selectedCategory: string = 'all';
+export class Products implements OnInit {
+  products: ProductListItem[] = [];
+  filteredProducts: ProductListItem[] = [];
+  categories: CategoryItem[] = [];
+  searchQuery = '';
+  selectedCategory = 'all';
+  isLoading = false;
+  errorMessage = '';
 
-  @Output() search = new EventEmitter<string>();
-  @Output() categoryChange = new EventEmitter<string>();
-  @Output() addToCart = new EventEmitter<Product>();
+  @Output() addToCart = new EventEmitter<ProductListItem>();
+
+  constructor(
+    private productManager: ProductManager,
+    private categoryManager: CategoryManager
+  ) {}
+
+  ngOnInit() {
+    this.loadCategories();
+    this.loadProducts();
+  }
+
+  loadCategories() {
+    this.categoryManager.getCategories().subscribe({
+      next: (res) => this.categories = res,
+      error: () => this.errorMessage = 'Failed to load categories'
+    });
+  }
+
+  loadProducts() {
+    this.isLoading = true;
+
+    this.productManager.getProducts().subscribe({
+      next: (res) => {
+        this.products = res;
+        this.filteredProducts = res;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Failed to load products';
+        this.isLoading = false;
+      }
+    });
+  }
 
   onSearch() {
-    this.search.emit(this.searchQuery);
+    if (!this.searchQuery.trim()) {
+      this.filteredProducts = this.products;
+      return;
+    }
+
+    this.productManager.searchProducts(this.searchQuery).subscribe({
+      next: (res) => this.filteredProducts = res,
+      error: () => this.errorMessage = 'Search failed'
+    });
   }
 
   onCategoryChange(category: string) {
-    this.categoryChange.emit(category);
+    this.selectedCategory = category;
+
+    this.productManager.filterByCategory(category).subscribe({
+      next: (res) => this.filteredProducts = res,
+      error: () => this.errorMessage = 'Filter failed'
+    });
   }
 
-  getStarRating(rating: number, star: number): boolean {
-    return star <= Math.floor(rating);
+  getCategoryLabel(slug: string): string {
+    if (slug === 'all') {
+      return 'All categories';
+    }
+
+    return this.categories.find(category => category.slug === slug)?.name ?? slug;
   }
 }
