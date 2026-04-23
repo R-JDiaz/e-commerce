@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { CartItem } from '../cart/cart';
+import { CartItem } from '../../common/services/cart/cart';
 
 export interface Order {
   id: string;

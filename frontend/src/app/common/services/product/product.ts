@@ -1,22 +1,38 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { ProductApiService } from '../api/product/product-api.service';
+import { Product } from '@common/models/product';
+import { CategoryApiService } from '../api/category/category-api.service';
 
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: 'coffee' | 'soda' | 'food' | 'dessert';
-  image: string;
-  rating: number;
-  inStock: boolean;
+export interface Categories {
+  id: string,
+  name: string
 }
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class ProductService {
+  private isLoaded = false;
+
+  private readonly CategoriesSubject = new BehaviorSubject<Categories[]>([]);
+  readonly categories$ = this.CategoriesSubject.asObservable();
+  
+  private readonly ProductSubject = new BehaviorSubject<Product[]>([]);
+  readonly product$ = this.ProductSubject.asObservable();
+
+
+  constructor(
+    private productService : ProductApiService,
+    private categoryService : CategoryApiService
+  ) {}
+
+  private load() {
+    
+  }
+  
   private products: Product[] = [
     {
       id: '1',
