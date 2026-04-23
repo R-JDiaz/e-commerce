@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { ProductApiService } from '../api/product/product-api.service';
+import { ProductApiService } from '../../api/product/product-api.service';
 import { Product } from '@common/models/product';
-import { CategoryApiService } from '../api/category/category-api.service';
+import { CategoryApiService } from '../../api/category/category-api.service';
 
 export interface Categories {
   id: string,

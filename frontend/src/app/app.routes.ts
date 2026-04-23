@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import { Landing } from './landing/landing';
-import { Login } from './login/login';
-import { UserDashboard } from './user-dashboard/user-dashboard';
-import { AdminDashboard } from './admin-dashboard/admin-dashboard';
+import { AdminDashboard } from '@features/admin-dashboard/admin-dashboard';
+import { Landing } from '@features/landing/landing';
+import { Login } from '@features/login/login';
+import { UserDashboard } from '@features/user-dashboard/user-dashboard';
 
 export const routes: Routes = [
   { path: '', component: Landing },

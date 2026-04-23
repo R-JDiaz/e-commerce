@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ProductService, Product } from '../services/product/product';
-import { OrderService, Order } from '../services/order/order';
-import { Auth } from '../services/auth/auth';
+import { Product } from '@common/models/product';
+import { ProductService } from '@common/services/managers/product/product';
+import { Order, OrderService } from '@common/services/managers/order/order';
+import { Auth } from '@common/services/managers/auth/auth';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -47,11 +48,11 @@ export class AdminDashboard implements OnInit, OnDestroy {
   loadProducts() {
     this.isLoading = true;
     this.productService.getProducts().subscribe({
-      next: (products) => {
+      next: (products : any) => {
         this.products = products;
         this.isLoading = false;
       },
-      error: (error) => {
+      error: (error : any) => {
         this.errorMessage = 'Failed to load products';
         this.isLoading = false;
       }
@@ -60,11 +61,11 @@ export class AdminDashboard implements OnInit, OnDestroy {
 
   loadOrders() {
     this.orderService.getAllOrders().subscribe({
-      next: (orders) => {
+      next: (orders : any) => {
         this.orders = orders;
         this.updateAnalytics();
       },
-      error: (error) => {
+      error: (error : any) => {
         console.error('Failed to load orders', error);
       }
     });
@@ -80,11 +81,11 @@ export class AdminDashboard implements OnInit, OnDestroy {
 
   updateOrderStatus(orderId: string, status: Order['status']) {
     this.orderService.updateOrderStatus(orderId, status).subscribe({
-      next: (order) => {
+      next: (order : any) => {
         this.loadOrders(); // Reload to update UI
       },
-      error: (error) => {
-        this.errorMessage = 'Failed to update order status';
+      error: (error : any) => {
+        this.errorMessage = error ?? 'Failed to update order status';
       }
     });
   }

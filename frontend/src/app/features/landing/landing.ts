@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ThemeService } from '../services/theme/theme';
+import { ThemeService } from '@common/services/managers/theme/theme';
 
 @Component({
   selector: 'app-landing',
