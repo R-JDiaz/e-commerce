@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ProductService, Product } from '../services/product';
-import { CartService, CartItem } from '../services/cart';
-import { Auth } from '../services/auth';
-import { OrderService, Order } from '../services/order';
+import { ProductService, Product } from '../services/product/product';
+import { CartService, CartItem } from '../services/cart/cart';
+import { Auth } from '../services/auth/auth';
+import { OrderService, Order } from '../services/order/order';
 
 @Component({
   selector: 'app-user-dashboard',

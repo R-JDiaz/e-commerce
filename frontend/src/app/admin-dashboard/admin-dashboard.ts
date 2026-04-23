@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ProductService, Product } from '../services/product';
-import { OrderService, Order } from '../services/order';
-import { Auth } from '../services/auth';
+import { ProductService, Product } from '../services/product/product';
+import { OrderService, Order } from '../services/order/order';
+import { Auth } from '../services/auth/auth';
 
 @Component({
   selector: 'app-admin-dashboard',
