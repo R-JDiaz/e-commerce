@@ -1,0 +1,137 @@
+.nav-shell {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 1.5rem;
+  background: rgba(255, 250, 246, 0.9);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(92, 64, 51, 0.08);
+}
+
+.nav-shell.compact {
+  background: rgba(255, 253, 250, 0.96);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 0;
+
+  .brand-mark {
+    width: 2.45rem;
+    height: 2.45rem;
+    border-radius: 0.75rem;
+    display: grid;
+    place-items: center;
+    background: #4f372c;
+    color: #fff;
+    font-weight: 700;
+    flex: none;
+  }
+
+  .brand-copy {
+    min-width: 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #3b2a22;
+    line-height: 1.15;
+  }
+
+  span {
+    display: block;
+    font-size: 0.82rem;
+    color: rgba(60, 40, 30, 0.66);
+    margin-top: 0.15rem;
+  }
+}
+
+.desktop-links {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+
+  a {
+    color: #4a3427;
+    font-weight: 600;
+    font-size: 0.94rem;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.action-link,
+.logout {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.72rem 0.98rem;
+  font-weight: 700;
+}
+
+.action-link {
+  background: #4f372c;
+  color: #fff;
+}
+
+.logout {
+  background: rgba(79, 55, 44, 0.08);
+  color: #4a3427;
+}
+
+.menu-toggle {
+  display: none;
+  width: 2.7rem;
+  height: 2.7rem;
+  border: 1px solid rgba(92, 64, 51, 0.12);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.55rem;
+  cursor: pointer;
+
+  span {
+    display: block;
+    height: 2px;
+    border-radius: 999px;
+    background: #4a3427;
+  }
+}
+
+.mobile-links {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .desktop-links {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: grid;
+    gap: 0.28rem;
+  }
+
+  .mobile-links {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.9rem 1.5rem 1rem;
+    background: rgba(255, 250, 246, 0.98);
+    border-bottom: 1px solid rgba(92, 64, 51, 0.08);
+
+    a {
+      color: #4a3427;
+      font-weight: 600;
+    }
+  }
+}
