@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './toast.html',
 })
+
 export class Toast implements OnChanges, OnDestroy {
   @Input() message = '';
   @Input() type: 'success' | 'error' | 'info' = 'success';

@@ -8,7 +8,7 @@ import { Auth } from '@common/services/managers/auth/auth';
 import { Router } from '@angular/router';
 import { NavigationComponent } from '@common/components/navigation/navigation';
 
-import { Products } from '../products/products';
+import { Products } from './products/products';
 import { SidebarComponent } from './sidebar/sidebar';
 
 @Component({

@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { AdminDashboard } from '@features/admin-dashboard/admin-dashboard';
-import { Checkout } from '@features/checkout/checkout';
+import { Checkout } from '@features/user-dashboard/checkout/checkout';
 import { Landing } from '@features/landing/landing';
-import { Login } from '@features/login/login';
-import { Orders } from '@features/orders/orders';
-import { Profile } from '@features/profile/profile';
+import { Login } from '@features/landing/login/login';
+import { Orders } from '@features/user-dashboard/orders/orders';
+import { Profile } from '@features/user-dashboard/profile/profile';
 import { UserDashboard } from '@features/user-dashboard/user-dashboard';
 
 export const routes: Routes = [

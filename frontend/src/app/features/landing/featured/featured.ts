@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { ProductListItem } from '@common/models/product';
 import { ProductManager } from '@common/services/managers/product/product';
-import { ProductCardComponent } from '@features/product-card/product-card';
+import { ProductCardComponent } from '@common/components/product-card/product-card';
 
 @Component({
   selector: 'app-landing-featured',

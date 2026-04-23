@@ -7,7 +7,7 @@ import { ProductManager } from '@common/services/managers/product/product';
 import { CategoryManager } from '@common/services/managers/category/category';
 import { CategoryItem } from '@common/services/api/category/category-api.service';
 
-import { ProductCardComponent } from '../product-card/product-card';
+import { ProductCardComponent } from '../../../common/components/product-card/product-card';
 
 @Component({
   selector: 'app-products',
