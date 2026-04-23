@@ -100,10 +100,6 @@
           </button>
         </form>
 
-        <div *ngIf="errorMessage" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          {{ errorMessage }}
-        </div>
-
         <div class="mt-6 text-center">
           <p class="text-brown/70">Don't have an account?
             <a href="#" class="text-soft-orange hover:text-soft-orange/80 transition-colors font-medium">Sign up</a>
@@ -113,3 +109,5 @@
     </div>
   </div>
 </div>
+
+<app-toast [open]="showToast" [message]="toastMessage" [type]="toastType" (closed)="showToast = false"></app-toast>

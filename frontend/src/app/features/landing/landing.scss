@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.landing-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba(255, 250, 246, 0.96), #f7f3ef 100%);
+  color: #3b2a22;
+}
+
+main {
+  display: grid;
+  gap: 1rem;
+}
