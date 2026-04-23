@@ -4,28 +4,25 @@ import {
   updateUser,
   deleteUser,
 } from "./user.service.js";
+import { asyncHandler } from "../../common/utilities/handler.js";
 
 
-export const getUsersController = async (req, res) => {
+export const getUsersController = asyncHandler(async (req, res) => {
   const users = await getAllUsers();
   res.json(users);
-};
+});
 
-export const getUserController = async (req, res) => {
-  try {
-    const user = await getUser(req.params.id);
-    res.json(user);
-  } catch (err) {
-    res.status(404).json({ message: err.message });
-  }
-};
+export const getUserController = asyncHandler(async (req, res) => {
+  const user = await getUser(req.params.id);
+  res.json(user);
+});
 
-export const updateUserController = async (req, res) => {
+export const updateUserController = asyncHandler(async (req, res) => {
   const user = await updateUser(req.params.id, req.body);
   res.json(user);
-};
+});
 
-export const deleteUserController = async (req, res) => {
+export const deleteUserController = asyncHandler(async (req, res) => {
   await deleteUser(req.params.id);
   res.json({ message: "User deleted successfully" });
-};
+});
