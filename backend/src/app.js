@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from "cors";
 
 import userRoutes from './features/user/user.routes.js'
 import productRoutes from "./features/products/product.routes.js";
@@ -9,6 +10,12 @@ import paymentRoutes from "./features/payment/payment.routes.js";
 import { globalErrorHandler } from './common/utilities/handler.js';
 const app = express();
 
+app.use(cors({
+  origin: "http://localhost:4200",
+  credentials: true
+}));
+
+app.use(cors)
 
 app.use(express.json());
 
@@ -19,5 +26,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);
 
 app.use(globalErrorHandler);
+
+
 
 export default app;
