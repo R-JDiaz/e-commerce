@@ -1,0 +1,85 @@
+<section class="site-links-panel" *ngIf="draft">
+  <div class="panel-head">
+    <p class="eyebrow">Content</p>
+    <h2>Footer Links</h2>
+    <p>Update the footer text, link labels, and destination URLs.</p>
+  </div>
+
+  <div class="field-row">
+    <label>
+      <span>Brand name</span>
+      <input type="text" [(ngModel)]="draft.brandName">
+    </label>
+
+    <label>
+      <span>Copyright</span>
+      <input type="text" [(ngModel)]="draft.copyright">
+    </label>
+  </div>
+
+  <label class="field-block">
+    <span>Description</span>
+    <textarea rows="3" [(ngModel)]="draft.description"></textarea>
+  </label>
+
+  <div class="groups">
+    <article class="group" *ngFor="let group of draft.groups">
+      <div class="group-head">
+        <label>
+          <span>Section title</span>
+          <input type="text" [(ngModel)]="group.title">
+        </label>
+
+        <button type="button" (click)="addLink(group)">Add link</button>
+      </div>
+
+      <div class="link-list">
+        <div class="link-row" *ngFor="let link of group.links; let linkIndex = index">
+          <input type="text" [(ngModel)]="link.label" placeholder="Label">
+          <input type="text" [(ngModel)]="link.href" placeholder="Href">
+          <button type="button" (click)="removeLink(group, linkIndex)">Remove</button>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <article class="group">
+    <div class="group-head">
+      <div>
+        <p class="eyebrow">Social</p>
+        <h3>Social links</h3>
+      </div>
+      <button type="button" (click)="addSocialLink()">Add social link</button>
+    </div>
+
+    <div class="link-list">
+      <div class="link-row" *ngFor="let social of draft.socials; let socialIndex = index">
+        <input type="text" [(ngModel)]="social.label" placeholder="Label">
+        <input type="text" [(ngModel)]="social.href" placeholder="Href">
+        <button type="button" (click)="removeSocialLink(socialIndex)">Remove</button>
+      </div>
+    </div>
+  </article>
+
+  <label class="field-block">
+    <span>Address</span>
+    <input type="text" [(ngModel)]="draft.contact.address">
+  </label>
+
+  <div class="field-row">
+    <label>
+      <span>Phone</span>
+      <input type="text" [(ngModel)]="draft.contact.phone">
+    </label>
+
+    <label>
+      <span>Email</span>
+      <input type="email" [(ngModel)]="draft.contact.email">
+    </label>
+  </div>
+
+  <div class="panel-actions">
+    <p>{{ message }}</p>
+    <button type="button" (click)="saveFooter()">Save site links</button>
+  </div>
+</section>

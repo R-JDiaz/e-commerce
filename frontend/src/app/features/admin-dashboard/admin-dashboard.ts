@@ -1,35 +1,52 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { Product } from '@common/models/product';
-import { ProductService } from '@common/services/managers/product/product';
+
+import { ProductListItem } from '@common/models/product';
+import { ProductManager } from '@common/services/managers/product/product';
 import { Order, OrderService } from '@common/services/managers/order/order';
 import { Auth } from '@common/services/managers/auth/auth';
+import { NavigationComponent } from '@common/components/navigation/navigation';
+import { AdminSiteLinksComponent } from './site-links/site-links';
+
+import { AdminAnalyticsComponent } from './analytics/analytics';
+import { AdminOrdersComponent } from './orders/orders';
+import { AdminProductsComponent } from './products/products';
+import { AdminSettingsComponent } from './settings/settings';
+import { AdminUsersComponent } from './users/users';
+
+type AdminSection = 'analytics' | 'products' | 'orders' | 'users' | 'settings' | 'site-links';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    NavigationComponent,
+    AdminAnalyticsComponent,
+    AdminProductsComponent,
+    AdminOrdersComponent,
+    AdminUsersComponent,
+    AdminSettingsComponent,
+    AdminSiteLinksComponent,
+  ],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.scss',
 })
-export class AdminDashboard implements OnInit, OnDestroy {
-  products: Product[] = [];
+export class AdminDashboard implements OnInit {
+  products: ProductListItem[] = [];
   orders: Order[] = [];
-  isLoading: boolean = false;
-  errorMessage: string = '';
+  isLoading = false;
+  errorMessage = '';
+  activeSection: AdminSection = 'analytics';
 
-  // Mock analytics data
-  totalSales: number = 12345;
-  ordersToday: number = 156;
-  activeUsers: number = 2847;
-  avgOrderValue: number = 24.50;
-
-  private destroy$ = new Subject<void>();
+  totalSales = 12345;
+  ordersToday = 156;
+  activeUsers = 2847;
+  avgOrderValue = 24.5;
 
   constructor(
-    private productService: ProductService,
+    private productService: ProductManager,
     private orderService: OrderService,
     private authService: Auth,
     private router: Router
@@ -40,34 +57,38 @@ export class AdminDashboard implements OnInit, OnDestroy {
     this.loadOrders();
   }
 
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
+  setSection(section: AdminSection): void {
+    this.activeSection = section;
   }
 
   loadProducts() {
     this.isLoading = true;
     this.productService.getProducts().subscribe({
-      next: (products : any) => {
+      next: (products: ProductListItem[]) => {
         this.products = products;
+        this.errorMessage = '';
         this.isLoading = false;
       },
-      error: (error : any) => {
+      error: () => {
         this.errorMessage = 'Failed to load products';
         this.isLoading = false;
-      }
+      },
     });
+  }
+
+  reloadProducts(): void {
+    this.loadProducts();
   }
 
   loadOrders() {
     this.orderService.getAllOrders().subscribe({
-      next: (orders : any) => {
+      next: (orders: any) => {
         this.orders = orders;
         this.updateAnalytics();
       },
-      error: (error : any) => {
+      error: (error: any) => {
         console.error('Failed to load orders', error);
-      }
+      },
     });
   }
 
@@ -81,13 +102,17 @@ export class AdminDashboard implements OnInit, OnDestroy {
 
   updateOrderStatus(orderId: string, status: Order['status']) {
     this.orderService.updateOrderStatus(orderId, status).subscribe({
-      next: (order : any) => {
-        this.loadOrders(); // Reload to update UI
+      next: () => {
+        this.loadOrders();
       },
-      error: (error : any) => {
+      error: (error: any) => {
         this.errorMessage = error ?? 'Failed to update order status';
-      }
+      },
     });
+  }
+
+  updateUserStatus(userId: string, status: 'active' | 'suspended'): void {
+    this.errorMessage = `User ${userId} marked as ${status}.`;
   }
 
   logout() {

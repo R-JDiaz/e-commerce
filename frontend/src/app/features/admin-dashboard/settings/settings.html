@@ -1,0 +1,49 @@
+<section class="panel">
+  <h2>Settings</h2>
+
+  <div class="forms">
+    <form class="card" [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+      <h3>Account details</h3>
+
+      <label>
+        <span>Name</span>
+        <input type="text" formControlName="name">
+      </label>
+
+      <label>
+        <span>Email</span>
+        <input type="email" formControlName="email">
+      </label>
+
+      <label>
+        <span>Phone</span>
+        <input type="tel" formControlName="phone">
+      </label>
+
+      <button type="submit">Save changes</button>
+    </form>
+
+    <form class="card" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+      <h3>Change password</h3>
+
+      <label>
+        <span>Current password</span>
+        <input type="password" formControlName="currentPassword">
+      </label>
+
+      <label>
+        <span>New password</span>
+        <input type="password" formControlName="newPassword">
+      </label>
+
+      <label>
+        <span>Confirm password</span>
+        <input type="password" formControlName="confirmPassword">
+      </label>
+
+      <button type="submit">Update password</button>
+    </form>
+  </div>
+
+  <div class="message" *ngIf="message">{{ message }}</div>
+</section>

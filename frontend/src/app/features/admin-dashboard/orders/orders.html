@@ -1,0 +1,23 @@
+<section class="panel">
+  <h2>Orders</h2>
+
+  <div class="list">
+    <article class="order-card" *ngFor="let order of orders">
+      <div class="header">
+        <div>
+          <p class="order-id">Order #{{ order.id }}</p>
+          <p class="meta">User {{ order.userId }} &middot; {{ order.items.length }} items</p>
+        </div>
+        <strong>&#8369;{{ order.total.toFixed(2) }}</strong>
+      </div>
+
+      <div class="footer">
+        <select [value]="order.status" (change)="statusChange.emit({ id: order.id, status: $any($event.target).value })">
+          <option value="pending">Pending</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+    </article>
+  </div>
+</section>

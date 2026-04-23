@@ -1,0 +1,159 @@
+<section class="panel">
+  <div class="panel-header">
+    <div>
+      <h2>Products</h2>
+      <p>Click a row to inspect and edit the full product record.</p>
+    </div>
+    <button class="refresh" type="button" (click)="refreshRequested.emit()">Refresh</button>
+  </div>
+
+  <div *ngIf="isLoading" class="state">Loading products...</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <div class="layout" *ngIf="!isLoading">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Description</th>
+            <th>Image</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let product of products; trackBy: trackByProductId"
+            (click)="selectProduct(product)"
+            [class.active]="selectedSummary?.id === product.id">
+            <td>{{ product.id }}</td>
+            <td>
+              <div class="product-cell">
+                <ng-container *ngIf="product.image_url; else noThumb">
+                  <img [src]="product.image_url" [alt]="product.name">
+                </ng-container>
+                <ng-template #noThumb>
+                  <div class="thumb-fallback">No image</div>
+                </ng-template>
+                <span>{{ product.name }}</span>
+              </div>
+            </td>
+            <td>{{ product.category_name }}</td>
+            <td>&#8369;{{ product.price.toFixed(2) }}</td>
+            <td>{{ product.stock }}</td>
+            <td class="description">{{ product.description || 'No description' }}</td>
+            <td class="image-url">{{ product.image_url || 'No image' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <aside class="editor" *ngIf="selectedProduct; else emptyState">
+      <div class="editor-header">
+        <div>
+          <p class="eyebrow">Editing</p>
+          <h3>{{ selectedProduct.name }}</h3>
+        </div>
+        <button type="button" class="close" (click)="closeEditor()">Close</button>
+      </div>
+
+      <div class="hero-image" *ngIf="selectedImageUrl; else noImage">
+        <img [src]="selectedImageUrl" [alt]="selectedProduct.name">
+      </div>
+
+      <ng-template #noImage>
+        <div class="hero-image empty">No image available</div>
+      </ng-template>
+
+      <div class="details-grid">
+        <div class="detail">
+          <span class="label">ID</span>
+          <strong>{{ selectedProduct.id }}</strong>
+        </div>
+        <div class="detail">
+          <span class="label">Category</span>
+          <strong>{{ selectedCategoryLabel }}</strong>
+        </div>
+        <div class="detail">
+          <span class="label">Images</span>
+          <strong>{{ selectedProduct.images.length }}</strong>
+        </div>
+        <div class="detail">
+          <span class="label">Created</span>
+          <strong>{{ selectedProduct.created_at | date:'medium' }}</strong>
+        </div>
+        <div class="detail">
+          <span class="label">Updated</span>
+          <strong>{{ selectedProduct.updated_at | date:'medium' }}</strong>
+        </div>
+      </div>
+
+      <div class="image-list" *ngIf="selectedProduct.images.length; else noAdditionalImages">
+        <div class="image-item" *ngFor="let image of selectedProduct.images">
+          <img [src]="image.image_url" [alt]="selectedProduct.name">
+          <span>{{ image.image_url }}</span>
+        </div>
+      </div>
+
+      <ng-template #noAdditionalImages>
+        <div class="message neutral">No additional images</div>
+      </ng-template>
+
+      <form class="editor-form" [formGroup]="productForm">
+        <label>
+          <span>Name</span>
+          <input type="text" formControlName="name">
+        </label>
+
+        <label>
+          <span>Description</span>
+          <textarea rows="4" formControlName="description"></textarea>
+        </label>
+
+        <div class="grid two-up">
+          <label>
+            <span>Price</span>
+            <input type="number" formControlName="price" min="0" step="0.01">
+          </label>
+
+          <label>
+            <span>Stock</span>
+            <input type="number" formControlName="stock" min="0" step="1">
+          </label>
+        </div>
+
+        <label>
+          <span>Category</span>
+          <select formControlName="categoryId">
+            <option [ngValue]="null">Select category</option>
+            <option *ngFor="let category of categories" [ngValue]="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </label>
+      </form>
+
+      <div class="message success" *ngIf="editorNote">{{ editorNote }}</div>
+      <div class="message error" *ngIf="editorError">{{ editorError }}</div>
+
+      <div class="actions">
+        <button type="button" class="save" (click)="saveProduct()" [disabled]="isSaving">
+          {{ isSaving ? 'Saving...' : 'Save changes' }}
+        </button>
+        <button type="button" class="delete" (click)="deleteProduct()" [disabled]="isDeleting">
+          {{ isDeleting ? 'Deleting...' : 'Delete product' }}
+        </button>
+      </div>
+    </aside>
+
+    <ng-template #emptyState>
+      <aside class="editor empty">
+        <h3>Select a product</h3>
+        <p>Click any row to view all product data and edit the record.</p>
+      </aside>
+    </ng-template>
+  </div>
+</section>

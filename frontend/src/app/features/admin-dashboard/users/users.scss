@@ -1,0 +1,76 @@
+.panel {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(92, 64, 51, 0.08);
+  border-radius: 1rem;
+  box-shadow: 0 10px 24px rgba(68, 44, 32, 0.06);
+  padding: 1rem;
+
+  h2 {
+    margin: 0 0 0.9rem;
+    color: #3b2a22;
+    font-size: 1.1rem;
+  }
+}
+
+.list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.user-card {
+  padding: 0.95rem;
+  border-radius: 0.9rem;
+  background: #f7f3ee;
+  border: 1px solid rgba(92, 64, 51, 0.08);
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+
+  .name {
+    margin: 0;
+    color: #3b2a22;
+    font-weight: 700;
+  }
+
+  .meta {
+    margin: 0.2rem 0 0;
+    color: #8b7a6e;
+    font-size: 0.85rem;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .role {
+    padding: 0.3rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(245, 158, 11, 0.12);
+    color: #a16207;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  select {
+    border: 1px solid #e6ddd7;
+    border-radius: 0.75rem;
+    padding: 0.55rem 0.7rem;
+    background: #fff;
+    color: #3b2a22;
+  }
+}
+
+@media (max-width: 760px) {
+  .user-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions {
+    justify-content: space-between;
+  }
+}
