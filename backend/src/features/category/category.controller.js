@@ -1,51 +1,32 @@
+import { asyncHandler } from "../../common/utilities/handler.js";
 import { CategoryService } from "./category.service.js";
 
 export const CategoryController = {
-    async getAll(req, res, next) {
-        try {
-            const categories = await CategoryService.getAllCategories();
-            res.json(categories);
-        } catch (err) {
-            next(err);
-        }
-    },
+    getAll: asyncHandler(async (req, res) => {
+        const categories = await CategoryService.getAllCategories();
+        res.json(categories);
+    }),
 
-    async getById(req, res, next) {
-        try {
-            const category = await CategoryService.getCategoryById(req.params.id);
-            res.json(category);
-        } catch (err) {
-            next(err);
-        }
-    },
+    getById: asyncHandler(async (req, res) => {
+        const category = await CategoryService.getCategoryById(req.params.id);
+        res.json(category);
+    }),
 
-    async create(req, res, next) {
-        try {
-            const category = await CategoryService.createCategory(req.body);
-            res.status(201).json(category);
-        } catch (err) {
-            next(err);
-        }
-    },
+    create: asyncHandler(async (req, res) => {
+        const category = await CategoryService.createCategory(req.body);
+        res.status(201).json(category);
+    }),
 
-    async update(req, res, next) {
-        try {
-            const category = await CategoryService.updateCategory(
-                req.params.id,
-                req.body
-            );
-            res.json(category);
-        } catch (err) {
-            next(err);
-        }
-    },
+    update: asyncHandler(async (req, res) => {
+        const category = await CategoryService.updateCategory(
+            req.params.id,
+            req.body
+        );
+        res.json(category);
+    }),
 
-    async delete(req, res, next) {
-        try {
-            await CategoryService.deleteCategory(req.params.id);
-            res.json({ message: "Category deleted" });
-        } catch (err) {
-            next(err);
-        }
-    }
+    delete: asyncHandler(async (req, res) => {
+        await CategoryService.deleteCategory(req.params.id);
+        res.json({ message: "Category deleted" });
+    })
 };

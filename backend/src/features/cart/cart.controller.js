@@ -1,8 +1,8 @@
+import { asyncHandler } from "../../common/utilities/handler.js";
 import { CartService } from "./cart.service.js";
 
 export const CartController = {
-  async getCart(req, res, next) {
-    try {
+  getCart: asyncHandler(async (req, res) => {
       const userId = 3;
 
       const cart = await CartService.getCart(userId);
@@ -11,13 +11,9 @@ export const CartController = {
         success: true,
         data: cart,
       });
-    } catch (err) {
-      next(err);
-    }
-  },
+    }),
 
-  async addItem(req, res, next) {
-    try {
+  addItem: asyncHandler(async (req, res) => {
       const userId = 3;
 
       const { productId, quantity } = req.body;
@@ -32,13 +28,9 @@ export const CartController = {
         success: true,
         data: result,
       });
-    } catch (err) {
-      next(err);
-    }
-  },
+    }),
 
-  async updateItem(req, res, next) {
-    try {
+  updateItem: asyncHandler(async (req, res) => {
       const userId = 3;
 
       const { productId, quantity } = req.body;
@@ -53,13 +45,9 @@ export const CartController = {
         success: true,
         data: result,
       });
-    } catch (err) {
-      next(err);
-    }
-  },
+    }),
 
-  async removeItem(req, res, next) {
-    try {
+  removeItem: asyncHandler(async (req, res) => {
       const userId = 3;
 
       const { productId } = req.body;
@@ -73,13 +61,9 @@ export const CartController = {
         success: true,
         data: result,
       });
-    } catch (err) {
-      next(err);
-    }
-  },
+    }),
 
-  async clearCart(req, res, next) {
-    try {
+  clearCart: asyncHandler(async (req, res) => {
       const userId = req.user.id;
 
       const result = await CartService.deleteCart(userId);
@@ -88,8 +72,5 @@ export const CartController = {
         success: true,
         data: result,
       });
-    } catch (err) {
-      next(err);
-    }
-  },
+    }),
 };
