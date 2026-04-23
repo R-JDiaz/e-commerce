@@ -1,0 +1,198 @@
+.sidebar {
+  width: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), #fff);
+  padding: 0.9rem;
+  border-right: 1px solid rgba(92, 64, 51, 0.08);
+  box-shadow: 5px 0 20px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  min-height: 0;
+  position: relative;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    .eyebrow {
+      margin: 0 0 0.15rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      color: #a16207;
+      font-weight: 700;
+    }
+
+    h2 {
+      color: #3b2a22;
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .count {
+      min-width: 2rem;
+      height: 2rem;
+      padding: 0 0.6rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(92, 64, 51, 0.1);
+      color: #5c4033;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+  }
+
+  .items {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 0.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.8rem 0.75rem;
+    align-items: center;
+    padding: 0.8rem;
+    background: #f7f3ee;
+    border: 1px solid rgba(92, 64, 51, 0.08);
+    border-radius: 0.85rem;
+    box-shadow: 0 6px 16px rgba(68, 44, 32, 0.04);
+
+    .info {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+
+      img {
+        width: 48px;
+        height: 48px;
+        border-radius: 0.65rem;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      .details {
+        min-width: 0;
+
+        p {
+          margin: 0 0 0.2rem;
+          color: #3b2a22;
+          font-weight: 600;
+          line-height: 1.2;
+          font-size: 0.9rem;
+        }
+
+        small {
+          color: #a16207;
+          font-weight: 700;
+          font-size: 0.8rem;
+        }
+      }
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+
+      .quantity {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.2rem 0.25rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(92, 64, 51, 0.08);
+        font-size: 0.88rem;
+      }
+
+      button {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: #5c4033;
+        font-weight: 700;
+
+        &:hover {
+          color: #f59e0b;
+        }
+      }
+
+      .quantity button {
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 50%;
+        background: #fff;
+        border: 1px solid rgba(92, 64, 51, 0.12);
+
+        &:disabled {
+          opacity: 0.45;
+          cursor: not-allowed;
+        }
+      }
+
+      .remove {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.6rem;
+        background: rgba(153, 27, 27, 0.08);
+        color: #991b1b;
+      }
+    }
+  }
+
+  .footer {
+    margin-top: auto;
+    border-top: 1px solid rgba(92, 64, 51, 0.1);
+    padding-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #3b2a22;
+      font-size: 0.9rem;
+    }
+
+    button {
+      width: 100%;
+      background: #5c4033;
+      color: white;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      border: none;
+      font-weight: 700;
+      box-shadow: 0 10px 18px rgba(92, 64, 51, 0.14);
+    }
+  }
+
+  .empty {
+    text-align: center;
+    color: #8b7a6e;
+    padding: 1.5rem 0;
+  }
+
+  @media (max-width: 1200px) {
+    .item {
+      grid-template-columns: minmax(0, 1fr);
+
+      .controls {
+        justify-content: space-between;
+      }
+    }
+  }
+}

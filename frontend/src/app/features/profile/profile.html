@@ -1,0 +1,68 @@
+<app-navigation context="profile" (logout)="logout()"></app-navigation>
+
+<main class="profile-page">
+  <section class="shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Profile</p>
+        <h1>Account details</h1>
+      </div>
+
+      <button type="button" class="back" (click)="backToShop()">Back to shop</button>
+    </header>
+
+    <form class="profile-card" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+      <div class="grid two-up">
+        <label>
+          <span>Name</span>
+          <input type="text" formControlName="name" placeholder="Juan Dela Cruz">
+        </label>
+
+        <label>
+          <span>Email</span>
+          <input type="email" formControlName="email" placeholder="name@example.com">
+        </label>
+      </div>
+
+      <div class="grid two-up">
+        <label>
+          <span>Phone</span>
+          <input type="tel" formControlName="phone" placeholder="09XX XXX XXXX">
+        </label>
+
+        <label>
+          <span>Address line 1</span>
+          <input type="text" formControlName="addressLine1" placeholder="Street, building, house number">
+        </label>
+      </div>
+
+      <label>
+        <span>Address line 2</span>
+        <input type="text" formControlName="addressLine2" placeholder="Apartment, suite, unit, etc.">
+      </label>
+
+      <div class="grid three-up">
+        <label>
+          <span>City</span>
+          <input type="text" formControlName="city" placeholder="Manila">
+        </label>
+
+        <label>
+          <span>State / Province</span>
+          <input type="text" formControlName="state" placeholder="Metro Manila">
+        </label>
+
+        <label>
+          <span>Postal code</span>
+          <input type="text" formControlName="postalCode" placeholder="1000">
+        </label>
+      </div>
+
+      <div class="message" *ngIf="message">{{ message }}</div>
+
+      <button type="submit" class="submit" [disabled]="isSaving">
+        {{ isSaving ? 'Saving...' : 'Save changes' }}
+      </button>
+    </form>
+  </section>
+</main>

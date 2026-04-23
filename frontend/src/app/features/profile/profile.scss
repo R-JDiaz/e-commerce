@@ -1,0 +1,130 @@
+.profile-page {
+  min-height: calc(100vh - 64px);
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.08), transparent 34%),
+    linear-gradient(180deg, #f7f3ef 0%, #f5f1eb 100%);
+  padding: 1rem;
+}
+
+.shell {
+  max-width: 980px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
+  background: rgba(75, 46, 46, 0.96);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+
+  .eyebrow {
+    margin: 0 0 0.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.7rem;
+    opacity: 0.82;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.3rem, 1.8vw, 1.8rem);
+  }
+
+  .back {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-radius: 0.75rem;
+    padding: 0.55rem 0.9rem;
+    cursor: pointer;
+  }
+}
+
+.profile-card {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(92, 64, 51, 0.08);
+  border-radius: 1rem;
+  box-shadow: 0 10px 24px rgba(68, 44, 32, 0.06);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    color: #3b2a22;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  input {
+    min-height: 2.8rem;
+    border: 1px solid #e6ddd7;
+    border-radius: 0.85rem;
+    padding: 0.7rem 0.9rem;
+    background: #fff;
+    color: #3b2a22;
+
+    &:focus {
+      outline: none;
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.14);
+    }
+  }
+}
+
+.grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.two-up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.three-up {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.message {
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.8rem;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.submit {
+  min-height: 3rem;
+  border: none;
+  border-radius: 0.85rem;
+  background: #5c4033;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  .profile-page {
+    padding: 0.75rem;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .two-up,
+  .three-up {
+    grid-template-columns: 1fr;
+  }
+}
