@@ -1,6 +1,11 @@
 import { Router } from "express";
 import OrderController from "./order.controller.js";
-import authMiddleware from "../../common/middleware/auth.js";
+import { validateRequest } from "../../common/validation/request.js";
+import {
+    validateCreateOrder,
+    validateOrderId,
+    validateOrderStatus,
+} from "./order.validation.js";
 // import adminMiddleware from "../../common/middleware/admin.middleware.js";
 
 const router = Router();
@@ -22,6 +27,7 @@ router.get(
 // get single order details
 router.get(
     "/:id",
+    validateRequest(validateOrderId, "params"),
     OrderController.getOrderById
 );
 
@@ -30,6 +36,7 @@ router.get(
 // create order (checkout)
 router.post(
     "/",
+    validateRequest(validateCreateOrder),
     OrderController.createOrder
 );
 
@@ -38,6 +45,8 @@ router.post(
 // update order status (admin only)
 router.put(
     "/:id/status",
+    validateRequest(validateOrderId, "params"),
+    validateRequest(validateOrderStatus),
     // adminMiddleware, // enable when you have roles
     OrderController.updateOrderStatus
 );
