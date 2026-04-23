@@ -19,7 +19,7 @@ export const authMiddleware = (req, res, next) => {
     next();
   } catch (error) {
     next(new AppError(
-        err.message,
+        error.message,
         401
     ))
   }
