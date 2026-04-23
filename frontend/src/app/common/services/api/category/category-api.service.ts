@@ -2,19 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
+import {
+  CategoryItemDTO,
+  CreateCategoryRequestDTO,
+  UpdateCategoryRequestDTO,
+} from '@common/dtos/category.dto';
 
-export interface CategoryItem {
-  id: number;
-  name: string;
-  slug: string;
-}
-
-export interface CreateCategoryRequest {
-  name: string;
-  slug: string;
-}
-
-export interface UpdateCategoryRequest extends Partial<CreateCategoryRequest> {}
+export type CategoryItem = CategoryItemDTO;
+export type CreateCategoryRequest = CreateCategoryRequestDTO;
+export type UpdateCategoryRequest = UpdateCategoryRequestDTO;
 
 @Injectable({
   providedIn: 'root'
@@ -27,22 +23,22 @@ export class CategoryApiService {
   /**
    * List all categories
    */
-  getCategories(): Observable<CategoryItem[]> {
-    return this.http.get<CategoryItem[]>(this.baseUrl);
+  getCategories(): Observable<CategoryItemDTO[]> {
+    return this.http.get<CategoryItemDTO[]>(this.baseUrl);
   }
 
   /**
    * Create a new category (admin only)
    */
-  createCategory(category: CreateCategoryRequest): Observable<CategoryItem> {
-    return this.http.post<CategoryItem>(this.baseUrl, category);
+  createCategory(category: CreateCategoryRequestDTO): Observable<CategoryItemDTO> {
+    return this.http.post<CategoryItemDTO>(this.baseUrl, category);
   }
 
   /**
    * Update an existing category (admin only)
    */
-  updateCategory(id: number, category: UpdateCategoryRequest): Observable<CategoryItem> {
-    return this.http.put<CategoryItem>(`${this.baseUrl}/${id}`, category);
+  updateCategory(id: number, category: UpdateCategoryRequestDTO): Observable<CategoryItemDTO> {
+    return this.http.put<CategoryItemDTO>(`${this.baseUrl}/${id}`, category);
   }
 
   /**

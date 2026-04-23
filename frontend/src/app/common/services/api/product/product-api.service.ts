@@ -2,9 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { CreateProductRequest, ProductDetail, ProductListItem } from '../../../models/product';
+import {
+  CreateProductRequestDTO,
+  ProductDetailDTO,
+  ProductListItemDTO,
+  UpdateProductRequestDTO,
+} from '@common/dtos/product.dto';
 
-export interface UpdateProductRequest extends Partial<CreateProductRequest> {}
+export type CreateProductRequest = CreateProductRequestDTO;
+export type UpdateProductRequest = UpdateProductRequestDTO;
+export type ProductDetail = ProductDetailDTO;
+export type ProductListItem = ProductListItemDTO;
 
 @Injectable({
   providedIn: 'root'
@@ -18,29 +26,29 @@ export class ProductApiService {
   /**
    * List all products
    */
-  getProducts(): Observable<ProductListItem[]> {
-    return this.http.get<ProductListItem[]>(this.baseUrl);
+  getProducts(): Observable<ProductListItemDTO[]> {
+    return this.http.get<ProductListItemDTO[]>(this.baseUrl);
   }
 
   /**
    * Get product details by ID
    */
-  getProduct(id: number): Observable<ProductDetail> {
-    return this.http.get<ProductDetail>(`${this.baseUrl}/${id}`);
+  getProduct(id: number): Observable<ProductDetailDTO> {
+    return this.http.get<ProductDetailDTO>(`${this.baseUrl}/${id}`);
   }
 
   /**
    * Create a new product (admin only)
    */
-  createProduct(product: CreateProductRequest): Observable<ProductDetail> {
-    return this.http.post<ProductDetail>(this.baseUrl, product);
+  createProduct(product: CreateProductRequestDTO): Observable<ProductDetailDTO> {
+    return this.http.post<ProductDetailDTO>(this.baseUrl, product);
   }
 
   /**
    * Update an existing product (admin only)
    */
-  updateProduct(id: number, product: UpdateProductRequest): Observable<ProductDetail> {
-    return this.http.put<ProductDetail>(`${this.baseUrl}/${id}`, product);
+  updateProduct(id: number, product: UpdateProductRequestDTO): Observable<ProductDetailDTO> {
+    return this.http.put<ProductDetailDTO>(`${this.baseUrl}/${id}`, product);
   }
 
   /**

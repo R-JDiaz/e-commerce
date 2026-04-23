@@ -1,6 +1,7 @@
 export interface ProductListItem {
-  id: number;
+  id: string;
   name: string;
+  description?: string | null;
   price: number;
   stock: number;
   category_name: string;

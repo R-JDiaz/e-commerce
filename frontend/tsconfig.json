@@ -5,6 +5,7 @@
   "compilerOptions": {
     "paths": {
       "@env/*": ["./src/environments/*"],
+      "@assets/*": ["./src/assets/*"],
       "@common/*": ["./src/app/common/*"],
       "@core/*": ["./src/app/core/*"],
       "@features/*": ["./src/app/features/*"]
