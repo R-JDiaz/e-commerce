@@ -1,108 +1,94 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { ProductApiService } from '../../api/product/product-api.service';
-import { Product } from '@common/models/product';
-import { CategoryApiService } from '../../api/category/category-api.service';
-
-export interface Categories {
-  id: string,
-  name: string
-}
+import { ProductListItem } from '@common/models/product';
 
 @Injectable({
   providedIn: 'root',
 })
+export class ProductManager {
 
-export class ProductService {
   private isLoaded = false;
 
-  private readonly CategoriesSubject = new BehaviorSubject<Categories[]>([]);
-  readonly categories$ = this.CategoriesSubject.asObservable();
-  
-  private readonly ProductSubject = new BehaviorSubject<Product[]>([]);
-  readonly product$ = this.ProductSubject.asObservable();
-
+  private readonly productSubject = new BehaviorSubject<ProductListItem[]>([]);
+  readonly product$ = this.productSubject.asObservable();
 
   constructor(
-    private productService : ProductApiService,
-    private categoryService : CategoryApiService
+    private api: ProductApiService
   ) {}
 
-  private load() {
+  private load(): void {
+    if (this.isLoaded) return;
+
+    this.api.getProducts().pipe(
+      tap(products => {
+        this.productSubject.next(products);
+        this.isLoaded = true;
+      })
+    ).subscribe();
+  }
+
+  getProducts(): Observable<ProductListItem[]> {
+    this.load();
     
-  }
-  
-  private products: Product[] = [
-    {
-      id: '1',
-      name: 'Premium Espresso',
-      description: 'Rich, bold, and perfectly brewed espresso',
-      price: 4.50,
-      category: 'coffee',
-      image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-4.0.3',
-      rating: 4.8,
-      inStock: true,
-    },
-    {
-      id: '2',
-      name: 'Craft Lemonade',
-      description: 'Refreshing and naturally sweet',
-      price: 3.50,
-      category: 'soda',
-      image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-4.0.3',
-      rating: 4.5,
-      inStock: true,
-    },
-    {
-      id: '3',
-      name: 'Chocolate Cake',
-      description: 'Decadent and irresistible',
-      price: 6.00,
-      category: 'dessert',
-      image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3',
-      rating: 4.9,
-      inStock: true,
-    },
-    {
-      id: '4',
-      name: 'Avocado Toast',
-      description: 'Healthy and delicious',
-      price: 8.50,
-      category: 'food',
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3',
-      rating: 4.6,
-      inStock: true,
-    },
-    // Add more products as needed
-  ];
-
-  getProducts(): Observable<Product[]> {
-    return of(this.products).pipe(delay(500)); // Simulate API delay
+    return this.product$;
   }
 
-  getProductById(id: string): Observable<Product | undefined> {
-    const product = this.products.find(p => p.id === id);
-    return of(product).pipe(delay(300));
-  }
-
-  searchProducts(query: string): Observable<Product[]> {
-    const filtered = this.products.filter(p =>
-      p.name.toLowerCase().includes(query.toLowerCase()) ||
-      p.description.toLowerCase().includes(query.toLowerCase())
+  getProductById(id: string): Observable<ProductListItem | undefined> {
+    return this.product$.pipe(
+      map(products => products.find(p => p.id == id))
     );
-    return of(filtered).pipe(delay(300));
   }
 
-  filterByCategory(category: string): Observable<Product[]> {
+  searchProducts(query: string): Observable<ProductListItem[]> {
+    const q = query.toLowerCase();
+
+    return this.product$.pipe(
+      map(products =>
+        products.filter(p =>
+          p.name.toLowerCase().includes(q) ||
+          p.description?.toLowerCase().includes(q)
+        ))
+    );
+  }
+
+  filterByCategory(category: string): Observable<ProductListItem[]> {
     if (category === 'all') {
       return this.getProducts();
     }
-    const filtered = this.products.filter(p => p.category === category);
-    return of(filtered).pipe(delay(300));
+
+    return this.product$.pipe(
+      map(products =>
+        products.filter(p => p.category_name === category)
+      )
+    );
   }
 
   getCategories(): string[] {
     return ['all', 'coffee', 'soda', 'food', 'dessert'];
+  }
+
+  getFeaturedProducts(): Observable<ProductListItem[]> {
+    return this.getFeatured();
+  }
+
+  getFeatured(): Observable<ProductListItem[]> {
+    this.load();
+
+    return this.product$.pipe(
+      map(products => this.pickRandom(products, 4))
+    );
+  }
+
+  private pickRandom(products: ProductListItem[], count: number): ProductListItem[] {
+    const pool = [...products];
+
+    for (let i = pool.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+
+    return pool.slice(0, Math.min(count, pool.length));
   }
 }

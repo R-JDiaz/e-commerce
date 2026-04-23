@@ -1,55 +1,103 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, map } from 'rxjs';
 import { CartItem } from '../cart/cart';
+import {
+  CreateOrderRequest,
+  OrderApiService,
+  OrderDetail,
+  OrderStatus,
+  OrderSummary,
+  UpdateOrderStatusRequest,
+} from '@common/services/api/order/order-api.service';
+
+export interface OrderItem {
+  id: string | number;
+  product: {
+    id: string | number;
+    name: string;
+    price: number;
+  };
+  quantity: number;
+  subtotal: number;
+}
 
 export interface Order {
   id: string;
   userId: string;
-  items: CartItem[];
+  items: OrderItem[];
   total: number;
-  status: 'pending' | 'completed' | 'cancelled';
-  createdAt: Date;
+  status: OrderStatus;
+  createdAt: string;
+  shippingAddr?: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class OrderService {
-  private orders: Order[] = [
-    // Mock orders
-  ];
+  constructor(private api: OrderApiService) {}
 
-  placeOrder(userId: string, items: CartItem[]): Observable<Order> {
-    const total = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-    const order: Order = {
-      id: Date.now().toString(),
-      userId,
-      items,
-      total,
-      status: 'pending',
-      createdAt: new Date(),
+  private mapSummary(order: OrderSummary): Order {
+    return {
+      id: String(order.id),
+      userId: '',
+      items: [],
+      total: order.total_amount,
+      status: order.status,
+      createdAt: order.created_at,
     };
-
-    this.orders.push(order);
-    return of(order).pipe(delay(1000)); // Simulate API delay
   }
 
-  getUserOrders(userId: string): Observable<Order[]> {
-    const userOrders = this.orders.filter(order => order.userId === userId);
-    return of(userOrders).pipe(delay(500));
+  private mapDetail(order: OrderDetail): Order {
+    return {
+      id: String(order.id),
+      userId: String(order.user_id),
+      items: order.items.map(item => ({
+        id: item.id,
+        product: item.product,
+        quantity: item.quantity,
+        subtotal: item.subtotal,
+      })),
+      total: order.total_amount,
+      status: order.status,
+      createdAt: order.created_at,
+      shippingAddr: order.shipping_addr,
+    };
+  }
+
+  placeOrder(_userId: string, _items: CartItem[], shippingAddr: string): Observable<Order> {
+    const request: CreateOrderRequest = {
+      shipping_addr: shippingAddr,
+    };
+
+    return this.api.createOrder(request).pipe(
+      map(order => this.mapDetail(order))
+    );
+  }
+
+  getUserOrders(_userId: string): Observable<Order[]> {
+    return this.api.getOrders().pipe(
+      map(orders => orders.map(order => this.mapSummary(order)))
+    );
   }
 
   getAllOrders(): Observable<Order[]> {
-    return of(this.orders).pipe(delay(500));
+    return this.api.getOrders().pipe(
+      map(orders => orders.map(order => this.mapSummary(order)))
+    );
+  }
+
+  getOrderById(orderId: string): Observable<Order> {
+    return this.api.getOrderById(orderId).pipe(
+      map(order => this.mapDetail(order))
+    );
   }
 
   updateOrderStatus(orderId: string, status: Order['status']): Observable<Order> {
-    const order = this.orders.find(o => o.id === orderId);
-    if (order) {
-      order.status = status;
-      return of(order).pipe(delay(300));
-    }
-    throw new Error('Order not found');
+    const request: UpdateOrderStatusRequest = { status };
+
+    return this.api.updateOrderStatus(orderId, request).pipe(
+      map(order => this.mapDetail(order))
+    );
   }
 }
