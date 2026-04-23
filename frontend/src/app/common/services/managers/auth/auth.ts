@@ -20,25 +20,20 @@ export interface User {
   postalCode?: string;
 }
 
-interface StoredAuthTokens {
-  accessToken: string | null;
-  refreshToken: string | null;
-}
-
 @Injectable({
   providedIn: 'root',
 })
-export class Auth {
-  private readonly userStorageKey = 'currentUser';
-  private readonly tokenStorageKey = 'authTokens';
 
+export class Auth {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
-  private accessToken: string | null = null;
-  private refreshToken: string | null = null;
 
   constructor(private authApi: AuthApiService) {
-    this.restoreSession();
+    // Check localStorage on init
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      this.currentUserSubject.next(JSON.parse(storedUser));
+    }
   }
 
   login(email: string, password: string, type: 'user' | 'admin'): Observable<User> {
@@ -47,17 +42,10 @@ export class Auth {
     return this.authApi.login(request).pipe(
       map(session => {
         const user = this.mapSessionUser(session, type);
-        this.persistSession(user, session.access_token, session.refresh_token);
+        this.persistUser(user);
         return user;
       }),
-      catchError(error => {
-        const status = typeof error?.status === 'number' ? error.status : null;
-        if (status === 404 || status === 0) {
-          return this.mockLogin(email, password, type);
-        }
-
-        return throwError(() => error);
-      })
+      catchError(() => this.mockLogin(email, password, type))
     );
   }
 
@@ -72,17 +60,12 @@ export class Auth {
       return throwError(() => new Error('Invalid credentials'));
     }
 
-    this.persistSession(user, null, null);
+    this.persistUser(user);
     return of(user).pipe(delay(1000));
   }
 
   private mapSessionUser(session: AuthSession, type: 'user' | 'admin'): User {
-    const mappedType =
-      session.user.role === 'admin'
-        ? 'admin'
-        : session.user.role === 'customer'
-          ? 'user'
-          : type;
+    const mappedType = session.user.role === 'admin' ? 'admin' : type;
 
     return {
       id: String(session.user.id),
@@ -92,17 +75,13 @@ export class Auth {
     };
   }
 
-  private persistSession(user: User, accessToken: string | null, refreshToken: string | null): void {
-    localStorage.setItem(this.userStorageKey, JSON.stringify(user));
-    const tokens: StoredAuthTokens = { accessToken, refreshToken };
-    localStorage.setItem(this.tokenStorageKey, JSON.stringify(tokens));
-    this.accessToken = accessToken;
-    this.refreshToken = refreshToken;
+  private persistUser(user: User): void {
+    localStorage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
 
   logout(): void {
-    this.clearSession();
+    this.clearUser();
     this.authApi.logout().subscribe({
       error: () => {
         // The local session is already cleared.
@@ -110,35 +89,9 @@ export class Auth {
     });
   }
 
-  clearSession(): void {
-    localStorage.removeItem(this.userStorageKey);
-    localStorage.removeItem(this.tokenStorageKey);
-    this.accessToken = null;
-    this.refreshToken = null;
+  private clearUser(): void {
+    localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
-  }
-
-  private restoreSession(): void {
-    const storedUser = localStorage.getItem(this.userStorageKey);
-    if (storedUser) {
-      try {
-        this.currentUserSubject.next(JSON.parse(storedUser));
-      } catch {
-        this.currentUserSubject.next(null);
-      }
-    }
-
-    const storedTokens = localStorage.getItem(this.tokenStorageKey);
-    if (storedTokens) {
-      try {
-        const parsed = JSON.parse(storedTokens) as StoredAuthTokens;
-        this.accessToken = parsed.accessToken ?? null;
-        this.refreshToken = parsed.refreshToken ?? null;
-      } catch {
-        this.accessToken = null;
-        this.refreshToken = null;
-      }
-    }
   }
 
   isAuthenticated(): boolean {
@@ -153,19 +106,11 @@ export class Auth {
     return this.currentUserSubject.value?.type || null;
   }
 
-  getAccessToken(): string | null {
-    return this.accessToken;
-  }
-
-  getRefreshToken(): string | null {
-    return this.refreshToken;
-  }
-
   updateCurrentUser(user: Partial<User>): void {
     const currentUser = this.currentUserSubject.value;
     if (!currentUser) return;
 
     const updatedUser = { ...currentUser, ...user };
-    this.persistSession(updatedUser, this.accessToken, this.refreshToken);
+    this.persistUser(updatedUser);
   }
 }
