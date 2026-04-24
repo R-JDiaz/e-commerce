@@ -1,0 +1,30 @@
+<div class="cart-wrap">
+  <button type="button" class="cart-fab" (click)="checkout()" aria-label="Go to checkout">
+    <span class="cart-fab__glow"></span>
+    <svg class="cart-fab__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M6 6h15l-1.5 7.5H8L6 6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M6 6 5.1 3.8A1 1 0 0 0 4.2 3H2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="9" cy="19" r="1.5" fill="currentColor"/>
+      <circle cx="17" cy="19" r="1.5" fill="currentColor"/>
+      <path d="M8 13h9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    <ng-container *ngIf="(totalItems$ | async) as total">
+      <span class="cart-fab__badge" *ngIf="total > 0">
+        {{ total }}
+      </span>
+    </ng-container>
+  </button>
+
+  <div class="cart-popover">
+    <p class="cart-popover__title">Shopping cart</p>
+    <div class="cart-popover__row">
+      <span>Items</span>
+      <strong>{{ totalItems$ | async }}</strong>
+    </div>
+    <div class="cart-popover__row">
+      <span>Total</span>
+      <strong>₱{{ (totalPrice$ | async) | number:'1.2-2' }}</strong>
+    </div>
+    <p class="cart-popover__hint">Click to checkout</p>
+  </div>
+</div>
