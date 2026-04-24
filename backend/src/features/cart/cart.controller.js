@@ -3,7 +3,7 @@ import { CartService } from "./cart.service.js";
 
 export const CartController = {
   getCart: asyncHandler(async (req, res) => {
-      const userId = 3;
+      const userId = req.user.id;
 
       const cart = await CartService.getCart(userId);
 
@@ -14,7 +14,7 @@ export const CartController = {
     }),
 
   addItem: asyncHandler(async (req, res) => {
-      const userId = 3;
+      const userId = req.user.id;
 
       const { productId, quantity } = req.body;
 
@@ -31,7 +31,7 @@ export const CartController = {
     }),
 
   updateItem: asyncHandler(async (req, res) => {
-      const userId = 3;
+      const userId = req.user.id;
 
       const { productId, quantity } = req.body;
 
@@ -48,7 +48,7 @@ export const CartController = {
     }),
 
   removeItem: asyncHandler(async (req, res) => {
-      const userId = 3;
+      const userId = req.user.id;
 
       const { productId } = req.body;
 

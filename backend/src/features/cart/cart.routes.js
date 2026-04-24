@@ -1,4 +1,5 @@
 import express from "express";
+import authMiddleware from "../../common/middleware/auth.js";
 import { CartController } from "./cart.controller.js";
 import { validateRequest } from "../../common/validation/request.js";
 import {
@@ -9,6 +10,8 @@ import {
 } from "./cart.validation.js";
 
 const router = express.Router();
+
+router.use(authMiddleware);
 
 router.get("/", CartController.getCart);
 router.post("/", validateRequest(validateAddCartItem), CartController.addItem);
