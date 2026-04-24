@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
+import authRoutes from "./features/auth/auth.routes.js";
 import userRoutes from './features/user/user.routes.js'
 import productRoutes from "./features/products/product.routes.js";
 import cartRoutes from "./features/cart/cart.routes.js";
@@ -19,7 +21,9 @@ app.use(cors({
 app.options("*", cors());
 
 app.use(express.json());
+app.use(cookieParser());
 
+app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/cart', cartRoutes);

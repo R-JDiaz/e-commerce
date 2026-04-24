@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, map, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { BehaviorSubject, Observable, map, tap, throwError } from 'rxjs';
 import {
   AuthApiService,
   AuthSession,
   LoginRequest,
+  RefreshRequest,
+  RegisterRequest,
 } from '@common/services/api/auth/auth-api.service';
 
 export interface User {
@@ -20,82 +21,79 @@ export interface User {
   postalCode?: string;
 }
 
+const ACCESS_TOKEN_KEY = 'accessToken';
+const REFRESH_TOKEN_KEY = 'refreshToken';
+const CURRENT_USER_KEY = 'currentUser';
+
 @Injectable({
   providedIn: 'root',
 })
-
 export class Auth {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private authApi: AuthApiService) {
-    // Check localStorage on init
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      this.currentUserSubject.next(JSON.parse(storedUser));
-    }
+    this.restoreSession();
   }
 
   login(email: string, password: string, type: 'user' | 'admin'): Observable<User> {
     const request: LoginRequest = { email, password };
 
     return this.authApi.login(request).pipe(
-      map(session => {
-        const user = this.mapSessionUser(session, type);
-        this.persistUser(user);
-        return user;
-      }),
-      catchError(() => this.mockLogin(email, password, type))
+      tap(session => this.persistSession(session)),
+      map(session => this.mapSessionUser(session, type))
     );
   }
 
-  private mockLogin(email: string, password: string, type: 'user' | 'admin'): Observable<User> {
-    const mockUsers: User[] = [
-      { id: '1', email: 'user@example.com', type: 'user', name: 'John Doe' },
-      { id: '2', email: 'admin@example.com', type: 'admin', name: 'Admin User' },
-    ];
+  register(data: RegisterRequest): Observable<User> {
+    return this.authApi.register(data).pipe(
+      tap(session => this.persistSession(session)),
+      map(session => this.mapSessionUser(session, 'user'))
+    );
+  }
 
-    const user = mockUsers.find(u => u.email === email && u.type === type);
-    if (!user || password !== 'password') {
-      return throwError(() => new Error('Invalid credentials'));
+  refresh(): Observable<User> {
+    const refreshToken = this.getRefreshToken();
+
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available'));
     }
 
-    this.persistUser(user);
-    return of(user).pipe(delay(1000));
-  }
+    const request: RefreshRequest = { refresh_token: refreshToken };
 
-  private mapSessionUser(session: AuthSession, type: 'user' | 'admin'): User {
-    const mappedType = session.user.role === 'admin' ? 'admin' : type;
-
-    return {
-      id: String(session.user.id),
-      email: session.user.email,
-      type: mappedType,
-      name: `${session.user.first_name} ${session.user.last_name}`.trim(),
-    };
-  }
-
-  private persistUser(user: User): void {
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    this.currentUserSubject.next(user);
+    return this.authApi.refresh(request).pipe(
+      tap(session => this.persistSession(session)),
+      map(session => this.mapSessionUser(session, this.getUserType() ?? 'user'))
+    );
   }
 
   logout(): void {
-    this.clearUser();
+    this.clearSession();
+
     this.authApi.logout().subscribe({
       error: () => {
-        // The local session is already cleared.
+        // Session is already cleared locally.
       },
     });
   }
 
-  private clearUser(): void {
-    localStorage.removeItem('currentUser');
+  clearSession(): void {
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(CURRENT_USER_KEY);
     this.currentUserSubject.next(null);
   }
 
+  getAccessToken(): string | null {
+    return localStorage.getItem(ACCESS_TOKEN_KEY);
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem(REFRESH_TOKEN_KEY);
+  }
+
   isAuthenticated(): boolean {
-    return this.currentUserSubject.value !== null;
+    return this.currentUserSubject.value !== null && this.getAccessToken() !== null;
   }
 
   getCurrentUser(): User | null {
@@ -111,6 +109,38 @@ export class Auth {
     if (!currentUser) return;
 
     const updatedUser = { ...currentUser, ...user };
-    this.persistUser(updatedUser);
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedUser));
+    this.currentUserSubject.next(updatedUser);
+  }
+
+  private restoreSession(): void {
+    const storedUser = localStorage.getItem(CURRENT_USER_KEY);
+    if (storedUser) {
+      try {
+        this.currentUserSubject.next(JSON.parse(storedUser));
+      } catch {
+        this.clearSession();
+      }
+    }
+  }
+
+  private persistSession(session: AuthSession): void {
+    const user = this.mapSessionUser(session, session.user.role === 'admin' ? 'admin' : 'user');
+
+    localStorage.setItem(ACCESS_TOKEN_KEY, session.access_token);
+    localStorage.setItem(REFRESH_TOKEN_KEY, session.refresh_token);
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
+  private mapSessionUser(session: AuthSession, fallbackType: 'user' | 'admin'): User {
+    const mappedType = session.user.role === 'admin' ? 'admin' : fallbackType;
+
+    return {
+      id: String(session.user.id),
+      email: session.user.email,
+      type: mappedType,
+      name: `${session.user.first_name} ${session.user.last_name}`.trim(),
+    };
   }
 }

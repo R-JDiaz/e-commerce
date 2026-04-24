@@ -25,15 +25,21 @@ export class AuthApiService {
   constructor(private http: HttpClient) {}
 
   register(data: RegisterRequestDTO): Observable<AuthSessionDTO> {
-    return this.http.post<AuthSessionDTO>(`${this.baseUrl}/register`, data);
+    return this.http.post<AuthSessionDTO>(`${this.baseUrl}/register`, data, {
+      withCredentials: true,
+    });
   }
 
   login(data: LoginRequestDTO): Observable<AuthSessionDTO> {
-    return this.http.post<AuthSessionDTO>(`${this.baseUrl}/login`, data);
+    return this.http.post<AuthSessionDTO>(`${this.baseUrl}/login`, data, {
+      withCredentials: true,
+    });
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/logout`, {});
+    return this.http.post<void>(`${this.baseUrl}/logout`, {}, {
+      withCredentials: true,
+    });
   }
 
   me(): Observable<AuthUserDTO> {
@@ -41,6 +47,8 @@ export class AuthApiService {
   }
 
   refresh(data: RefreshRequestDTO): Observable<AuthSessionDTO> {
-    return this.http.post<AuthSessionDTO>(`${this.baseUrl}/refresh`, data);
+    return this.http.post<AuthSessionDTO>(`${this.baseUrl}/refresh`, data, {
+      withCredentials: true,
+    });
   }
 }

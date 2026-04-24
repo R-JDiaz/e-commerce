@@ -15,6 +15,18 @@
 
 ---
 
+## 🔐 Refresh Tokens
+| Column      | Type           | Constraints                              |
+|-------------|----------------|------------------------------------------|
+| id          | UUID/BIGINT    | PK                                       |
+| user_id     | UUID/BIGINT    | FK → users(id), CASCADE                  |
+| token_hash  | CHAR(64)       | UNIQUE, NOT NULL                         |
+| expires_at  | DATETIME       | NOT NULL                                 |
+| revoked_at  | DATETIME       | NULLABLE                                 |
+| created_at  | TIMESTAMP      | DEFAULT CURRENT_TIMESTAMP                |
+
+---
+
 ## 📂 Categories
 | Column     | Type          | Constraints               |
 |------------|--------------|---------------------------|
@@ -112,6 +124,7 @@
 
 - User → Cart (1:1)
 - User → Orders (1:N)
+- User → Refresh Tokens (1:N)
 - Order → Order Items (1:N)
 - Product → Category (N:1)
 - Cart → Cart Items (1:N)

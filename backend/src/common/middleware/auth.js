@@ -14,6 +14,12 @@ export const authMiddleware = (req, res, next) => {
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    if (decoded.type && decoded.type !== "access") {
+      return res.status(401).json({
+        message: "Unauthorized: Invalid token type",
+      });
+    }
+
     req.user = decoded;
 
     next();
