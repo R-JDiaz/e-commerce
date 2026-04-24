@@ -1,0 +1,54 @@
+<button type="button" class="section-toggle" (click)="toggle()">
+  <div>
+    <p class="eyebrow">Shipping address</p>
+    <h2>Delivery details</h2>
+    <p>Keep this section minimal or expand it when you need to edit your address.</p>
+  </div>
+  <span class="toggle-state">{{ isOpen ? 'Minimize' : 'Expand' }}</span>
+</button>
+
+<div class="section-body" *ngIf="isOpen" [formGroup]="checkoutForm">
+  <div class="grid two-up">
+    <label>
+      <span>Full name</span>
+      <input type="text" formControlName="fullName" placeholder="Juan Dela Cruz">
+    </label>
+
+    <label>
+      <span>Phone</span>
+      <input type="tel" formControlName="phone" placeholder="09XX XXX XXXX">
+    </label>
+  </div>
+
+  <label>
+    <span>Email</span>
+    <input type="email" formControlName="email" placeholder="name@example.com">
+  </label>
+
+  <label>
+    <span>Address line 1</span>
+    <input type="text" formControlName="addressLine1" placeholder="Street, building, house number">
+  </label>
+
+  <label>
+    <span>Address line 2</span>
+    <input type="text" formControlName="addressLine2" placeholder="Apartment, suite, unit, etc.">
+  </label>
+
+  <div class="grid three-up">
+    <label>
+      <span>City</span>
+      <input type="text" formControlName="city" placeholder="Manila">
+    </label>
+
+    <label>
+      <span>State / Province</span>
+      <input type="text" formControlName="state" placeholder="Metro Manila">
+    </label>
+
+    <label>
+      <span>Postal code</span>
+      <input type="text" formControlName="postalCode" placeholder="1000">
+    </label>
+  </div>
+</div>

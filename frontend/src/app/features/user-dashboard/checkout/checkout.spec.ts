@@ -5,6 +5,7 @@ import { Checkout } from './checkout';
 import { CartService } from '@common/services/managers/cart/cart';
 import { Auth } from '@common/services/managers/auth/auth';
 import { OrderService } from '@common/services/managers/order/order';
+import { PaymentManager } from '@common/services/managers/payment/payment';
 
 describe('Checkout', () => {
   beforeEach(async () => {
@@ -30,6 +31,12 @@ describe('Checkout', () => {
           provide: OrderService,
           useValue: {
             placeOrder: () => of({}),
+          },
+        },
+        {
+          provide: PaymentManager,
+          useValue: {
+            checkoutPayment: () => of({}),
           },
         },
       ],

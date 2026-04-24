@@ -2,18 +2,26 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, takeUntil } from 'rxjs';
 
 import { CartItem, CartService } from '@common/services/managers/cart/cart';
 import { Auth } from '@common/services/managers/auth/auth';
 import { OrderService } from '@common/services/managers/order/order';
+import { PaymentManager } from '@common/services/managers/payment/payment';
 import { NavigationComponent } from '@common/components/navigation/navigation';
+import { CheckoutSummaryComponent } from './checkout-summary/checkout-summary';
+import { CheckoutShippingComponent } from './checkout-shipping/checkout-shipping';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NavigationComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NavigationComponent,
+    CheckoutSummaryComponent,
+    CheckoutShippingComponent,
+  ],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
 })
@@ -21,13 +29,8 @@ export class Checkout implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];
   isSubmitting = false;
   errorMessage = '';
+  isShippingOpen = true;
   checkoutForm: FormGroup;
-
-  readonly paymentMethods = [
-    { value: 'card', label: 'Debit / Credit Card' },
-    { value: 'cash', label: 'Cash on Delivery' },
-    { value: 'gcash', label: 'GCash' },
-  ] as const;
 
   private destroy$ = new Subject<void>();
 
@@ -36,6 +39,7 @@ export class Checkout implements OnInit, OnDestroy {
     private cartService: CartService,
     private authService: Auth,
     private orderService: OrderService,
+    private paymentService: PaymentManager,
     private router: Router
   ) {
     this.checkoutForm = this.fb.group({
@@ -47,18 +51,20 @@ export class Checkout implements OnInit, OnDestroy {
       city: ['', [Validators.required]],
       state: ['', [Validators.required]],
       postalCode: ['', [Validators.required, Validators.minLength(3)]],
-      paymentMethod: ['card', [Validators.required]],
-      cardName: [''],
-      cardNumber: [''],
-      expiryDate: [''],
-      cvv: [''],
+      cashAmount: ['', [Validators.required, Validators.min(0)]],
     });
   }
 
   ngOnInit(): void {
     this.cartService.cartItems$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(items => this.cartItems = items);
+      .subscribe(items => {
+        this.cartItems = items;
+
+        if (items.length === 0 && !this.isSubmitting) {
+          this.router.navigate(['/user-dashboard']);
+        }
+      });
 
     const user = this.authService.getCurrentUser();
     if (user) {
@@ -66,18 +72,6 @@ export class Checkout implements OnInit, OnDestroy {
         fullName: user.name,
         email: user.email,
       });
-    }
-
-    this.checkoutForm.get('paymentMethod')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(method => {
-        this.syncPaymentValidators(method ?? 'card');
-      });
-
-    this.syncPaymentValidators(this.checkoutForm.value.paymentMethod ?? 'card');
-
-    if (this.cartItems.length === 0) {
-      this.router.navigate(['/user-dashboard']);
     }
   }
 
@@ -98,9 +92,50 @@ export class Checkout implements OnInit, OnDestroy {
     return this.subtotal + this.shippingFee;
   }
 
+  get cashAmount(): number {
+    return Number(this.checkoutForm.value.cashAmount || 0);
+  }
+
+  get changeDue(): number {
+    return Math.max(this.cashAmount - this.total, 0);
+  }
+
+  get totalQuantity(): number {
+    return this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  }
+
+  adjustQuantity(productId: string, delta: number): void {
+    const item = this.cartItems.find(entry => entry.product.id === productId);
+    if (!item) {
+      return;
+    }
+
+    const nextQuantity = item.quantity + delta;
+    if (nextQuantity <= 0) {
+      this.cartService.removeFromCart(productId);
+      return;
+    }
+
+    this.cartService.updateQuantity(productId, nextQuantity);
+  }
+
+  removeItem(productId: string): void {
+    this.cartService.removeFromCart(productId);
+  }
+
+  toggleShipping(): void {
+    this.isShippingOpen = !this.isShippingOpen;
+  }
+
   submitOrder(): void {
     if (this.checkoutForm.invalid || this.cartItems.length === 0) {
       this.checkoutForm.markAllAsTouched();
+      return;
+    }
+
+    if (this.cashAmount < this.total) {
+      this.errorMessage = `Cash amount must be at least ₱${this.total.toFixed(2)}.`;
+      this.checkoutForm.get('cashAmount')?.setErrors({ insufficientCash: true });
       return;
     }
 
@@ -124,14 +159,26 @@ export class Checkout implements OnInit, OnDestroy {
       .join(', ');
 
     this.orderService.placeOrder(user.id, this.cartItems, shippingAddr).subscribe({
-      next: () => {
-        this.cartService.clearCart();
-        this.isSubmitting = false;
-        this.router.navigate(['/user-dashboard']);
+      next: (order) => {
+        this.paymentService.checkoutPayment({
+          order_id: order.id,
+          payment_method: 'cash',
+          cash: this.cashAmount,
+        }).subscribe({
+          next: () => {
+            this.cartService.clearCart();
+            this.isSubmitting = false;
+            this.router.navigate(['/orders']);
+          },
+          error: (error: any) => {
+            this.isSubmitting = false;
+            this.errorMessage = error?.error?.message || error?.message || 'Failed to process payment';
+          },
+        });
       },
-      error: () => {
+      error: (error: any) => {
         this.isSubmitting = false;
-        this.errorMessage = 'Failed to place order';
+        this.errorMessage = error?.error?.message || error?.message || 'Failed to place order';
       },
     });
   }
@@ -143,29 +190,5 @@ export class Checkout implements OnInit, OnDestroy {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
-  }
-
-  private syncPaymentValidators(method: string): void {
-    const cardFields = ['cardName', 'cardNumber', 'expiryDate', 'cvv'] as const;
-
-    cardFields.forEach(field => {
-      const control = this.checkoutForm.get(field);
-      if (!control) return;
-
-      if (method === 'card') {
-        const validators = field === 'cardName'
-          ? [Validators.required, Validators.minLength(3)]
-          : field === 'cardNumber'
-            ? [Validators.required, Validators.minLength(12), Validators.maxLength(19)]
-            : field === 'expiryDate'
-              ? [Validators.required]
-              : [Validators.required, Validators.minLength(3), Validators.maxLength(4)];
-        control.setValidators(validators);
-      } else {
-        control.clearValidators();
-      }
-
-      control.updateValueAndValidity({ emitEvent: false });
-    });
   }
 }
