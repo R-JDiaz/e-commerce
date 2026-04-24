@@ -6,10 +6,12 @@ import { Login } from '@features/auth/login/login';
 import { Orders } from '@features/user-dashboard/orders/orders';
 import { Profile } from '@features/user-dashboard/profile/profile';
 import { UserDashboard } from '@features/user-dashboard/user-dashboard';
+import { Signup } from '@features/auth/signup/signup';
 
 export const routes: Routes = [
   { path: '', component: Landing },
   { path: 'login', component: Login },
+  { path: 'signup', component: Signup },
   { path: 'user-dashboard', component: UserDashboard },
   { path: 'checkout', component: Checkout },
   { path: 'orders', component: Orders },
