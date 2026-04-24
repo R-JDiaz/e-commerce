@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common';
 import { ThemeService } from '@common/services/managers/theme/theme';
 import { Products } from '@features/user-dashboard/products/products';
@@ -13,7 +12,7 @@ import { NavigationComponent } from '@common/components/navigation/navigation';
 
 @Component({
   selector: 'app-landing',
-  imports: [RouterLink, CommonModule, LandingFooterComponent, LandingAboutComponent, LandingTestimonialsComponent,
+  imports: [CommonModule, LandingFooterComponent, LandingAboutComponent, LandingTestimonialsComponent,
     LandingHeroComponent, LandingFeaturedComponent, NavigationComponent
   ],
   templateUrl: './landing.html',
