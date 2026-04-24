@@ -1,36 +1,9 @@
 <app-navigation context="dashboard" (logout)="logout()"></app-navigation>
 
 <div class="dashboard">
-
-  <app-sidebar class="sidebar"></app-sidebar>
-
   <div class="main-content">
-
     <div class="products-section">
       <app-products (addToCart)="addToCart($event)"></app-products>
     </div>
-
-    <div class="order-history" *ngIf="orderHistory.length">
-      <h3>Order History</h3>
-
-      <div class="order-card" *ngFor="let order of orderHistory">
-        <div class="header">
-          <h4>Order #{{ order.id }}</h4>
-          <span class="status {{ order.status }}">
-            {{ order.status }}
-          </span>
-        </div>
-
-        <p class="date">{{ order.createdAt | date:'medium' }}</p>
-        <p class="total">Total: ₱{{ order.total.toFixed(2) }}</p>
-
-        <ul>
-          <li *ngFor="let item of order.items">
-            {{ item.product.name }} (x{{ item.quantity }})
-          </li>
-        </ul>
-      </div>
-    </div>
-
   </div>
 </div>
