@@ -20,15 +20,15 @@ export class Toast implements OnChanges, OnDestroy {
 
   private timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['open']) {
-      if (this.open) {
-        this.startAutoClose();
-      } else {
-        this.clearAutoClose();
+    ngOnChanges(changes: SimpleChanges) {
+      if (changes['open'] || changes['message']) {
+        if (this.open) {
+          this.startAutoClose();
+        } else {
+          this.clearAutoClose();
+        }
       }
     }
-  }
 
   ngOnDestroy() {
     this.clearAutoClose();
