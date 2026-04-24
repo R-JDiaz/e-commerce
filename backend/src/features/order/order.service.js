@@ -96,6 +96,28 @@ export default class OrderService {
         );
     }
 
+    // ðŸ”¹ 3b. GET ALL ORDERS (ADMIN)
+    async getAllOrders() {
+        const rows = await OrderRepository.findFullAll();
+
+        if (!rows || rows.length === 0) {
+            throw new AppError("No orders found", 404);
+        }
+
+        const ordersMap = {};
+
+        rows.forEach(row => {
+            if (!ordersMap[row.order_id]) {
+                ordersMap[row.order_id] = [];
+            }
+            ordersMap[row.order_id].push(row);
+        });
+
+        return Object.values(ordersMap).map(group =>
+            orderListDTO(group)
+        );
+    }
+
     // 🔹 4. GET SINGLE ORDER (SECURE)
     async getOrderById(userId, orderId) {
         const rows = await OrderRepository.findFullById(orderId);

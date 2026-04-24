@@ -90,4 +90,33 @@ export default class OrderRepository extends BaseModel {
 
         return rows;
     }
+
+    // ðŸ”¹ Get FULL orders (all users)
+    static async findFullAll() {
+        const [rows] = await this.pool.query(
+            `SELECT
+                o.id AS order_id,
+                o.user_id,
+                o.total_amount,
+                o.status,
+                o.shipping_addr,
+                o.created_at,
+
+                oi.id AS order_item_id,
+                oi.product_id,
+                oi.quantity,
+
+                p.name,
+                p.price AS product_price,
+
+                pi.image_url
+
+            FROM orders o
+            LEFT JOIN order_items oi ON oi.order_id = o.id
+            LEFT JOIN products p ON p.id = oi.product_id
+            LEFT JOIN product_images pi ON pi.product_id = p.id`
+        );
+
+        return rows;
+    }
 }
