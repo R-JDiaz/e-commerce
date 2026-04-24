@@ -1,0 +1,109 @@
+<div class="signup-page">
+  <div class="signup-card">
+    <section class="signup-brand">
+      <div class="signup-brand__glow signup-brand__glow--one"></div>
+      <div class="signup-brand__glow signup-brand__glow--two"></div>
+
+      <div class="signup-brand__content">
+        <p class="signup-kicker">Join the cafe</p>
+        <h1>Create your account and start ordering faster.</h1>
+        <p class="signup-lead">
+          Save your details, track your orders, and enjoy a smoother checkout experience from your first cup to your next craving.
+        </p>
+      </div>
+
+      <div class="signup-highlights">
+        <div class="signup-highlight">
+          <p class="signup-highlight__title">Fast checkout</p>
+          <p>Register once and reuse your info.</p>
+        </div>
+        <div class="signup-highlight">
+          <p class="signup-highlight__title">Order tracking</p>
+          <p>Keep your orders organized in one place.</p>
+        </div>
+        <div class="signup-highlight">
+          <p class="signup-highlight__title">Member perks</p>
+          <p>Be ready for future rewards and offers.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="signup-form-panel">
+      <div class="signup-header">
+        <h2>Sign up</h2>
+        <p>Create your customer account with your name, email, and password.</p>
+      </div>
+
+      <form class="signup-form" (ngSubmit)="onSubmit()">
+        <div class="signup-grid">
+          <label class="signup-field">
+            <span>First name</span>
+            <input
+              [(ngModel)]="firstName"
+              name="firstName"
+              type="text"
+              autocomplete="given-name"
+              placeholder="Jane"
+            />
+          </label>
+
+          <label class="signup-field">
+            <span>Last name</span>
+            <input
+              [(ngModel)]="lastName"
+              name="lastName"
+              type="text"
+              autocomplete="family-name"
+              placeholder="Doe"
+            />
+          </label>
+        </div>
+
+        <label class="signup-field">
+          <span>Email address</span>
+          <input
+            [(ngModel)]="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+          />
+        </label>
+
+        <label class="signup-field">
+          <span>Password</span>
+          <input
+            [(ngModel)]="password"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Create a strong password"
+          />
+        </label>
+
+        <label class="signup-field">
+          <span>Confirm password</span>
+          <input
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Repeat your password"
+          />
+        </label>
+
+        <button type="submit" [disabled]="isLoading" class="signup-submit">
+          <span *ngIf="isLoading" class="signup-spinner"></span>
+          {{ isLoading ? 'Creating account...' : 'Create account' }}
+        </button>
+      </form>
+
+      <p class="signup-footer">
+        Already have an account?
+        <a routerLink="/login">Sign in</a>
+      </p>
+    </section>
+  </div>
+</div>
+
+<app-toast [open]="showToast" [message]="toastMessage" [type]="toastType" (closed)="showToast = false"></app-toast>
