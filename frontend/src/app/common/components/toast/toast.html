@@ -1,16 +1,28 @@
-<div *ngIf="open" role="status" aria-live="polite"
-  class="fixed right-6 bottom-6 z-[9999] max-w-[min(360px,calc(100vw-48px))] overflow-hidden rounded-2xl shadow-[0_14px_40px_rgba(0,0,0,0.15)] transition-all duration-200 ease-out"
+<div *ngIf="open"
+  role="status"
+  aria-live="polite"
+  class="toast"
   [ngClass]="{
-    'bg-gradient-to-r from-emerald-500 to-emerald-600': type === 'success',
-    'bg-gradient-to-r from-rose-500 to-red-600': type === 'error',
-    'bg-gradient-to-r from-sky-500 to-blue-600': type === 'info'
+    'toast-success': type === 'success',
+    'toast-error': type === 'error',
+    'toast-info': type === 'info'
   }">
-  <div class="flex items-center gap-3 p-4 text-white">
-    <span class="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-lg">{{ icon }}</span>
-    <div class="flex-1">
-      <strong class="block text-sm font-semibold">{{ title }}</strong>
-      <p class="mt-1 text-sm leading-5 opacity-90">{{ message }}</p>
+
+  <div class="toast-content">
+    <span class="toast-icon">{{ icon }}</span>
+
+    <div class="toast-text">
+      <strong class="toast-title">{{ title }}</strong>
+      <p class="toast-message">{{ message }}</p>
     </div>
-    <button class="rounded-full p-1 text-white/90 transition hover:text-white" type="button" (click)="closeToast()" aria-label="Close notification">×</button>
+
+    <button
+      class="toast-close"
+      type="button"
+      (click)="closeToast()"
+      aria-label="Close notification">
+      ×
+    </button>
   </div>
+
 </div>

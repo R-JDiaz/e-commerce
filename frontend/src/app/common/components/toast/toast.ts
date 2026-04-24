@@ -1,10 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+
 @Component({
   selector: 'app-toast',
   standalone: true,
   imports: [CommonModule],
+  styleUrl: './toast.scss',
   templateUrl: './toast.html',
 })
 
