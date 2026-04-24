@@ -24,6 +24,10 @@ export const validateRegister = (body) => {
   errors.push(...lastName.errors);
   if (lastName.value !== undefined) value.last_name = lastName.value;
 
+  const phone = optionalString("phone", body.phone, { min: 7, max: 30 });
+  errors.push(...phone.errors);
+  if (phone.value !== undefined) value.phone = phone.value;
+
   return { value, errors };
 };
 

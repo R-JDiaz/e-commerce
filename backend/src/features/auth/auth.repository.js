@@ -6,7 +6,26 @@ export default class AuthRepository {
     const conn = db ?? UserModel.pool;
 
     const [rows] = await conn.query(
-      `SELECT * FROM users WHERE email = ? LIMIT 1`,
+      `
+      SELECT
+        u.id,
+        u.email,
+        u.password_hash,
+        u.first_name,
+        u.last_name,
+        u.phone,
+        u.role,
+        u.created_at,
+        u.updated_at,
+        a.address_line,
+        a.city,
+        a.state,
+        a.postal_code
+      FROM users u
+      LEFT JOIN addresses a ON a.user_id = u.id
+      WHERE u.email = ?
+      LIMIT 1
+      `,
       [email]
     );
 
@@ -17,7 +36,26 @@ export default class AuthRepository {
     const conn = db ?? UserModel.pool;
 
     const [rows] = await conn.query(
-      `SELECT * FROM users WHERE id = ? LIMIT 1`,
+      `
+      SELECT
+        u.id,
+        u.email,
+        u.password_hash,
+        u.first_name,
+        u.last_name,
+        u.phone,
+        u.role,
+        u.created_at,
+        u.updated_at,
+        a.address_line,
+        a.city,
+        a.state,
+        a.postal_code
+      FROM users u
+      LEFT JOIN addresses a ON a.user_id = u.id
+      WHERE u.id = ?
+      LIMIT 1
+      `,
       [id]
     );
 

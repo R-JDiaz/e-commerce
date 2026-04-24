@@ -13,6 +13,7 @@ import {
 import { withTransaction } from "../../common/utilities/handler.js";
 import UserModel from "../user/user.repository.js";
 import AuthRepository from "./auth.repository.js";
+import AddressRepository from "../address/address.repository.js";
 
 const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
@@ -83,7 +84,19 @@ export const register = async (payload) => {
         password_hash: hashPassword(payload.password),
         first_name: payload.first_name,
         last_name: payload.last_name,
+        phone: payload.phone ?? null,
         role: "customer",
+      },
+      conn
+    );
+
+    await AddressRepository.upsertByUserId(
+      result.insertId,
+      {
+        address_line: null,
+        city: null,
+        state: null,
+        postal_code: null,
       },
       conn
     );
