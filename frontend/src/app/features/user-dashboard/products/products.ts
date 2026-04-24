@@ -8,11 +8,12 @@ import { CategoryManager } from '@common/services/managers/category/category';
 import { CategoryItem } from '@common/services/api/category/category-api.service';
 
 import { ProductCardComponent } from '../../../common/components/product-card/product-card';
+import { CartComponent } from '../cart/cart';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductCardComponent],
+  imports: [CommonModule, FormsModule, ProductCardComponent, CartComponent],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
