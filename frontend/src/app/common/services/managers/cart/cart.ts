@@ -26,25 +26,17 @@ export class CartService {
   );
 
   constructor(private api: CartApiService) {
-    // Load cached cart first, then refresh from the API.
-    const storedCart = localStorage.getItem('cart');
-    if (storedCart) {
-      try {
-        this.cartItemsSubject.next(JSON.parse(storedCart));
-      } catch {
-        localStorage.removeItem('cart');
-      }
-    }
-
+    this.loadCachedCart();
     this.refreshCart();
+    this.bindAuthEvents();
   }
 
   private mapApiProduct(item: CartProductItem): ProductListItem {
     return {
-      id: String(item.id),
+      id: String(item.id ?? item.product_id ?? ''),
       name: item.name,
       description: null,
-      price: item.price,
+      price: Number(item.price ?? 0),
       stock: 0,
       category_name: '',
       image_url: item.image_url,
@@ -54,7 +46,7 @@ export class CartService {
   private mapCartDetail(detail: CartDetail): CartItem[] {
     return detail.products.map(item => ({
       product: this.mapApiProduct(item),
-      quantity: item.quantity,
+      quantity: Number(item.quantity ?? 0),
     }));
   }
 
@@ -63,15 +55,30 @@ export class CartService {
     this.saveToStorage();
   }
 
+  private normalizeCartItems(items: CartItem[]): CartItem[] {
+    return items.map(item => ({
+      product: {
+        ...item.product,
+        price: Number(item.product?.price ?? 0),
+      },
+      quantity: Number(item.quantity ?? 0),
+    }));
+  }
+
   private updateLocalCart(mutator: (items: CartItem[]) => CartItem[]): void {
     const nextItems = mutator([...this.cartItemsSubject.value]);
     this.setCartItems(nextItems);
   }
 
   private refreshCart(): void {
+    if (!this.hasAccessToken()) {
+      this.clearLocalCart();
+      return;
+    }
+
     this.api.getCart().subscribe({
       next: cart => {
-        const items = this.mapCartDetail(cart);
+        const items = this.normalizeCartItems(this.mapCartDetail(cart));
         this.setCartItems(items);
       },
       error: () => {
@@ -79,6 +86,37 @@ export class CartService {
       }
     });
   }
+
+  private loadCachedCart(): void {
+    const storedCart = localStorage.getItem('cart');
+    if (!storedCart) {
+      return;
+    }
+
+    try {
+      this.cartItemsSubject.next(this.normalizeCartItems(JSON.parse(storedCart)));
+    } catch {
+      localStorage.removeItem('cart');
+    }
+  }
+
+  private bindAuthEvents(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.addEventListener('auth:logout', this.handleLogout);
+    window.addEventListener('auth:session-changed', this.handleSessionChanged);
+  }
+
+  private handleLogout = (): void => {
+    this.clearLocalCart();
+  };
+
+  private handleSessionChanged = (): void => {
+    this.cartItemsSubject.next([]);
+    this.refreshCart();
+  };
 
   addToCart(product: ProductListItem, quantity: number = 1): void {
     if (quantity <= 0) {
@@ -90,7 +128,7 @@ export class CartService {
       quantity,
     }).subscribe({
       next: cart => {
-        this.setCartItems(this.mapCartDetail(cart));
+        this.setCartItems(this.normalizeCartItems(this.mapCartDetail(cart)));
       },
       error: () => {
         this.updateLocalCart(items => {
@@ -112,7 +150,7 @@ export class CartService {
   removeFromCart(productId: string): void {
     this.api.removeItem(productId, { productId }).subscribe({
       next: cart => {
-        this.setCartItems(this.mapCartDetail(cart));
+        this.setCartItems(this.normalizeCartItems(this.mapCartDetail(cart)));
       },
       error: () => {
         this.updateLocalCart(items => items.filter(item => item.product.id !== productId));
@@ -128,7 +166,7 @@ export class CartService {
 
     this.api.updateItem(productId, { productId, quantity }).subscribe({
       next: cart => {
-        this.setCartItems(this.mapCartDetail(cart));
+        this.setCartItems(this.normalizeCartItems(this.mapCartDetail(cart)));
       },
       error: () => {
         this.updateLocalCart(items =>
@@ -155,15 +193,24 @@ export class CartService {
   clearCart(): void {
     this.api.clearCart().subscribe({
       next: () => {
-        this.setCartItems([]);
+        this.clearLocalCart();
       },
       error: () => {
-        this.setCartItems([]);
+        this.clearLocalCart();
       }
     });
   }
 
   private saveToStorage(): void {
     localStorage.setItem('cart', JSON.stringify(this.cartItemsSubject.value));
+  }
+
+  private clearLocalCart(): void {
+    this.cartItemsSubject.next([]);
+    localStorage.removeItem('cart');
+  }
+
+  private hasAccessToken(): boolean {
+    return localStorage.getItem('accessToken') !== null;
   }
 }

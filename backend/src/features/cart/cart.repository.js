@@ -43,4 +43,8 @@ export default class CartRepository extends BaseModel {
         );
         return rows[0];
     }
+
+    static async createForUser(userId, db = null) {
+        return this.create({ user_id: userId }, db);
+    }
 }
