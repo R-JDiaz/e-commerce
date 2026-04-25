@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Checkout } from './checkout';
-import { CartService } from '@common/services/managers/cart/cart';
+import { CartManager } from '@common/services/managers/cart/cart';
 import { Auth } from '@common/services/managers/auth/auth';
 import { OrderManager } from '@common/services/managers/order/order';
 
@@ -12,7 +12,7 @@ describe('Checkout', () => {
       imports: [Checkout, RouterTestingModule],
       providers: [
         {
-          provide: CartService,
+          provide: CartManager,
           useValue: {
             cartItems$: of([]),
             getTotalPrice: () => 0,

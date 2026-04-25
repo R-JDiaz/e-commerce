@@ -10,6 +10,8 @@ import { OrderManager } from '@common/services/managers/order/order';
 import { NavigationComponent } from '@common/components/navigation/navigation';
 import { CheckoutSummaryComponent } from './checkout-summary/checkout-summary';
 import { CheckoutShippingComponent } from './checkout-shipping/checkout-shipping';
+import { PaymentManager } from '@common/services/managers/payment/payment';
+import { ToastManager } from '@common/services/managers/toast/toast.manager';
 
 @Component({
   selector: 'app-checkout',
@@ -38,7 +40,9 @@ export class Checkout implements OnInit, OnDestroy {
     private CartManager: CartManager,
     private authService: Auth,
     private orderManager: OrderManager,
-    private router: Router
+    private router: Router,
+    private paymentManager: PaymentManager,
+    private toastManager: ToastManager
   ) {
     this.checkoutForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -146,26 +150,57 @@ export class Checkout implements OnInit, OnDestroy {
     this.isSubmitting = true;
     this.errorMessage = '';
 
+    const form = this.checkoutForm.value;
+
     const shippingAddr = [
-      this.checkoutForm.value.addressLine1,
-      this.checkoutForm.value.addressLine2,
-      this.checkoutForm.value.city,
-      this.checkoutForm.value.state,
-      this.checkoutForm.value.postalCode,
+      form.addressLine1,
+      form.addressLine2,
+      form.city,
+      form.state,
+      form.postalCode,
     ]
       .filter(Boolean)
       .join(', ');
 
+    const cash = Number(form.cashAmount || 0);
+    
     this.orderManager.placeOrder(user.id, this.cartItems, shippingAddr).subscribe({
-      next: () => {
-        this.CartManager.clearCart();
-        this.isSubmitting = false;
-        this.router.navigate(['/orders']);
+      next: (order) => {
+
+        // ✅ If no cash payment needed
+        if (cash <= 0) {
+          this.CartManager.refreshCart();
+          this.isSubmitting = false;
+          this.router.navigate(['/orders']);
+          return;
+        }
+
+        // ✅ Cash payment flow
+        this.paymentManager.checkoutPayment({
+          order_id: order.id,
+          payment_method: 'cash',
+          cash: cash
+        }).subscribe({
+          next: (result: any) => {
+            this.toastManager.success(result.message || 'Payment successful');
+            this.CartManager.refreshCart();
+            this.isSubmitting = false;
+            this.router.navigate(['/orders']);
+          },
+
+          error: (error: any) => {
+            this.toastManager.error(error?.message || 'Payment failed');
+            this.isSubmitting = false;
+          }
+        });
+
       },
+
       error: (error: any) => {
         this.isSubmitting = false;
-        this.errorMessage = error?.error?.message || error?.message || 'Failed to place order';
-      },
+        this.errorMessage =
+          error?.error?.message || error?.message || 'Failed to place order';
+      }
     });
   }
 
