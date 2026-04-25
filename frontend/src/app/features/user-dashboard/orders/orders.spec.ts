@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Orders } from './orders';
 import { Auth } from '@common/services/managers/auth/auth';
-import { OrderService } from '@common/services/managers/order/order';
+import { OrderManager } from '@common/services/managers/order/order';
 
 describe('Orders', () => {
   beforeEach(async () => {
@@ -18,7 +18,7 @@ describe('Orders', () => {
           },
         },
         {
-          provide: OrderService,
+          provide: OrderManager,
           useValue: {
             getUserOrders: () => of([]),
           },

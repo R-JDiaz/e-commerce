@@ -1,11 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 import { Auth } from '@common/services/managers/auth/auth';
-import { Order, OrderService } from '@common/services/managers/order/order';
+import { Order, OrderManager } from '@common/services/managers/order/order';
 import { NavigationComponent } from '@common/components/navigation/navigation';
 
 @Component({
@@ -15,26 +13,19 @@ import { NavigationComponent } from '@common/components/navigation/navigation';
   templateUrl: './orders.html',
   styleUrl: './orders.scss',
 })
-export class Orders implements OnInit, OnDestroy {
+export class Orders implements OnInit {
   orders: Order[] = [];
   isLoading = false;
   errorMessage = '';
 
-  private destroy$ = new Subject<void>();
-
   constructor(
-    private orderService: OrderService,
+    private orderManager: OrderManager,
     private authService: Auth,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadOrders();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   get totalSpent(): number {
@@ -53,7 +44,7 @@ export class Orders implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-    this.orderService.getUserOrders(user.id).subscribe({
+    this.orderManager.getUserOrders(user.id).subscribe({
       next: (orders) => {
         this.orders = orders;
         this.isLoading = false;
@@ -62,6 +53,17 @@ export class Orders implements OnInit, OnDestroy {
         this.errorMessage = 'Failed to load orders';
         this.isLoading = false;
       },
+    });
+  }
+
+  markReceived(orderId: string): void {
+    this.isLoading = true;
+    this.orderManager.updateOrderStatus(orderId, 'completed').subscribe({
+      next: () => this.loadOrders(),
+      error: () => {
+        this.errorMessage = 'Failed to update order status';
+        this.isLoading = false;
+      }
     });
   }
 

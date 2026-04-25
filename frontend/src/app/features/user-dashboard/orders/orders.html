@@ -44,7 +44,16 @@
 
         <div class="footer">
           <span>Total</span>
-          <strong>&#8369;{{ order.total.toFixed(2) }}</strong>
+          <div class="footer-actions">
+            <strong>&#8369;{{ order.total.toFixed(2) }}</strong>
+            <button
+              type="button"
+              class="receive"
+              *ngIf="order.status === 'accepted'"
+              (click)="markReceived(order.id)">
+              Order received
+            </button>
+          </div>
         </div>
       </article>
     </div>

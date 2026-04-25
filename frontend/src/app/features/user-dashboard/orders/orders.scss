@@ -128,6 +128,7 @@
       text-transform: capitalize;
 
       &.completed { background: #d1fae5; color: #065f46; }
+      &.accepted { background: #dbeafe; color: #1d4ed8; }
       &.pending { background: #fff7ed; color: #9a3412; }
       &.cancelled { background: #fee2e2; color: #991b1b; }
     }
@@ -153,8 +154,27 @@
   .footer {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     color: #3b2a22;
     font-weight: 700;
+
+    .footer-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .receive {
+      border: none;
+      border-radius: 0.75rem;
+      background: #5c4033;
+      color: #fff;
+      padding: 0.5rem 0.8rem;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
   }
 }
 
