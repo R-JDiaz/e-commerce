@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { ProductListItem } from '@common/models/product';
-import { CartService } from '@common/services/managers/cart/cart';
+import { CartManager } from '@common/services/managers/cart/cart';
 import { Auth } from '@common/services/managers/auth/auth';
 import { Router } from '@angular/router';
 import { NavigationComponent } from '@common/components/navigation/navigation';
@@ -20,13 +20,13 @@ import { Products } from './products/products';
 })
 export class UserDashboard {
   constructor(
-    private cartService: CartService,
+    private CartManager: CartManager,
     private authService: Auth,
     private router: Router
   ) {}
 
   addToCart(product: ProductListItem) {
-    this.cartService.addToCart(product);
+    this.CartManager.addToCart(product);
   }
 
   logout() {

@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
-import { CartItem, CartService } from '@common/services/managers/cart/cart';
+import { CartItem, CartManager } from '@common/services/managers/cart/cart';
 import { Auth } from '@common/services/managers/auth/auth';
 import { OrderManager } from '@common/services/managers/order/order';
 import { NavigationComponent } from '@common/components/navigation/navigation';
@@ -35,7 +35,7 @@ export class Checkout implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private cartService: CartService,
+    private CartManager: CartManager,
     private authService: Auth,
     private orderManager: OrderManager,
     private router: Router
@@ -54,7 +54,7 @@ export class Checkout implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.cartService.cartItems$
+    this.CartManager.cartItems$
       .pipe(takeUntil(this.destroy$))
       .subscribe(items => {
         this.cartItems = items;
@@ -85,7 +85,7 @@ export class Checkout implements OnInit, OnDestroy {
   }
 
   get subtotal(): number {
-    return this.cartService.getTotalPrice();
+    return this.CartManager.getTotalPrice();
   }
 
   get shippingFee(): number {
@@ -116,15 +116,15 @@ export class Checkout implements OnInit, OnDestroy {
 
     const nextQuantity = item.quantity + delta;
     if (nextQuantity <= 0) {
-      this.cartService.removeFromCart(productId);
+      this.CartManager.removeFromCart(productId);
       return;
     }
 
-    this.cartService.updateQuantity(productId, nextQuantity);
+    this.CartManager.updateQuantity(productId, nextQuantity);
   }
 
   removeItem(productId: string): void {
-    this.cartService.removeFromCart(productId);
+    this.CartManager.removeFromCart(productId);
   }
 
   toggleShipping(): void {
@@ -158,7 +158,7 @@ export class Checkout implements OnInit, OnDestroy {
 
     this.orderManager.placeOrder(user.id, this.cartItems, shippingAddr).subscribe({
       next: () => {
-        this.cartService.clearCart();
+        this.CartManager.clearCart();
         this.isSubmitting = false;
         this.router.navigate(['/orders']);
       },

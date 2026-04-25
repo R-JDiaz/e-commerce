@@ -15,7 +15,7 @@ export interface CartItem {
 @Injectable({
   providedIn: 'root',
 })
-export class CartService {
+export class CartManager {
   private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
   public cartItems$ = this.cartItemsSubject.asObservable();
   public totalItems$ = this.cartItems$.pipe(
