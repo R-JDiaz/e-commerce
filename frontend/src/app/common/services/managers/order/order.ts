@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, forkJoin, map, switchMap, tap } from 'rxjs';
 import { CartItem } from '../cart/cart';
 import {
   CreateOrderRequest,
@@ -9,6 +9,8 @@ import {
   OrderSummary,
   UpdateOrderStatusRequest,
 } from '@common/services/api/order/order-api.service';
+import { OrderDetailDTO, OrderSummaryDTO } from '@common/dtos/order.dto';
+import { OrderMapper } from './mapper/order.mapper';
 
 export interface OrderItem {
   id: string | number;
@@ -19,6 +21,11 @@ export interface OrderItem {
   };
   quantity: number;
   subtotal: number;
+}
+export interface OrderData {
+  totalQuantity: number;
+  totalSpent: number;
+  totalOrders: number;
 }
 
 export interface Order {
@@ -35,7 +42,57 @@ export interface Order {
   providedIn: 'root',
 })
 export class OrderManager {
+  private isLoaded = false;
+  private readonly orderDataSubject = new BehaviorSubject<OrderData>({
+    totalQuantity: 0,
+    totalSpent: 0,
+    totalOrders: 0,
+  });
+
+readonly orderData$ = this.orderDataSubject.asObservable();
+
+  private readonly orderSubject = new BehaviorSubject<OrderSummaryDTO[]>([]);
+  readonly orders$ = this.orderSubject.asObservable();
+
+  private readonly orderFullSubject = new BehaviorSubject<Order[]>([]);
+  readonly orderFull$ = this.orderFullSubject.asObservable();
+
   constructor(private api: OrderApiService) {}
+
+  private load(): void {
+    if (this.isLoaded) return;
+
+    this.api.getOrders().pipe(
+      tap(orders => {
+        this.orderSubject.next(orders);
+        this.isLoaded = true;
+      }),
+
+      switchMap(orders => {
+        const requests = orders.map(order =>
+          this.api.getOrderById(order.id)
+        );
+
+        return forkJoin(requests);
+      }),
+
+      tap(fullOrders => {
+        const mappedOrders = OrderMapper.toOrderList(fullOrders);
+
+        this.orderFullSubject.next(mappedOrders);
+
+        const orderData = this.computeOrderData(mappedOrders);
+        this.orderDataSubject.next(orderData);
+      })
+
+    ).subscribe();
+  }
+
+  public getDetailedOrder() : Observable<Order[]> {
+    this.load();
+
+    return this.orderFull$;
+  }
 
   private mapSummary(order: OrderSummary): Order {
     return {
@@ -75,9 +132,15 @@ export class OrderManager {
     );
   }
 
-  getUserOrders(_userId: string): Observable<Order[]> {
+ getUserOrders(_userId: string): Observable<Order[]> {
     return this.api.getOrders().pipe(
-      map(orders => orders.map(order => this.mapSummary(order)))
+      map(orders => {
+        const mapped = orders.map(order => this.mapSummary(order));
+
+        this.orderDataSubject.next(this.computeOrderData(mapped));
+
+        return mapped;
+      })
     );
   }
 
@@ -99,6 +162,25 @@ export class OrderManager {
     return this.api.updateOrderStatus(orderId, request).pipe(
       map(order => this.mapDetail(order))
     );
+  }
+
+  private computeOrderData(orders: Order[]): OrderData {
+    let totalQuantity = 0;
+    let totalSpent = 0;
+
+    orders.forEach(order => {
+      totalSpent += order.total;
+
+      order.items.forEach(item => {
+        totalQuantity += item.quantity;
+      });
+    });
+
+    return {
+      totalQuantity,
+      totalSpent,
+      totalOrders: orders.length,
+    };
   }
 }
 
