@@ -49,7 +49,7 @@ export class OrderManager {
     totalOrders: 0,
   });
 
-readonly orderData$ = this.orderDataSubject.asObservable();
+  readonly orderData$ = this.orderDataSubject.asObservable(); 
 
   private readonly orderSubject = new BehaviorSubject<OrderSummaryDTO[]>([]);
   readonly orders$ = this.orderSubject.asObservable();
@@ -87,6 +87,35 @@ readonly orderData$ = this.orderDataSubject.asObservable();
 
     ).subscribe();
   }
+
+  public refreshOrder(id: string | number): Observable<Order> {
+    return this.api.getOrderById(String(id)).pipe(
+      map(order => this.mapDetail(order)),
+
+      tap((updatedOrder: Order) => {
+        const currentOrders = this.orderFullSubject.value;
+
+        const updatedOrders = currentOrders.map(order =>
+          String(order.id) === String(updatedOrder.id)
+            ? updatedOrder
+            : order
+        );
+        const exists = currentOrders.some(
+          order => String(order.id) === String(updatedOrder.id)
+        );
+
+        if (!exists) {
+          updatedOrders.push(updatedOrder);
+        }
+
+        this.orderFullSubject.next(updatedOrders);
+
+        // Recompute aggregated stats
+        const orderData = this.computeOrderData(updatedOrders);
+        this.orderDataSubject.next(orderData);
+      })
+    );
+  } 
 
   public getDetailedOrder() : Observable<Order[]> {
     this.load();
@@ -132,7 +161,7 @@ readonly orderData$ = this.orderDataSubject.asObservable();
     );
   }
 
- getUserOrders(_userId: string): Observable<Order[]> {
+  getUserOrders(_userId: string): Observable<Order[]> {
     return this.api.getOrders().pipe(
       map(orders => {
         const mapped = orders.map(order => this.mapSummary(order));

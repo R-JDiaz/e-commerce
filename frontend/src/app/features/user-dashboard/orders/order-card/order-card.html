@@ -1,37 +1,80 @@
 <article class="order-card">
 
-  <div class="header">
+  <!-- HEADER (click to toggle) -->
+  <div class="header clickable" (click)="toggle()">
+
     <div>
       <p class="order-id">Order #{{ order.id }}</p>
       <p class="date">{{ order.createdAt | date:'medium' }}</p>
     </div>
 
-    <span class="status" [ngClass]="order.status">
-      {{ order.status }}
-    </span>
-  </div>
+    <div class="header-right">
+      <span class="status" [ngClass]="order.status">
+        {{ order.status }}
+      </span>
 
-  <div class="items">
-    <div class="item" *ngFor="let item of order.items">
-      <span>{{ item.product.name }}</span>
-      <span>x{{ item.quantity }}</span>
+      <button class="toggle-btn">
+        {{ isExpanded ? '−' : '+' }}
+      </button>
     </div>
+
   </div>
 
-  <div class="footer">
-    <span>Total</span>
+  <!-- COLLAPSIBLE CONTENT -->
+  <div class="content" *ngIf="isExpanded">
 
-    <div class="footer-actions">
-      <strong>{{ order.total | number:'1.2-2' }}</strong>
+    <div class="items">
+      <div class="item" *ngFor="let item of order.items">
+        <span>{{ item.product.name }}</span>
+        <span>x{{ item.quantity }}</span>
+      </div>
+    </div>
+
+    <!-- PAYMENT -->
+    <div class="payment" *ngIf="order.status === 'pending'">
+
+      <label class="pay-label">
+        Enter payment (≥ ₱{{ order.total | number:'1.2-2' }})
+      </label>
+
+      <input
+        type="number"
+        [(ngModel)]="paymentAmount"
+        placeholder="₱0.00"
+        class="pay-input"
+      />
+
+      <small class="error-msg"
+        *ngIf="paymentAmount !== null && paymentAmount < order.total">
+        Payment must be equal or higher than total
+      </small>
 
       <button
         type="button"
-        class="receive"
-        *ngIf="order.status === 'accepted'"
-        (click)="markReceived()">
-        Order received
+        class="pay-btn"
+        (click)="payOrder()"
+        [disabled]="!isPaymentValid">
+        Pay Now
       </button>
+
     </div>
+
+    <div class="footer">
+      <span>Total</span>
+
+      <div class="footer-actions">
+        <strong>{{ order.total | number:'1.2-2' }}</strong>
+
+        <button
+          type="button"
+          class="receive"
+          *ngIf="order.status === 'accepted'"
+          (click)="markReceived()">
+          Order received
+        </button>
+      </div>
+    </div>
+
   </div>
 
 </article>

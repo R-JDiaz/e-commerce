@@ -13,9 +13,10 @@
       </button>
     </header>
   <app-order-card
-    *ngFor="let order of orders$ | async"
-    [order]="order"
-    (received)="markReceived($event)">
-  </app-order-card>
+  *ngFor="let order of orders$ | async"
+  [order]="order"
+  (pay)="payAmount($event)"
+  (received)="markReceived($event)">
+  </app-order-card> 
 
 </div>
