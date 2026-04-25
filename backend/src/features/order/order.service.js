@@ -139,6 +139,7 @@ export default class OrderService {
     async updateOrderStatus(orderId, status) {
         const validStatuses = [
             "pending",
+            "accepted",
             "paid",
             "shipped",
             "completed",

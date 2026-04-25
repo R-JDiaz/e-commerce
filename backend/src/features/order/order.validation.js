@@ -4,7 +4,7 @@ import {
   requiredString,
 } from "../../common/validation/fields.js";
 
-const orderStatuses = ["pending", "paid", "shipped", "completed", "cancelled"];
+const orderStatuses = ["pending", "accepted", "paid", "shipped", "completed", "cancelled"];
 
 export const validateOrderId = (params) => {
   const { value, errors } = requiredPositiveInteger("id", params.id);
@@ -38,4 +38,3 @@ export const validateOrderStatus = (body) => {
     errors,
   };
 };
-
