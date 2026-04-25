@@ -2,8 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { Auth, User } from '@common/services/managers/auth/auth';
+import { UserManager } from '@common/services/managers/user/user';
+import { ToastManager } from '@common/services/managers/toast/toast.manager';
 import { NavigationComponent } from '@common/components/navigation/navigation';
 
 @Component({
@@ -13,7 +16,6 @@ import { NavigationComponent } from '@common/components/navigation/navigation';
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
 })
-
 export class Profile implements OnInit {
   profileForm!: FormGroup;
   isSaving = false;
@@ -22,9 +24,10 @@ export class Profile implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: Auth,
+    private userManager: UserManager,
+    private toastManager: ToastManager,
     private router: Router
   ) {
-    
     this.profileForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
@@ -44,15 +47,31 @@ export class Profile implements OnInit {
       return;
     }
 
-    this.profileForm.patchValue({
-      name: user.name,
-      email: user.email,
-      phone: user.phone ?? '',
-      addressLine1: user.addressLine1 ?? '',
-      addressLine2: user.addressLine2 ?? '',
-      city: user.city ?? '',
-      state: user.state ?? '',
-      postalCode: user.postalCode ?? '',
+    this.userManager.getUser(user.id).subscribe({
+      next: (profile) => {
+        this.profileForm.patchValue({
+          name: `${profile.first_name} ${profile.last_name}`.trim(),
+          email: profile.email,
+          phone: profile.phone ?? '',
+          addressLine1: profile.address_line ?? '',
+          addressLine2: '',
+          city: profile.city ?? '',
+          state: profile.state ?? '',
+          postalCode: profile.postal_code ?? '',
+        });
+      },
+      error: () => {
+        this.profileForm.patchValue({
+          name: user.name,
+          email: user.email,
+          phone: user.phone ?? '',
+          addressLine1: user.addressLine1 ?? '',
+          addressLine2: user.addressLine2 ?? '',
+          city: user.city ?? '',
+          state: user.state ?? '',
+          postalCode: user.postalCode ?? '',
+        });
+      },
     });
   }
 
@@ -62,22 +81,56 @@ export class Profile implements OnInit {
       return;
     }
 
-    this.isSaving = true;
-    const value = this.profileForm.value;
+    const user = this.authService.getCurrentUser();
+    if (!user) {
+      this.router.navigate(['/login']);
+      return;
+    }
 
-    this.authService.updateCurrentUser({
-      name: value.name ?? '',
+    this.isSaving = true;
+    this.message = '';
+
+    const value = this.profileForm.value;
+    const nameParts = String(value.name ?? '').trim().split(/\s+/).filter(Boolean);
+    const firstName = nameParts.shift() ?? user.name;
+    const lastName = nameParts.length > 0 ? nameParts.join(' ') : firstName;
+    const addressLine = [value.addressLine1, value.addressLine2].filter(Boolean).join(', ');
+
+    this.userManager.updateUser(user.id, {
+      first_name: firstName,
+      last_name: lastName,
       email: value.email ?? '',
       phone: value.phone ?? '',
-      addressLine1: value.addressLine1 ?? '',
-      addressLine2: value.addressLine2 ?? '',
+      address_line: addressLine || '',
       city: value.city ?? '',
       state: value.state ?? '',
-      postalCode: value.postalCode ?? '',
-    } as Partial<User>);
+      postal_code: value.postalCode ?? '',
+    }).pipe(
+      finalize(() => {
+        this.isSaving = false;
+      })
+    ).subscribe({
+      next: (profile) => {
+        this.authService.updateCurrentUser({
+          name: `${profile.first_name} ${profile.last_name}`.trim(),
+          email: profile.email,
+          phone: profile.phone ?? '',
+          addressLine1: profile.address_line ?? '',
+          addressLine2: '',
+          city: profile.city ?? '',
+          state: profile.state ?? '',
+          postalCode: profile.postal_code ?? '',
+        } as Partial<User>);
 
-    this.isSaving = false;
-    this.message = 'Profile updated';
+        this.message = 'Profile updated';
+        this.toastManager.success('Profile updated successfully');
+      },
+      error: (error: any) => {
+        const message = error?.error?.message || error?.message || 'Failed to update profile';
+        this.message = message;
+        this.toastManager.error(message);
+      },
+    });
   }
 
   backToShop(): void {
