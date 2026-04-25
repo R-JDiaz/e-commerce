@@ -46,12 +46,12 @@ export default class OrderService {
             const orderData = await this.buildOrderFromCart(userId, shipping_addr);
 
             // 2. create order
-            const result = await OrderRepository.create({
+            const result = await OrderRepository.create({ 
                 user_id: orderData.user_id,
                 total_amount: orderData.total_amount,
                 status: "pending",
                 shipping_addr: orderData.shipping_addr
-            }, conn);
+            });
 
             if (!result || result.affectedRows === 0) {
                 throw new AppError("Order failed to create", 500);
@@ -68,6 +68,7 @@ export default class OrderService {
             // 5. fetch full order (JOIN)
             const rows = await OrderRepository.findFullById(orderId, conn);
 
+            console.log("JOIN", orderDetailDTO(rows));
             return orderDetailDTO(rows);
         });
     }

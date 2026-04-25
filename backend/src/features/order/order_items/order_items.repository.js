@@ -14,7 +14,7 @@ export default class OrderItemRepository extends BaseModel {
         ]);
         
         const db = conn ?? this.pool;
-        const [rows] = await conn.query(
+        const [rows] = await db.query(
             `INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ?`,
             [values]
         );
