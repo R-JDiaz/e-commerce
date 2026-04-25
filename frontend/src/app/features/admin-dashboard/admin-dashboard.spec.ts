@@ -4,7 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { AdminDashboard } from './admin-dashboard';
 import { ProductManager } from '@common/services/managers/product/product';
-import { OrderService } from '@common/services/managers/order/order';
+import { OrderManager } from '@common/services/managers/order/order';
 import { Auth } from '@common/services/managers/auth/auth';
 import { ProductApiService } from '@common/services/api/product/product-api.service';
 import { CategoryManager } from '@common/services/managers/category/category';
@@ -24,7 +24,7 @@ describe('AdminDashboard', () => {
           },
         },
         {
-          provide: OrderService,
+          provide: OrderManager,
           useValue: {
             getAllOrders: () => of([]),
             updateOrderStatus: () => of({}),

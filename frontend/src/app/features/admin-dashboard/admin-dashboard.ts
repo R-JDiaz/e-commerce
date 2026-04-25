@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { ProductListItem } from '@common/models/product';
 import { ProductManager } from '@common/services/managers/product/product';
-import { Order, OrderService } from '@common/services/managers/order/order';
+import { Order, OrderManager } from '@common/services/managers/order/order';
 import { Auth } from '@common/services/managers/auth/auth';
 import { NavigationComponent } from '@common/components/navigation/navigation';
 import { AdminSiteLinksComponent } from './site-links/site-links';
@@ -47,7 +47,7 @@ export class AdminDashboard implements OnInit {
 
   constructor(
     private productService: ProductManager,
-    private orderService: OrderService,
+    private orderManager: OrderManager,
     private authService: Auth,
     private router: Router
   ) {}
@@ -81,7 +81,7 @@ export class AdminDashboard implements OnInit {
   }
 
   loadOrders() {
-    this.orderService.getAllOrders().subscribe({
+    this.orderManager.getAllOrders().subscribe({
       next: (orders: any) => {
         this.orders = orders;
         this.updateAnalytics();
@@ -101,7 +101,7 @@ export class AdminDashboard implements OnInit {
   }
 
   updateOrderStatus(orderId: string, status: Order['status']) {
-    this.orderService.updateOrderStatus(orderId, status).subscribe({
+    this.orderManager.updateOrderStatus(orderId, status).subscribe({
       next: () => {
         this.loadOrders();
       },
