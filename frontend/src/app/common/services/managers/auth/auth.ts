@@ -81,7 +81,9 @@ export class Auth {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(CURRENT_USER_KEY);
+    localStorage.removeItem('cart');
     this.currentUserSubject.next(null);
+    this.dispatchAuthEvent('logout');
   }
 
   getAccessToken(): string | null {
@@ -131,6 +133,7 @@ export class Auth {
     localStorage.setItem(REFRESH_TOKEN_KEY, session.refresh_token);
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
     this.currentUserSubject.next(user);
+    this.dispatchAuthEvent('session-changed');
   }
 
   private mapSessionUser(session: AuthSession, fallbackType: 'user' | 'admin'): User {
@@ -141,6 +144,19 @@ export class Auth {
       email: session.user.email,
       type: mappedType,
       name: `${session.user.first_name} ${session.user.last_name}`.trim(),
+      phone: session.user.phone ?? undefined,
+      addressLine1: session.user.address_line ?? undefined,
+      city: session.user.city ?? undefined,
+      state: session.user.state ?? undefined,
+      postalCode: session.user.postal_code ?? undefined,
     };
+  }
+
+  private dispatchAuthEvent(name: 'logout' | 'session-changed'): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.dispatchEvent(new CustomEvent(`auth:${name}`));
   }
 }

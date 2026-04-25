@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { finalize, switchMap, timer } from 'rxjs';
 import { Auth, User } from '@common/services/managers/auth/auth';
-import { ToastManager } from '@common/components/toast-container/toast.service';
+import { ToastManager } from '@common/services/managers/toast/toast.manager';
 
 @Component({
   selector: 'app-login',

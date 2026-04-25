@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ToastManager, ToastData } from './toast.service';
+import { ToastManager, ToastData } from '@common/services/managers/toast/toast.manager';
 import { Toast } from './toast/toast';
 import { Observable } from 'rxjs';
 
