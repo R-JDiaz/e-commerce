@@ -22,7 +22,8 @@ export const CartService = {
     let cart = await CartRepository.findByUserId(userId);
 
     if (!cart) {
-      cart = await CartRepository.createForUser(userId, conn);
+      const result = await CartRepository.createForUser(userId, conn);
+      cart = {id: result.insertId};
     }
 
     return cart;
@@ -49,6 +50,7 @@ export const CartService = {
       cart.id,
       productId
     );
+    
     
     let cart_item;
 
