@@ -1,61 +1,21 @@
 <app-navigation context="orders" (logout)="logout()"></app-navigation>
 
-<main class="orders-page">
-  <section class="shell">
-    <header class="topbar">
+<div class="list" *ngIf="!isLoading && !errorMessage">
+
+  <header class="topbar">
       <div>
         <p class="eyebrow">Orders</p>
         <h1>Order history</h1>
       </div>
 
-      <button type="button" class="back" (click)="backToShop()">Back to shop</button>
+      <button type="button" class="back" (click)="backToShop()">
+        Back to shop
+      </button>
     </header>
+  <app-order-card
+    *ngFor="let order of orders$ | async"
+    [order]="order"
+    (received)="markReceived($event)">
+  </app-order-card>
 
-    <div class="stats">
-      <div class="stat">
-        <span class="label">Orders</span>
-        <strong>{{ totalOrders }}</strong>
-      </div>
-      <div class="stat">
-        <span class="label">Spent</span>
-        <strong>&#8369;{{ totalSpent.toFixed(2) }}</strong>
-      </div>
-    </div>
-
-    <div *ngIf="isLoading" class="state">Loading orders...</div>
-    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
-
-    <div class="list" *ngIf="!isLoading">
-      <article class="order-card" *ngFor="let order of orders">
-        <div class="header">
-          <div>
-            <p class="order-id">Order #{{ order.id }}</p>
-            <p class="date">{{ order.createdAt | date:'medium' }}</p>
-          </div>
-          <span class="status {{ order.status }}">{{ order.status }}</span>
-        </div>
-
-        <div class="items">
-          <div class="item" *ngFor="let item of order.items">
-            <span>{{ item.product.name }}</span>
-            <span>x{{ item.quantity }}</span>
-          </div>
-        </div>
-
-        <div class="footer">
-          <span>Total</span>
-          <div class="footer-actions">
-            <strong>&#8369;{{ order.total.toFixed(2) }}</strong>
-            <button
-              type="button"
-              class="receive"
-              *ngIf="order.status === 'accepted'"
-              (click)="markReceived(order.id)">
-              Order received
-            </button>
-          </div>
-        </div>
-      </article>
-    </div>
-  </section>
-</main>
+</div>

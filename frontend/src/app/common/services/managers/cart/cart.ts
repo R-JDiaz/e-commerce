@@ -16,11 +16,14 @@ export interface CartItem {
   providedIn: 'root',
 })
 export class CartManager {
+
   private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
   public cartItems$ = this.cartItemsSubject.asObservable();
+  
   public totalItems$ = this.cartItems$.pipe(
     map(items => items.reduce((sum, item) => sum + item.quantity, 0))
   );
+
   public totalPrice$ = this.cartItems$.pipe(
     map(items => items.reduce((total, item) => total + (item.product.price * item.quantity), 0))
   );

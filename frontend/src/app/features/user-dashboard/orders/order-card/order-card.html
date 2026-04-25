@@ -1,0 +1,37 @@
+<article class="order-card">
+
+  <div class="header">
+    <div>
+      <p class="order-id">Order #{{ order.id }}</p>
+      <p class="date">{{ order.createdAt | date:'medium' }}</p>
+    </div>
+
+    <span class="status" [ngClass]="order.status">
+      {{ order.status }}
+    </span>
+  </div>
+
+  <div class="items">
+    <div class="item" *ngFor="let item of order.items">
+      <span>{{ item.product.name }}</span>
+      <span>x{{ item.quantity }}</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Total</span>
+
+    <div class="footer-actions">
+      <strong>{{ order.total | number:'1.2-2' }}</strong>
+
+      <button
+        type="button"
+        class="receive"
+        *ngIf="order.status === 'accepted'"
+        (click)="markReceived()">
+        Order received
+      </button>
+    </div>
+  </div>
+
+</article>
