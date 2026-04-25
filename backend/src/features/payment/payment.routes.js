@@ -1,4 +1,5 @@
 import { Router } from "express";
+import authMiddleware from "../../common/middleware/auth.js";
 import PaymentController from "./payment.controller.js";
 import { validateRequest } from "../../common/validation/request.js";
 import {
@@ -8,14 +9,14 @@ import {
 
 const router = Router();
 
-// Create payment (checkout)
+router.use(authMiddleware);
+
 router.post(
   "/checkout",
   validateRequest(validateCheckoutPayment),
   PaymentController.checkoutPayment
 );
 
-// Get payment by ID
 router.get(
   "/:id",
   validateRequest(validatePaymentId, "params"),

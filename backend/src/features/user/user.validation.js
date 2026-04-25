@@ -55,6 +55,35 @@ export const validateUpdateUser = (body) => {
     value.role = role.value;
   }
 
+  if (Object.prototype.hasOwnProperty.call(body, "phone")) {
+    const phone = optionalString("phone", body.phone, { min: 7, max: 30 });
+    errors.push(...phone.errors);
+    if (phone.value !== undefined) value.phone = phone.value;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "address_line")) {
+    const addressLine = optionalString("address_line", body.address_line, { min: 3, max: 255 });
+    errors.push(...addressLine.errors);
+    if (addressLine.value !== undefined) value.address_line = addressLine.value;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "city")) {
+    const city = optionalString("city", body.city, { min: 2, max: 100 });
+    errors.push(...city.errors);
+    if (city.value !== undefined) value.city = city.value;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "state")) {
+    const state = optionalString("state", body.state, { min: 2, max: 100 });
+    errors.push(...state.errors);
+    if (state.value !== undefined) value.state = state.value;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(body, "postal_code")) {
+    const postalCode = optionalString("postal_code", body.postal_code, { min: 3, max: 20 });
+    errors.push(...postalCode.errors);
+    if (postalCode.value !== undefined) value.postal_code = postalCode.value;
+  }
+
   return { value, errors };
 };
-

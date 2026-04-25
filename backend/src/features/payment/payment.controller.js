@@ -2,9 +2,8 @@ import { asyncHandler } from "../../common/utilities/handler.js";
 import PaymentService from "./payment.service.js";
 
 export default class PaymentController {
-  // POST /payments/checkout
   static checkoutPayment = asyncHandler(async (req, res) => {
-    const userId = 5; // from auth middleware
+    const userId = req.user.id;
     const data = req.body;
 
     const payment = await PaymentService.checkoutPayment(userId, data);
@@ -16,9 +15,8 @@ export default class PaymentController {
     });
   });
 
-  // GET /payments/:id
   static getPaymentById = asyncHandler(async (req, res) => {
-    const userId = 3;
+    const userId = req.user.id;
     const paymentId = req.params.id;
 
     const payment = await PaymentService.getPaymentById(userId, paymentId);

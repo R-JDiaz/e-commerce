@@ -4,6 +4,11 @@ export interface AuthUserDTO {
   first_name: string;
   last_name: string;
   role?: 'customer' | 'admin';
+  phone?: string | null;
+  address_line?: string | null;
+  city?: string | null;
+  state?: string | null;
+  postal_code?: string | null;
 }
 
 export interface AuthSessionDTO {
@@ -27,4 +32,3 @@ export interface RegisterRequestDTO {
 export interface RefreshRequestDTO {
   refresh_token: string;
 }
-
