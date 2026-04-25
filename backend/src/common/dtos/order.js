@@ -4,6 +4,7 @@ export const orderListDTO = (rows) => {
 
   return {
     id: first.order_id,
+    user_id: first.user_id,
     total_amount: first.total_amount,
     status: first.status,
     created_at: first.created_at

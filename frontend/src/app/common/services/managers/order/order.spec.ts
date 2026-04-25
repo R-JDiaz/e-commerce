@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 
-import { OrderService } from './order';
+import { OrderManager } from './order';
 import { OrderApiService } from '@common/services/api/order/order-api.service';
 
 describe('Order', () => {
-  let service: OrderService;
+  let service: OrderManager;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -36,7 +36,7 @@ describe('Order', () => {
               id: 1,
               user_id: 1,
               total_amount: 0,
-              status: 'pending',
+              status: 'accepted',
               shipping_addr: '',
               items: [],
               created_at: new Date().toISOString(),
@@ -45,7 +45,7 @@ describe('Order', () => {
         },
       ],
     });
-    service = TestBed.inject(OrderService);
+    service = TestBed.inject(OrderManager);
   });
 
   it('should be created', () => {

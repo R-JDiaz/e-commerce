@@ -34,13 +34,13 @@ export interface Order {
 @Injectable({
   providedIn: 'root',
 })
-export class OrderService {
+export class OrderManager {
   constructor(private api: OrderApiService) {}
 
   private mapSummary(order: OrderSummary): Order {
     return {
       id: String(order.id),
-      userId: '',
+      userId: String(order.user_id ?? ''),
       items: [],
       total: order.total_amount,
       status: order.status,
@@ -82,7 +82,7 @@ export class OrderService {
   }
 
   getAllOrders(): Observable<Order[]> {
-    return this.api.getOrders().pipe(
+    return this.api.getAllOrders().pipe(
       map(orders => orders.map(order => this.mapSummary(order)))
     );
   }
@@ -101,3 +101,5 @@ export class OrderService {
     );
   }
 }
+
+export { OrderManager as OrderService };

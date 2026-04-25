@@ -36,6 +36,12 @@ export class OrderApiService {
     );
   }
 
+  getAllOrders(): Observable<OrderSummaryDTO[]> {
+    return this.http.get<ApiResponse<OrderSummaryDTO[]>>(`${this.baseUrl}/all`).pipe(
+      map(response => response.data)
+    );
+  }
+
   getOrderById(id: number | string): Observable<OrderDetailDTO> {
     return this.http.get<ApiResponse<OrderDetailDTO>>(`${this.baseUrl}/${id}`).pipe(
       map(response => response.data)

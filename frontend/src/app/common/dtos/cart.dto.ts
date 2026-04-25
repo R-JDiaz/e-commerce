@@ -1,5 +1,6 @@
 export interface CartProductItemDTO {
   id: number | string;
+  product_id?: number | string;
   name: string;
   price: number;
   image_url: string | null;
@@ -25,4 +26,3 @@ export interface UpdateCartItemRequestDTO extends AddCartItemRequestDTO {}
 export interface RemoveCartItemRequestDTO {
   productId: number | string;
 }
-

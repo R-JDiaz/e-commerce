@@ -1,7 +1,8 @@
-export type OrderStatusDTO = 'pending' | 'paid' | 'shipped' | 'completed' | 'cancelled';
+export type OrderStatusDTO = 'pending' | 'accepted' | 'paid' | 'shipped' | 'completed' | 'cancelled';
 
 export interface OrderSummaryDTO {
   id: number | string;
+  user_id?: number | string;
   total_amount: number;
   status: OrderStatusDTO;
   created_at: string;
@@ -35,4 +36,3 @@ export interface CreateOrderRequestDTO {
 export interface UpdateOrderStatusRequestDTO {
   status: OrderStatusDTO;
 }
-
