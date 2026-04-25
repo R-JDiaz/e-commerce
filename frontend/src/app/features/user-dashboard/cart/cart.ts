@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { CartService } from '@common/services/managers/cart/cart';
+import { CartManager } from '@common/services/managers/cart/cart';
 
 @Component({
   selector: 'app-cart',
@@ -17,11 +17,11 @@ export class CartComponent {
   totalPrice$: Observable<number>;
 
   constructor(
-    private cartService: CartService,
+    private CartManager: CartManager,
     private router: Router
   ) {
-    this.totalItems$ = this.cartService.totalItems$;
-    this.totalPrice$ = this.cartService.totalPrice$;
+    this.totalItems$ = this.CartManager.totalItems$;
+    this.totalPrice$ = this.CartManager.totalPrice$;
   }
 
   checkout(): void {

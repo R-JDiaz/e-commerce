@@ -29,3 +29,4 @@ export const CategoryService = {
         return await CategoryRepository.delete(id);
     }
 };
+
