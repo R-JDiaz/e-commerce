@@ -73,7 +73,7 @@ export class CartManager {
     this.setCartItems(nextItems);
   }
 
-  private refreshCart(): void {
+  public refreshCart(): void {
     if (!this.hasAccessToken()) {
       this.clearLocalCart();
       return;
