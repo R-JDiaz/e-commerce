@@ -4,8 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Checkout } from './checkout';
 import { CartService } from '@common/services/managers/cart/cart';
 import { Auth } from '@common/services/managers/auth/auth';
-import { OrderService } from '@common/services/managers/order/order';
-import { PaymentManager } from '@common/services/managers/payment/payment';
+import { OrderManager } from '@common/services/managers/order/order';
 
 describe('Checkout', () => {
   beforeEach(async () => {
@@ -28,15 +27,9 @@ describe('Checkout', () => {
           },
         },
         {
-          provide: OrderService,
+          provide: OrderManager,
           useValue: {
             placeOrder: () => of({}),
-          },
-        },
-        {
-          provide: PaymentManager,
-          useValue: {
-            checkoutPayment: () => of({}),
           },
         },
       ],

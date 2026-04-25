@@ -6,8 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { CartItem, CartService } from '@common/services/managers/cart/cart';
 import { Auth } from '@common/services/managers/auth/auth';
-import { OrderService } from '@common/services/managers/order/order';
-import { PaymentManager } from '@common/services/managers/payment/payment';
+import { OrderManager } from '@common/services/managers/order/order';
 import { NavigationComponent } from '@common/components/navigation/navigation';
 import { CheckoutSummaryComponent } from './checkout-summary/checkout-summary';
 import { CheckoutShippingComponent } from './checkout-shipping/checkout-shipping';
@@ -38,8 +37,7 @@ export class Checkout implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private cartService: CartService,
     private authService: Auth,
-    private orderService: OrderService,
-    private paymentService: PaymentManager,
+    private orderManager: OrderManager,
     private router: Router
   ) {
     this.checkoutForm = this.fb.group({
@@ -51,7 +49,7 @@ export class Checkout implements OnInit, OnDestroy {
       city: ['', [Validators.required]],
       state: ['', [Validators.required]],
       postalCode: ['', [Validators.required, Validators.minLength(3)]],
-      cashAmount: ['', [Validators.required, Validators.min(0)]],
+      cashAmount: [''],
     });
   }
 
@@ -71,6 +69,12 @@ export class Checkout implements OnInit, OnDestroy {
       this.checkoutForm.patchValue({
         fullName: user.name,
         email: user.email,
+        phone: user.phone ?? '',
+        addressLine1: user.addressLine1 ?? '',
+        addressLine2: user.addressLine2 ?? '',
+        city: user.city ?? '',
+        state: user.state ?? '',
+        postalCode: user.postalCode ?? '',
       });
     }
   }
@@ -133,12 +137,6 @@ export class Checkout implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.cashAmount < this.total) {
-      this.errorMessage = `Cash amount must be at least ₱${this.total.toFixed(2)}.`;
-      this.checkoutForm.get('cashAmount')?.setErrors({ insufficientCash: true });
-      return;
-    }
-
     const user = this.authService.getCurrentUser();
     if (!user) {
       this.errorMessage = 'Please sign in again to place your order.';
@@ -158,23 +156,11 @@ export class Checkout implements OnInit, OnDestroy {
       .filter(Boolean)
       .join(', ');
 
-    this.orderService.placeOrder(user.id, this.cartItems, shippingAddr).subscribe({
-      next: (order) => {
-        this.paymentService.checkoutPayment({
-          order_id: order.id,
-          payment_method: 'cash',
-          cash: this.cashAmount,
-        }).subscribe({
-          next: () => {
-            this.cartService.clearCart();
-            this.isSubmitting = false;
-            this.router.navigate(['/orders']);
-          },
-          error: (error: any) => {
-            this.isSubmitting = false;
-            this.errorMessage = error?.error?.message || error?.message || 'Failed to process payment';
-          },
-        });
+    this.orderManager.placeOrder(user.id, this.cartItems, shippingAddr).subscribe({
+      next: () => {
+        this.cartService.clearCart();
+        this.isSubmitting = false;
+        this.router.navigate(['/orders']);
       },
       error: (error: any) => {
         this.isSubmitting = false;
