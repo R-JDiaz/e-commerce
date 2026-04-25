@@ -98,3 +98,27 @@
     grid-template-columns: 1fr;
   }
 }
+.error {
+  margin-top: 0.35rem;
+
+  small {
+    display: block;
+    color: #e74c3c;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+}
+
+/* Highlight invalid inputs after user interaction */
+input.ng-touched.ng-invalid {
+  border: 1px solid #e74c3c;
+  background-color: rgba(231, 76, 60, 0.05);
+}
+
+/* Optional: smooth focus effect */
+input:focus {
+  outline: none;
+  border-color: #5c4033;
+  box-shadow: 0 0 0 2px rgba(92, 64, 51, 0.15);
+}

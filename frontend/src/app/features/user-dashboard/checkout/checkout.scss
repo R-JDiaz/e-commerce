@@ -163,6 +163,14 @@
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 14px 24px rgba(92, 64, 51, 0.15);
+
+  &:disabled {
+    background: #c7b3a8; // lighter, muted version
+    color: #f5f5f5;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+  }
 }
 
 @media (max-width: 760px) {

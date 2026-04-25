@@ -8,26 +8,62 @@
 </button>
 
 <div class="section-body" *ngIf="isOpen" [formGroup]="checkoutForm">
+
   <div class="grid two-up">
     <label>
       <span>Full name</span>
       <input type="text" formControlName="fullName" placeholder="Juan Dela Cruz">
+
+      <div class="error"
+           *ngIf="checkoutForm.get('fullName')?.touched && checkoutForm.get('fullName')?.invalid">
+        <small *ngIf="checkoutForm.get('fullName')?.errors?.['required']">
+          Full name is required
+        </small>
+        <small *ngIf="checkoutForm.get('fullName')?.errors?.['minlength']">
+          Minimum 3 characters
+        </small>
+      </div>
     </label>
 
     <label>
       <span>Phone</span>
       <input type="tel" formControlName="phone" placeholder="09XX XXX XXXX">
+
+      <div class="error"
+           *ngIf="checkoutForm.get('phone')?.touched && checkoutForm.get('phone')?.invalid">
+        <small *ngIf="checkoutForm.get('phone')?.errors?.['required']">
+          Phone is required
+        </small>
+        <small *ngIf="checkoutForm.get('phone')?.errors?.['minlength']">
+          Invalid phone number
+        </small>
+      </div>
     </label>
   </div>
 
   <label>
     <span>Email</span>
     <input type="email" formControlName="email" placeholder="name@example.com">
+
+    <div class="error"
+         *ngIf="checkoutForm.get('email')?.touched && checkoutForm.get('email')?.invalid">
+      <small *ngIf="checkoutForm.get('email')?.errors?.['required']">
+        Email is required
+      </small>
+      <small *ngIf="checkoutForm.get('email')?.errors?.['email']">
+        Enter a valid email
+      </small>
+    </div>
   </label>
 
   <label>
     <span>Address line 1</span>
     <input type="text" formControlName="addressLine1" placeholder="Street, building, house number">
+
+    <div class="error"
+         *ngIf="checkoutForm.get('addressLine1')?.touched && checkoutForm.get('addressLine1')?.invalid">
+      <small>Address is required</small>
+    </div>
   </label>
 
   <label>
@@ -39,16 +75,32 @@
     <label>
       <span>City</span>
       <input type="text" formControlName="city" placeholder="Manila">
+
+      <div class="error"
+           *ngIf="checkoutForm.get('city')?.touched && checkoutForm.get('city')?.invalid">
+        <small>City is required</small>
+      </div>
     </label>
 
     <label>
       <span>State / Province</span>
       <input type="text" formControlName="state" placeholder="Metro Manila">
+
+      <div class="error"
+           *ngIf="checkoutForm.get('state')?.touched && checkoutForm.get('state')?.invalid">
+        <small>State is required</small>
+      </div>
     </label>
 
     <label>
       <span>Postal code</span>
       <input type="text" formControlName="postalCode" placeholder="1000">
+
+      <div class="error"
+           *ngIf="checkoutForm.get('postalCode')?.touched && checkoutForm.get('postalCode')?.invalid">
+        <small>Postal code is required</small>
+      </div>
     </label>
   </div>
+
 </div>
