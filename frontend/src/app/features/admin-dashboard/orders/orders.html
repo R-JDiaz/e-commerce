@@ -18,7 +18,7 @@
           <div class="info">
             <p class="order-id">Order #{{ order.id }}</p>
             <p class="meta">
-              User {{ order.userId }} · {{ order.items?.length || 0 }} items
+              User {{ order.userId }} · {{ order.items.length || 0 }} items
             </p>
           </div>
 
@@ -28,12 +28,12 @@
         </div>
 
         <!-- ITEMS PREVIEW -->
-        <div class="items" *ngIf="order.items?.length">
+        <div class="items" *ngIf="order.items.length">
 
           <div class="item" *ngFor="let item of order.items">
 
             <div class="item-name">
-              {{ item.product?.name || 'Item' }}
+              {{ item.product.name || 'Item' }}
             </div>
 
             <div class="item-meta">
