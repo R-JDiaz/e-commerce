@@ -11,9 +11,10 @@ import {
   CategoryItem,
 } from '@common/services/api/category/category-api.service';
 import { CategoryManager } from '@common/services/managers/category/category';
-import { Observable } from 'rxjs';
+import { finalize, Observable, switchMap, tap } from 'rxjs';
 import { ProductManager } from '@common/services/managers/product/product';
 import { ProductDetailDTO } from '@common/dtos/product.dto';
+import { ToastManager } from '@common/services/managers/toast/toast.manager';
 
 @Component({
   selector: 'app-admin-products',
@@ -32,8 +33,6 @@ export class AdminProductsComponent implements OnInit {
   categories: CategoryItem[] = [];
   selectedSummary: ProductListItem | null = null;
   selectedProduct: ProductDetailDTO | null = null;
-  editorError = '';
-  editorNote = '';
   isSaving = false;
   isDeleting = false;
 
@@ -41,9 +40,9 @@ export class AdminProductsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private productApi: ProductApiService,
     private categoryManager: CategoryManager,
-    private manager: ProductManager
+    private manager: ProductManager,
+    private toastManager: ToastManager
   ) {
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -65,46 +64,41 @@ export class AdminProductsComponent implements OnInit {
         this.categories = categories;
       },
       error: () => {
-        this.editorError = 'Failed to load categories';
+        this.toastManager.error('Categories Failed to Load');
       },
     });
   }
 
   selectProduct(product: ProductListItem): void {
     this.selectedSummary = product;
-    this.editorError = '';
-    this.editorNote = '';
-
+    
     const productId = Number(product.id);
     if (!Number.isFinite(productId)) {
-      this.editorError = 'This product cannot be edited because its ID is invalid.';
+      this.toastManager.error('This product cannot be edited because its ID is invalid.');
+      console.log(product);
       return;
     }
 
-    this.productApi.getProduct(productId).subscribe({
-      next: (detail) => {
-        this.selectedProduct = detail;
+    this.manager.selectProduct(productId).pipe(
+      tap(product => {
+        this.selectedProduct = product;
+
         this.productForm.patchValue({
-          name: detail.name,
-          description: detail.description,
-          price: detail.price,
-          stock: detail.stock,
-          categoryId: detail.category.id ?? null,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          stock: product.stock,
+          categoryId: product.category?.id ?? null
         });
-        console.log("product: ", this.selectedProduct.category);
         this.productForm.markAsPristine();
-      },
-      error: () => {
-        this.editorError = 'Failed to load product details';
-      },
-    });
+      })
+    ).subscribe();
   }
+
 
   closeEditor(): void {
     this.selectedSummary = null;
     this.selectedProduct = null;
-    this.editorError = '';
-    this.editorNote = '';
     this.productForm.reset({
       name: '',
       description: '',
@@ -114,46 +108,41 @@ export class AdminProductsComponent implements OnInit {
     });
   }
 
-  saveProduct(): void {
-    if (!this.selectedProduct) return;
+saveProduct(): void {
+  if (!this.selectedProduct) return;
 
-    if (this.productForm.invalid) {
-      this.productForm.markAllAsTouched();
-      return;
-    }
-
-    const value = this.productForm.value;
-    const payload: UpdateProductRequest = {
-      name: value.name ?? '',
-      description: value.description ?? '',
-      price: Number(value.price ?? 0),
-      stock: Number(value.stock ?? 0),
-      category_id: Number(value.categoryId ?? 0),
-    };
-
-    this.isSaving = true;
-    this.editorError = '';
-
-    this.productApi.updateProduct(this.selectedProduct.id, payload).subscribe({
-      next: (updated) => {
-        this.isSaving = false;
-        this.selectedProduct = updated;
-        this.productForm.patchValue({
-          name: updated.name,
-          description: updated.description,
-          price: updated.price,
-          stock: updated.stock,
-          categoryId: updated.category?.id ?? null,
-        });
-        this.editorNote = 'Product saved successfully.';
-        this.refreshRequested.emit();
-      },
-      error: () => {
-        this.isSaving = false;
-        this.editorError = 'Failed to save product';
-      },
-    });
+  if (this.productForm.invalid) {
+    this.productForm.markAllAsTouched();
+    return;
   }
+
+  const value = this.productForm.value;
+
+  const payload: UpdateProductRequest = {
+    name: value.name ?? '',
+    description: value.description ?? '',
+    price: Number(value.price ?? 0),
+    stock: Number(value.stock ?? 0),
+    category_id: value.categoryId ?? null,
+  };
+
+  this.isSaving = true;
+
+  this.manager.updateProduct(this.selectedProduct.id, payload).pipe(
+    finalize(() => {
+      this.isSaving = false;
+    })
+  ).subscribe({
+    next: (updatedProduct) => {
+      this.selectedProduct = updatedProduct;
+      this.selectProduct(this.mapDetailToList(updatedProduct)); // reuse updated data directly
+      this.toastManager.success("Product updated successfully");
+    },
+    error: () => {
+      this.toastManager.error("Failed to update product");
+    }
+  });
+}
 
   deleteProduct(): void {
     if (!this.selectedProduct) return;
@@ -162,9 +151,8 @@ export class AdminProductsComponent implements OnInit {
     if (!confirmDelete) return;
 
     this.isDeleting = true;
-    this.editorError = '';
 
-    this.productApi.deleteProduct(this.selectedProduct.id).subscribe({
+    this.manager.deleteProduct(this.selectedProduct.id).subscribe({
       next: () => {
         this.isDeleting = false;
         this.refreshRequested.emit();
@@ -172,7 +160,7 @@ export class AdminProductsComponent implements OnInit {
       },
       error: () => {
         this.isDeleting = false;
-        this.editorError = 'Failed to delete product';
+        this.toastManager.error('Failed to delete product');
       },
     });
   }
@@ -188,4 +176,16 @@ export class AdminProductsComponent implements OnInit {
   trackByProductId(_: number, product: ProductListItem): string {
     return product.id;
   }
+
+  private mapDetailToList(item: ProductDetailDTO): ProductListItem {
+  return {
+    id: String(item.id),
+    name: item.name,
+    price: item.price,
+    stock: item.stock,
+    description: item.description,
+    category_name: item.category?.name ?? '',
+    image_url: item.images?.[0]?.image_url ?? ''
+  };
+}
 }
