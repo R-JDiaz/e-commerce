@@ -47,8 +47,6 @@ export const ProductService = {
         
         const category = categoryDTO(first);
 
-        console.log(category);
-
         const images = rows
             .filter(r => r.image_id)
             .map(r => ({

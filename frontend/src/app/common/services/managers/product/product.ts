@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, shareReplay, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map, shareReplay, tap } from 'rxjs/operators';
 import { ProductApiService } from '../../api/product/product-api.service';
 import { ProductListItem } from '@common/models/product';
 import { ProductDetailDTO, UpdateProductRequestDTO } from '@common/dtos/product.dto';
@@ -66,7 +66,8 @@ export class ProductManager {
         const updatedList = exists
           ? current.map(p => (p.id === mapped.id ? mapped : p))
           : [...current, mapped];
-
+        
+        
         this.productSubject.next(updatedList);
 
         if (this.selectedProductSubject.value?.id === updatedProduct.id) {
@@ -133,4 +134,7 @@ export class ProductManager {
 
     return pool.slice(0, Math.min(count, pool.length));
   }
+
+  deleteProduct(id: number): Observable<void> {
+    return this.api.deleteProduct(id);}
 }
