@@ -2,13 +2,14 @@
   <h2>Orders</h2>
 
   <div class="list">
-    <article class="order-card" *ngFor="let order of orders">
+    <ng-container *ngIf="orders$ | async as orders">
+      <article class="order-card" *ngFor="let order of orders">
       <div class="header">
         <div>
           <p class="order-id">Order #{{ order.id }}</p>
           <p class="meta">User {{ order.userId }} &middot; {{ order.items.length }} items</p>
         </div>
-        <strong>&#8369;{{ order.total.toFixed() }}</strong>
+        <strong>&#8369;{{ order.total }}</strong>
       </div>
 
       <div class="footer">
@@ -16,9 +17,10 @@
           <option value="pending">Pending</option>
           <option value="accepted">Accepted</option>
           <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="cancelled">Paid</option>
         </select>
       </div>
     </article>
+    </ng-container>
   </div>
 </section>
