@@ -20,8 +20,5 @@ export class AdminOrdersComponent implements OnInit{
 
   ngOnInit(): void {
     this.orders$ = this.manager.getAllOrders();
-    this.orders$.pipe(
-      tap(order => console.log(order))
-    ).subscribe();
   }
 }

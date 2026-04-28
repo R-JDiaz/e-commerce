@@ -175,7 +175,6 @@ export class OrderManager {
 
   getAllOrders(): Observable<Order[]> {
     return this.api.getAllOrders().pipe(
-      tap(raw => raw.forEach(order => console.log('RAW ITEM:', order))),
       map(orders => orders.map(order => this.mapSummary(order))),
     );
   }
