@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, forkJoin, map, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import { CartItem } from '../cart/cart';
 import {
   CreateOrderRequest,
@@ -185,11 +185,22 @@ export class OrderManager {
     );
   }
 
-  updateOrderStatus(orderId: string, status: Order['status']): Observable<Order> {
+  updateOrderStatus(orderId: string, status: Order['status']): Observable<boolean> {
     const request: UpdateOrderStatusRequest = { status };
 
     return this.api.updateOrderStatus(orderId, request).pipe(
-      map(order => this.mapDetail(order))
+      map(order => this.mapDetail(order)),
+
+      tap(updatedOrder => {
+        const current = this.orderFullSubject.value;
+        const updatedList = current.map(o =>
+          o.id === updatedOrder.id ? updatedOrder : o
+        );
+        this.orderFullSubject.next(updatedList);
+      }),
+
+      map(() => true),
+      catchError(() => of(false)) // emit false on failure
     );
   }
 
