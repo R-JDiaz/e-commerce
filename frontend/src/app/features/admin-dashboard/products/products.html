@@ -125,15 +125,20 @@
           </label>
         </div>
 
-        <label>
-          <span>Category</span>
-          <select formControlName="categoryId">
-            <option [ngValue]="null">Select category</option>
-            <option *ngFor="let category of categories" [ngValue]="category.id">
-              {{ category.name }}
-            </option>
-          </select>
-        </label>
+      <label>
+  <span>Category</span>
+
+  <select formControlName="categoryId">
+
+    <option [ngValue]="selectedProduct.category.id">{{ selectedProduct.category.name}}</option>
+
+    <option *ngFor="let category of categories"
+            [ngValue]="category.id">
+      {{ category.name }}
+    </option>
+
+  </select>
+</label>
       </form>
 
       <div class="message success" *ngIf="editorNote">{{ editorNote }}</div>

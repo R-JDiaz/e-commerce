@@ -13,6 +13,7 @@ import {
 import { CategoryManager } from '@common/services/managers/category/category';
 import { Observable } from 'rxjs';
 import { ProductManager } from '@common/services/managers/product/product';
+import { ProductDetailDTO } from '@common/dtos/product.dto';
 
 @Component({
   selector: 'app-admin-products',
@@ -30,7 +31,7 @@ export class AdminProductsComponent implements OnInit {
 
   categories: CategoryItem[] = [];
   selectedSummary: ProductListItem | null = null;
-  selectedProduct: ProductDetail | null = null;
+  selectedProduct: ProductDetailDTO | null = null;
   editorError = '';
   editorNote = '';
   isSaving = false;
@@ -88,8 +89,9 @@ export class AdminProductsComponent implements OnInit {
           description: detail.description,
           price: detail.price,
           stock: detail.stock,
-          categoryId: detail.category?.id ?? null,
+          categoryId: detail.category.id ?? null,
         });
+        console.log("product: ", this.selectedProduct.category);
         this.productForm.markAsPristine();
       },
       error: () => {
@@ -176,7 +178,7 @@ export class AdminProductsComponent implements OnInit {
   }
 
   get selectedCategoryLabel(): string {
-    return this.selectedProduct?.category?.name ?? this.selectedSummary?.category_name ?? 'Uncategorized';
+    return this.selectedSummary?.category_name ?? 'Uncategorized';
   }
 
   get selectedImageUrl(): string | null {

@@ -25,7 +25,7 @@ export interface ProductDetailDTO {
   description: string;
   price: number;
   stock: number;
-  category: ProductCategoryDTO | null;
+  category: ProductCategoryDTO;
   images: ProductImageDTO[];
   created_at: string;
   updated_at: string;
