@@ -15,9 +15,11 @@ export default class ProductRepository extends BaseModel {
                 p.category_id,
                 p.created_at,
                 p.updated_at,
-                c.id AS category_id,
-                c.name AS category_name,
-                c.slug AS category_slug,
+
+                c.id,
+                c.name,
+                c.slug,
+
                 pi.id AS image_id,
                 pi.image_url
             FROM products p

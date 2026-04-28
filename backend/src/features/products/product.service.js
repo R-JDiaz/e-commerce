@@ -44,8 +44,10 @@ export const ProductService = {
         const first = rows[0];
 
         const product = productDTO(first);
+        
+        const category = categoryDTO(first);
 
-        const category = first.category_id ? categoryDTO : null;
+        console.log(category);
 
         const images = rows
             .filter(r => r.image_id)

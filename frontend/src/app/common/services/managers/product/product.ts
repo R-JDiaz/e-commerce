@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, shareReplay, tap } from 'rxjs/operators';
 import { ProductApiService } from '../../api/product/product-api.service';
 import { ProductListItem } from '@common/models/product';
+import { ProductDetailDTO, UpdateProductRequestDTO } from '@common/dtos/product.dto';
+import { toListItem } from './mapper';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +15,10 @@ export class ProductManager {
 
   private readonly productSubject = new BehaviorSubject<ProductListItem[]>([]);
   readonly product$ = this.productSubject.asObservable();
+
+
+  private readonly selectedProductSubject = new BehaviorSubject<ProductDetailDTO | null>(null);
+  readonly selectedProduct$ = this.selectedProductSubject.asObservable();
 
   constructor(
     private api: ProductApiService
@@ -33,6 +39,42 @@ export class ProductManager {
     this.load();
     
     return this.product$;
+  }
+
+  selectProduct(id: number): Observable<ProductDetailDTO> {
+    return this.api.getProduct(id).pipe(
+      tap(product => this.selectedProductSubject.next(product))
+    );
+  }
+
+  getSelectedProducts(): Observable<ProductDetailDTO | null> {
+    return this.selectedProduct$;
+  }
+
+  updateProduct(
+    id: number,
+    productData: UpdateProductRequestDTO
+  ): Observable<ProductDetailDTO> {
+    return this.api.updateProduct(id, productData).pipe(
+      tap((updatedProduct) => {
+        const current = this.productSubject.value;
+
+        const mapped = toListItem(updatedProduct);
+
+        const exists = current.some(p => p.id === mapped.id);
+
+        const updatedList = exists
+          ? current.map(p => (p.id === mapped.id ? mapped : p))
+          : [...current, mapped];
+
+        this.productSubject.next(updatedList);
+
+        if (this.selectedProductSubject.value?.id === updatedProduct.id) {
+          this.selectedProductSubject.next(updatedProduct);
+        }
+      }),
+      shareReplay(1)
+    );
   }
 
   getProductById(id: string): Observable<ProductListItem | undefined> {
@@ -63,7 +105,7 @@ export class ProductManager {
         products.filter(p => p.category_name === category)
       )
     );
-  }
+  } 
 
   getCategories(): string[] {
     return ['all', 'coffee', 'soda', 'food', 'dessert'];
