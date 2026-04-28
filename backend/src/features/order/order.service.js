@@ -114,8 +114,9 @@ export default class OrderService {
             ordersMap[row.order_id].push(row);
         });
 
+        console.log(ordersMap);
         return Object.values(ordersMap).map(group =>
-            orderListDTO(group)
+            orderDetailDTO(group)
         );
     }
 
