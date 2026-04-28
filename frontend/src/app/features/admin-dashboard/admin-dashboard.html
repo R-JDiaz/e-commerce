@@ -13,11 +13,7 @@
 
     <main class="content">
       <app-admin-analytics
-        *ngIf="activeSection === 'analytics'"
-        [totalSales]="totalSales"
-        [ordersToday]="ordersToday"
-        [activeUsers]="activeUsers"
-        [avgOrderValue]="avgOrderValue">
+        *ngIf="activeSection === 'analytics'">
       </app-admin-analytics>
 
       <app-admin-products

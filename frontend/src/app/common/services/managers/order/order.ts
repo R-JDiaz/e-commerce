@@ -84,7 +84,6 @@ export class OrderManager {
         const orderData = this.computeOrderData(mappedOrders);
         this.orderDataSubject.next(orderData);
       })
-
     ).subscribe();
   }
 
@@ -208,6 +207,7 @@ export class OrderManager {
     let totalQuantity = 0;
     let totalSpent = 0;
 
+    console.log(orders);
     orders.forEach(order => {
       totalSpent += order.total;
 
@@ -223,5 +223,3 @@ export class OrderManager {
     };
   }
 }
-
-export { OrderManager as OrderService };

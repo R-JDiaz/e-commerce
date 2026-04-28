@@ -1,22 +1,78 @@
 <section class="panel">
   <h2>Analytics</h2>
 
-  <div class="grid">
+  <div class="grid" *ngIf="data$ | async as data">
+
+    <!-- KPI CARDS -->
     <article class="card">
       <span class="label">Total Sales</span>
-      <strong>&#8369;{{ totalSales.toFixed(2) }}</strong>
+      <strong>₱{{ data.totalSales }}</strong>
+      <small class="trend up">↑ {{ data.salesGrowth }}%</small>
     </article>
+
     <article class="card">
       <span class="label">Orders Today</span>
-      <strong>{{ ordersToday }}</strong>
+      <strong>{{ data.ordersToday }}</strong>
+      <small class="trend">{{ data.ordersYesterday }} yesterday</small>
     </article>
+
     <article class="card">
       <span class="label">Active Users</span>
-      <strong>{{ activeUsers }}</strong>
+      <strong>{{ data.activeUsers }}</strong>
+      <small class="trend up">↑ {{ data.userGrowth }}%</small>
     </article>
+
     <article class="card">
       <span class="label">Avg. Order Value</span>
-      <strong>&#8369;{{ avgOrderValue.toFixed(2) }}</strong>
+      <strong>₱{{ data.avgOrderValue }}</strong>
+      <small class="trend down">↓ {{ data.avgChange }}%</small>
+    </article>
+
+    <!-- NEW KPI CARDS -->
+    <article class="card">
+      <span class="label">Pending Orders</span>
+      <strong>{{ data.pendingOrders }}</strong>
+    </article>
+
+    <article class="card">
+      <span class="label">Completed Orders</span>
+      <strong>{{ data.completedOrders }}</strong>
+    </article>
+
+    <article class="card">
+      <span class="label">Cancelled Orders</span>
+      <strong>{{ data.cancelledOrders }}</strong>
+    </article>
+
+    <article class="card">
+      <span class="label">Conversion Rate</span>
+      <strong>{{ data.conversionRate }}%</strong>
     </article>
   </div>
+
+  <!-- CHART SECTION -->
+  <div class="charts">
+    <div class="chart-box">
+      <h3>Sales Overview</h3>
+      <canvas id="salesChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+      <h3>Orders Breakdown</h3>
+      <canvas id="ordersChart"></canvas>
+    </div>
+  </div>
+
+  <!-- ACTIVITY FEED -->
+  <aside class="activity">
+    <h3>Recent Activity</h3>
+
+    <ul *ngIf="data$ | async as data">
+      <li *ngFor="let item of data.recentActivity">
+        {{ item.message }}
+        <small>{{ item.time }}</small>
+      </li>
+    </ul>
+  </aside>
+
 </section>

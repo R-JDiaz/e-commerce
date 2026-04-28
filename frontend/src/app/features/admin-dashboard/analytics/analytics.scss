@@ -1,50 +1,164 @@
 .panel {
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(92, 64, 51, 0.08);
-  border-radius: 1rem;
-  box-shadow: 0 10px 24px rgba(68, 44, 32, 0.06);
-  padding: 1rem;
-
-  h2 {
-    margin: 0 0 0.9rem;
-    color: #3b2a22;
-    font-size: 1.1rem;
-  }
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 3rem;
+  background: #f7f3ee; // warm milk background
+  min-height: 100vh;
 }
 
+/* TITLE */
+h2 {
+  margin-bottom: 1.2rem;
+  font-size: 1.8rem;
+  color: #3b2a22; // espresso text
+  font-weight: 700;
+}
+
+/* =========================
+   GRID KPI CARDS
+========================= */
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .card {
-  padding: 0.95rem;
-  border-radius: 0.9rem;
-  background: #f7f3ee;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(92, 64, 51, 0.08);
+  box-shadow: 0 10px 25px rgba(60, 40, 30, 0.08);
+  transition: 0.25s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 35px rgba(60, 40, 30, 0.12);
+  }
 
   .label {
-    display: block;
-    color: #8b7a6e;
-    font-size: 0.8rem;
-    margin-bottom: 0.2rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #a16207; // coffee gold
+    font-weight: 600;
   }
 
   strong {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 1.5rem;
+    color: #5c4033; // espresso brown
+  }
+
+  .trend {
+    display: inline-block;
+    margin-top: 0.3rem;
+    font-size: 0.75rem;
+    color: rgba(60, 40, 30, 0.65);
+
+    &.up {
+      color: #7a9e7e; // latte green
+    }
+
+    &.down {
+      color: #c26a5a; // cocoa red
+    }
+  }
+}
+
+/* =========================
+   CHART SECTION (FIXED)
+========================= */
+.charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.chart-box {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(92, 64, 51, 0.08);
+  border-radius: 1.2rem;
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+  height: 300px; // FIXED HEIGHT
+  overflow: hidden;
+
+  box-shadow: 0 12px 28px rgba(60, 40, 30, 0.08);
+
+  h3 {
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
     color: #3b2a22;
-    font-size: 1.15rem;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid rgba(92, 64, 51, 0.08);
+  }
+
+  canvas {
+    flex: 1;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 220px; // prevents overflow/stretch
   }
 }
 
-@media (max-width: 1000px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+/* =========================
+   ACTIVITY FEED
+========================= */
+.activity {
+  margin-top: 1.8rem;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(92, 64, 51, 0.08);
+  border-radius: 1.2rem;
+  padding: 1rem;
+  box-shadow: 0 12px 28px rgba(60, 40, 30, 0.08);
+
+  h3 {
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+    color: #3b2a22;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid rgba(92, 64, 51, 0.08);
+    color: rgba(60, 40, 30, 0.8);
+    font-size: 0.9rem;
+
+    small {
+      color: rgba(60, 40, 30, 0.55);
+    }
   }
 }
 
-@media (max-width: 640px) {
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
   .grid {
     grid-template-columns: 1fr;
+  }
+
+  .charts {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-box {
+    height: 280px;
   }
 }
