@@ -1,66 +1,110 @@
 .panel {
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(92, 64, 51, 0.08);
-  border-radius: 1rem;
-  box-shadow: 0 10px 24px rgba(68, 44, 32, 0.06);
-  padding: 1rem;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
 
   h2 {
-    margin: 0 0 0.9rem;
-    color: #3b2a22;
-    font-size: 1.1rem;
+    font-size: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
   }
 }
 
 .list {
-  display: grid;
-  gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .order-card {
-  padding: 0.95rem;
-  border-radius: 0.9rem;
-  background: #f7f3ee;
-  border: 1px solid rgba(92, 64, 51, 0.08);
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 16px;
+  transition: 0.2s ease;
 
-  .header {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.75rem;
-    align-items: flex-start;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+}
 
-    .order-id,
-    .meta {
-      margin: 0;
-    }
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 
-    .order-id {
-      color: #3b2a22;
-      font-weight: 700;
-    }
-
-    .meta {
-      color: #8b7a6e;
-      font-size: 0.85rem;
-    }
-
-    strong {
-      color: #a16207;
-      white-space: nowrap;
-    }
+  .order-id {
+    font-weight: 600;
+    margin: 0;
   }
 
-  .footer {
-    margin-top: 0.75rem;
-    display: flex;
-    justify-content: flex-end;
+  .meta {
+    font-size: 12px;
+    color: #777;
+    margin: 2px 0 0;
   }
+
+  .amount {
+    font-weight: 700;
+    font-size: 16px;
+    color: #1a1a1a;
+  }
+}
+
+/* ITEMS */
+.items {
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+
+  .item-name {
+    font-weight: 500;
+    color: #333;
+  }
+
+  .item-meta {
+    color: #888;
+    font-size: 12px;
+  }
+}
+
+/* FOOTER */
+.footer {
+  display: flex;
+  justify-content: flex-end;
 
   select {
-    border: 1px solid #e6ddd7;
-    border-radius: 0.75rem;
-    padding: 0.55rem 0.7rem;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
     background: #fff;
-    color: #3b2a22;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: #4a90e2;
+    }
   }
+}
+
+/* EMPTY STATE */
+.empty {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+  border: 1px dashed #ccc;
+  border-radius: 10px;
 }

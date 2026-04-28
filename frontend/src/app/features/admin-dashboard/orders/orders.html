@@ -1,26 +1,67 @@
 <section class="panel">
   <h2>Orders</h2>
 
-  <div class="list">
-    <ng-container *ngIf="orders$ | async as orders">
-      <article class="order-card" *ngFor="let order of orders">
-      <div class="header">
-        <div>
-          <p class="order-id">Order #{{ order.id }}</p>
-          <p class="meta">User {{ order.userId }} &middot; {{ order.items.length }} items</p>
-        </div>
-        <strong>&#8369;{{ order.total }}</strong>
-      </div>
+  <ng-container *ngIf="orders$ | async as orders">
 
-      <div class="footer">
-        <select [value]="order.status" (change)="statusChange.emit({ id: order.id, status: $any($event.target).value })">
-          <option value="pending">Pending</option>
-          <option value="accepted">Accepted</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Paid</option>
-        </select>
-      </div>
-    </article>
-    </ng-container>
-  </div>
+    <!-- EMPTY STATE -->
+    <div class="empty" *ngIf="orders.length === 0">
+      No orders found.
+    </div>
+
+    <!-- LIST -->
+    <div class="list" *ngIf="orders.length > 0">
+
+      <article class="order-card" *ngFor="let order of orders">
+
+        <!-- HEADER -->
+        <div class="header">
+          <div class="info">
+            <p class="order-id">Order #{{ order.id }}</p>
+            <p class="meta">
+              User {{ order.userId }} · {{ order.items?.length || 0 }} items
+            </p>
+          </div>
+
+          <div class="amount">
+            ₱{{ order.total }}
+          </div>
+        </div>
+
+        <!-- ITEMS PREVIEW -->
+        <div class="items" *ngIf="order.items?.length">
+
+          <div class="item" *ngFor="let item of order.items">
+
+            <div class="item-name">
+              {{ item.product?.name || 'Item' }}
+            </div>
+
+            <div class="item-meta">
+              Qty: {{ item.quantity }} · ₱{{ item.subtotal }}
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+          <select
+            [value]="order.status"
+            (change)="statusChange.emit({
+              id: order.id,
+              status: $any($event.target).value
+            })"
+          >
+            <option value="pending">Pending</option>
+            <option value="accepted">Accepted</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+      </article>
+
+    </div>
+  </ng-container>
 </section>
