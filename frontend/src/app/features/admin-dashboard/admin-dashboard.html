@@ -22,7 +22,6 @@
 
       <app-admin-products
         *ngIf="activeSection === 'products'"
-        [products]="products"
         [isLoading]="isLoading"
         [errorMessage]="errorMessage"
         (refreshRequested)="reloadProducts()">
