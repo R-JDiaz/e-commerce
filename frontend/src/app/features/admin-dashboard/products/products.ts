@@ -11,6 +11,8 @@ import {
   CategoryItem,
 } from '@common/services/api/category/category-api.service';
 import { CategoryManager } from '@common/services/managers/category/category';
+import { Observable } from 'rxjs';
+import { ProductManager } from '@common/services/managers/product/product';
 
 @Component({
   selector: 'app-admin-products',
@@ -20,7 +22,7 @@ import { CategoryManager } from '@common/services/managers/category/category';
   styleUrl: './products.scss',
 })
 export class AdminProductsComponent implements OnInit {
-  @Input() products: ProductListItem[] = [];
+  products$!: Observable<ProductListItem[]>;
   @Input() isLoading = false;
   @Input() errorMessage = '';
 
@@ -39,7 +41,8 @@ export class AdminProductsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private productApi: ProductApiService,
-    private categoryManager: CategoryManager
+    private categoryManager: CategoryManager,
+    private manager: ProductManager
   ) {
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -52,6 +55,7 @@ export class AdminProductsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCategories();
+    this.products$ = this.manager.getProducts();
   }
 
   loadCategories(): void {
