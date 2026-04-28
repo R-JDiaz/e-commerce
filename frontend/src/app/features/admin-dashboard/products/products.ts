@@ -187,5 +187,5 @@ saveProduct(): void {
     category_name: item.category?.name ?? '',
     image_url: item.images?.[0]?.image_url ?? ''
   };
-}
+  }
 }

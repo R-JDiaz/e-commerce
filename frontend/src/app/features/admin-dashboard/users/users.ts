@@ -1,5 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UserManager } from '@common/services/managers/user/user';
+import { UpdateUserRequestDTO, UserCompleteDetailDTO } from '@common/dtos/user.dto';
+import { Observable } from 'rxjs';
 
 type UserStatus = 'active' | 'suspended';
 
@@ -7,7 +10,7 @@ interface AdminUserRow {
   id: string;
   name: string;
   email: string;
-  role: 'user' | 'admin';
+  role: 'customer' | 'admin';
   status: UserStatus;
 }
 
@@ -18,11 +21,14 @@ interface AdminUserRow {
   templateUrl: './users.html',
   styleUrl: './users.scss',
 })
-export class AdminUsersComponent {
+export class AdminUsersComponent implements OnInit{
+  users$! : Observable<UserCompleteDetailDTO[]>;
+  
   @Output() statusChange = new EventEmitter<{ id: string; status: UserStatus }>();
 
-  users: AdminUserRow[] = [
-    { id: '1', name: 'John Doe', email: 'user@example.com', role: 'user', status: 'active' },
-    { id: '2', name: 'Admin User', email: 'admin@example.com', role: 'admin', status: 'active' },
-  ];
+  constructor (private manager: UserManager) {}
+
+  ngOnInit(): void {
+    this.users$ = this.manager.getUsers();
+  }
 }

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import {
   UpdateUserRequestDTO,
+  UserCompleteDetailDTO,
   UserDetailDTO,
   UserSummaryDTO,
 } from '@common/dtos/user.dto';
@@ -20,8 +21,8 @@ export class UserApiService {
 
   constructor(private http: HttpClient) {}
 
-  getUsers(): Observable<UserSummaryDTO[]> {
-    return this.http.get<UserSummaryDTO[]>(this.baseUrl);
+  getUsers(): Observable<UserCompleteDetailDTO[]> {
+    return this.http.get<UserCompleteDetailDTO[]>(this.baseUrl);
   }
 
   getUser(id: number | string): Observable<UserDetailDTO> {

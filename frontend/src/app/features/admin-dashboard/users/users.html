@@ -2,15 +2,15 @@
   <h2>Users</h2>
 
   <div class="list">
-    <article class="user-card" *ngFor="let user of users">
+    <article class="user-card" *ngFor="let user of users$ | async">
       <div>
-        <p class="name">{{ user.name }}</p>
+        <p class="name">{{ user.first_name }} {{ user.last_name }}</p>
         <p class="meta">{{ user.email }}</p>
       </div>
 
       <div class="actions">
         <span class="role">{{ user.role }}</span>
-        <select [value]="user.status" (change)="statusChange.emit({ id: user.id, status: $any($event.target).value })">
+        <select [value]="'active'" (change)="statusChange.emit({ id: user.id, status: $any($event.target).value })">
           <option value="active">Active</option>
           <option value="suspended">Suspended</option>
         </select>
