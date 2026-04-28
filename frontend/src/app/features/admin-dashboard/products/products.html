@@ -8,7 +8,6 @@
   </div>
 
   <div *ngIf="isLoading" class="state">Loading products...</div>
-  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
 
   <div class="layout" *ngIf="!isLoading">
     <div class="table-wrap">
@@ -79,7 +78,7 @@
         </div>
         <div class="detail">
           <span class="label">Images</span>
-          <strong>{{ selectedProduct.images.length }}</strong>
+          <strong>{{ selectedProduct.images }}</strong>
         </div>
         <div class="detail">
           <span class="label">Created</span>
@@ -129,7 +128,7 @@
   <span>Category</span>
 
   <select formControlName="categoryId">
-
+    
     <option [ngValue]="selectedProduct.category.id">{{ selectedProduct.category.name}}</option>
 
     <option *ngFor="let category of categories"
@@ -140,9 +139,6 @@
   </select>
 </label>
       </form>
-
-      <div class="message success" *ngIf="editorNote">{{ editorNote }}</div>
-      <div class="message error" *ngIf="editorError">{{ editorError }}</div>
 
       <div class="actions">
         <button type="button" class="save" (click)="saveProduct()" [disabled]="isSaving">
