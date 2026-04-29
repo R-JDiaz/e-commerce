@@ -2,14 +2,21 @@
   position: sticky;
   top: 0;
   z-index: 40;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+
   padding: 0.95rem 1.5rem;
+
   background: rgba(255, 250, 246, 0.9);
   backdrop-filter: blur(14px);
+
   border-bottom: 1px solid rgba(92, 64, 51, 0.08);
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04),
+              0 8px 18px rgba(0, 0, 0, 0.06);
 }
 
 .nav-shell.compact {

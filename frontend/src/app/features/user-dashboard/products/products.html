@@ -40,25 +40,10 @@
       class="select"
     >
       <option value="all">All Categories</option>
-      <option *ngFor="let c of categories" [value]="c.slug">
+      <option *ngFor="let c of categories" [value]="c.name">
         {{ c.name }}
       </option>
     </select>
-  </div>
-
-  <div class="tabs">
-    <button
-      [class.active]="selectedCategory === 'all'"
-      (click)="onCategoryChange('all')">
-      All
-    </button>
-
-    <button
-      *ngFor="let c of categories"
-      [class.active]="selectedCategory === c.slug"
-      (click)="onCategoryChange(c.slug)">
-      {{ c.name }}
-    </button>
   </div>
 
   <div *ngIf="isLoading" class="loading">
