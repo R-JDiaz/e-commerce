@@ -2,6 +2,7 @@
   min-height: calc(100vh - 64px);
   background-color: #f2eadf;
   padding: 1rem;
+
 }
 
 .shell {
@@ -96,7 +97,8 @@
   display: grid;
   gap: 0.85rem;
   padding: 20px 100px;
-
+  height: 100%;
+  min-height: 100vh;
   background-color: #f2eadf;
 }
 
