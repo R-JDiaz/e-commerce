@@ -3,37 +3,56 @@
     <div>
       <p class="eyebrow">Cart Summary</p>
       <h2>Editable order summary</h2>
-      <p class="summary-copy">Review quantities, remove items, and confirm the final total before checkout.</p>
+      <p class="summary-copy">
+        Review quantities, remove items, and confirm the final total before checkout.
+      </p>
     </div>
   </div>
 
-  <div class="items">
-    <article class="item" *ngFor="let item of cartItems">
-      <img [src]="item.product.image_url" [alt]="item.product.name">
+  <!-- CART OR EMPTY SWITCH -->
+  <ng-container *ngIf="cartItems?.length > 0; else emptyCart">
 
-      <div class="meta">
-        <strong>{{ item.product.name }}</strong>
-        <p class="description">
-          Freshly packed and ready to go. Update the quantity before you place the order.
-        </p>
-        <span>&#8369;{{ formatPrice(item.product.price) }} each</span>
+    <!-- CART CONTENT -->
+    <div class="items">
+      <article class="item" *ngFor="let item of cartItems">
+        <img [src]="item.product.image_url" [alt]="item.product.name">
 
-        <div class="quantity-controls">
-          <span class="qty-label">Qty</span>
-          <button type="button" (click)="adjustQuantity(item.product.id, -1)">-</button>
-          <span>{{ item.quantity }}</span>
-          <button type="button" (click)="adjustQuantity(item.product.id, 1)">+</button>
+        <div class="meta">
+          <strong>{{ item.product.name }}</strong>
+          <p class="description">
+            Freshly packed and ready to go. Update the quantity before you place the order.
+          </p>
+          <span>&#8369;{{ formatPrice(item.product.price) }} each</span>
+
+          <div class="quantity-controls">
+            <span class="qty-label">Qty</span>
+            <button type="button" (click)="adjustQuantity(item.product.id, -1)">-</button>
+            <span>{{ item.quantity }}</span>
+            <button type="button" (click)="adjustQuantity(item.product.id, 1)">+</button>
+          </div>
         </div>
-      </div>
 
-      <div class="line-total">
-        <span>&#8369;{{ lineTotal(item).toFixed(2) }}</span>
-        <button type="button" class="remove" (click)="onRemove(item.product.id)">Remove</button>
-      </div>
-    </article>
-  </div>
+        <div class="line-total">
+          <span>&#8369;{{ lineTotal(item).toFixed(2) }}</span>
+          <button type="button" class="remove" (click)="onRemove(item.product.id)">
+            Remove
+          </button>
+        </div>
+      </article>
+    </div>
 
-  <div class="totals">
+  </ng-container>
+
+  <!-- EMPTY STATE -->
+  <ng-template #emptyCart>
+    <div class="empty-cart">
+      <h3>Cart is Empty</h3>
+      <p>Add some products to start building your order.</p>
+    </div>
+  </ng-template>
+
+  <!-- TOTALS (optional: you may also hide this when empty) -->
+  <div class="totals" *ngIf="cartItems?.length > 0">
     <div><span>Subtotal</span><strong>&#8369;{{ subtotal.toFixed(2) }}</strong></div>
     <div><span>Shipping</span><strong>Free</strong></div>
     <div><span>Total quantity</span><strong>{{ totalQuantity }}</strong></div>

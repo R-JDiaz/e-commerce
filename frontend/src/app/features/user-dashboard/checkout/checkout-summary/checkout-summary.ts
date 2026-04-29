@@ -11,7 +11,7 @@ import { CartItem } from '@common/services/managers/cart/cart';
   styleUrl: './checkout-summary.scss',
 })
 export class CheckoutSummaryComponent {
-  @Input() cartItems: CartItem[] = [];
+  @Input() cartItems: CartItem[] | null = [];
   @Input() subtotal = 0;
   @Input() totalQuantity = 0;
   @Input() total = 0;

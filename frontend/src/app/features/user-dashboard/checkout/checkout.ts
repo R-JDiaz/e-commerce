@@ -62,10 +62,6 @@ export class Checkout implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(items => {
         this.cartItems = items;
-
-        if (items.length === 0 && !this.isSubmitting) {
-          this.router.navigate(['/user-dashboard']);
-        }
       });
 
     const user = this.authService.getCurrentUser();
