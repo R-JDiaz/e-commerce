@@ -1,6 +1,7 @@
 import { OrderDetailDTO } from "@common/dtos/order.dto";
 import { Order } from "../order";
 import { createTracker } from "../tracking";
+import { DomPlatform } from "chart.js";
 
 
 export class OrderMapper {
@@ -13,6 +14,7 @@ export class OrderMapper {
     total: dto.total_amount,
     status: dto.status,
     createdAt: dto.created_at,
+    review: dto.review,
     shippingAddr: dto.shipping_addr,
     tracking: createTracker(dto.status)
   };
