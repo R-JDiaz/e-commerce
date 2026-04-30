@@ -1,6 +1,6 @@
 import { Order, OrderItem } from "@common/services/managers/order/order";
 
-export type OrderStatusDTO = 'pending' | 'accepted' | 'paid' | 'shipped' | 'completed' | 'cancelled';
+export type OrderStatusDTO = 'pending' | 'accepted' | 'paid' | 'shipped' | 'completed' | 'cancelled' | 'refund';
 
 export interface OrderSummaryDTO {
   id: number | string;

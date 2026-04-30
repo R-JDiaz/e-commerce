@@ -6,6 +6,7 @@ import { ReviewManager } from '@common/services/managers/review/review';
 import { CreateReviewRequest } from '@common/services/api/review/review-api.service';
 import { ToastManager } from '@common/services/managers/toast/toast.manager';
 import { delay, finalize } from 'rxjs';
+import { OrderStatusDTO } from '@common/dtos/order.dto';
 
 
 @Component({
@@ -42,8 +43,20 @@ export class OrderCardComponent {
     );
   }
 
-  markReceived(): void {
-    this.orderManager.updateOrderStatus(this.order.id, 'completed').pipe(
+  receivedOrder() : void {
+    return this.updateOrder('completed');
+  }
+
+  cancelOrder() : void {
+    return this.updateOrder('cancelled');
+  }
+
+  returnOrder() : void {
+    return this.updateOrder('refund');
+  }
+
+  updateOrder(status: OrderStatusDTO): void {
+    this.orderManager.updateOrderStatus(this.order.id, status).pipe(
       finalize(() => {
         this.isLoading.set(false)}
       )).subscribe({

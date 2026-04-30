@@ -1,3 +1,4 @@
+import { OrderStatusDTO } from "@common/dtos/order.dto";
 
 const DONE_LABELS = ['Order Placed', 'Paid', 'Order Accepted', 'Shipped', 'Order Received']
 const CURRENT_LABELS = {
@@ -13,8 +14,6 @@ export interface OrderTracking {
     date?: string | null
 }
 
-
-export type OrderStatusDTO = 'pending' | 'accepted' | 'paid' | 'shipped' | 'completed' | 'cancelled' | 'returned' | 'cancelled' ;
 
 function updateObj(i: number, c: number, list : OrderTracking[]) {
     while (i < c) {
@@ -52,7 +51,7 @@ export function createTracker(status : OrderStatusDTO) {
                 updateObj(0,5,defaultOrderTrack);
                 defaultOrderTrack[4].status = 'done';
                 break
-            case 'returned':
+            case 'refund':
                 updateObj(0,4,defaultOrderTrack);
                 defaultOrderTrack.pop();
                 defaultOrderTrack.push({label: 'returned', status: 'done'})
