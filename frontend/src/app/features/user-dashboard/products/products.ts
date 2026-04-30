@@ -9,6 +9,7 @@ import { CategoryItem } from '@common/services/api/category/category-api.service
 
 import { ProductCardComponent } from '../../../common/components/product-card/product-card';
 import { CartComponent } from '../cart/cart';
+import { Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-products',
@@ -18,11 +19,13 @@ import { CartComponent } from '../cart/cart';
   styleUrl: './products.scss',
 })
 export class Products implements OnInit {
-  products: ProductListItem[] = [];
-  filteredProducts: ProductListItem[] = [];
+
+  filteredProducts$!: Observable<ProductListItem[]>;
   categories: CategoryItem[] = [];
+
   searchQuery = '';
   selectedCategory = 'all';
+
   isLoading = false;
   errorMessage = '';
 
@@ -47,46 +50,49 @@ export class Products implements OnInit {
 
   loadProducts() {
     this.isLoading = true;
+    this.productManager.load()
+    this.filteredProducts$ = this.productManager.product$;
 
-    this.productManager.getProducts().subscribe({
-      next: (res) => {
-        this.products = res;
-        this.filteredProducts = res;
-        this.isLoading = false;
-      },
+    // If product$ is a BehaviorSubject, loading should stop after first emit
+    this.filteredProducts$.subscribe({
+      next: () => this.isLoading = false,
       error: () => {
         this.errorMessage = 'Failed to load products';
         this.isLoading = false;
       }
     });
+    this.filteredProducts$.pipe(
+      tap(product => {
+        console.log(product);
+      })
+    )
   }
 
   onSearch() {
-    if (!this.searchQuery.trim()) {
-      this.filteredProducts = this.products;
+    const query = this.searchQuery.trim();
+
+    if (!query) {
+      this.loadProducts();
       return;
     }
 
-    this.productManager.searchProducts(this.searchQuery).subscribe({
-      next: (res) => this.filteredProducts = res,
-      error: () => this.errorMessage = 'Search failed'
-    });
+    this.filteredProducts$ = this.productManager.searchProducts(query);
   }
 
   onCategoryChange(category: string) {
     this.selectedCategory = category;
 
-    this.productManager.filterByCategory(category).subscribe({
-      next: (res) => this.filteredProducts = res,
-      error: () => this.errorMessage = 'Filter failed'
-    });
+    if (category === 'all') {
+      this.loadProducts();
+      return;
+    }
+
+    this.filteredProducts$ = this.productManager.filterByCategory(category);
   }
 
   getCategoryLabel(slug: string): string {
-    if (slug === 'all') {
-      return 'All categories';
-    }
+    if (slug === 'all') return 'All categories';
 
-    return this.categories.find(category => category.slug === slug)?.name ?? slug;
+    return this.categories.find(c => c.slug === slug)?.name ?? slug;
   }
 }

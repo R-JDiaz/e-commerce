@@ -24,7 +24,7 @@ export class ProductManager {
     private api: ProductApiService
   ) {}
 
-  private load(): void {
+  public load(): void {
     if (this.isLoaded) return;
 
     this.api.getProducts().pipe(
