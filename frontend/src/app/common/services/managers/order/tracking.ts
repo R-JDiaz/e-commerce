@@ -1,0 +1,71 @@
+
+const DONE_LABELS = ['Order Placed', 'Paid', 'Order Accepted', 'Shipped', 'Order Received']
+const CURRENT_LABELS = {
+    'Paid': 'Waiting for Payment', 
+    'Order Accepted': 'Waiting for Admin Confirmation',
+    'Shipped' : 'Preparing Order',
+    'Order Received' : 'Out for Delivery'
+}
+
+export interface OrderTracking {
+    label: string,
+    status: 'pending' | 'current' | 'done',
+    date?: string | null
+}
+
+
+export type OrderStatusDTO = 'pending' | 'accepted' | 'paid' | 'shipped' | 'completed' | 'cancelled' | 'returned' | 'cancelled' ;
+
+function updateObj(i: number, c: number, list : OrderTracking[]) {
+    while (i < c) {
+                list[i].status = 'done';
+                i++;
+    }
+    if (c >= 4) return;
+
+    list[c].status = 'current';
+    const key = list[c].label as keyof typeof CURRENT_LABELS;
+    list[c].label = CURRENT_LABELS[key];
+}
+
+export function createTracker(status : OrderStatusDTO) {
+    let defaultOrderTrack: OrderTracking[] = DONE_LABELS.map(name => ({
+    label: name,
+    status: 'pending'
+    }));
+    let i = 0;
+    let c = 0;
+    switch(status) {
+            case 'pending':
+                updateObj(0,0,defaultOrderTrack);
+                break
+            case 'paid':
+                updateObj(0,1,defaultOrderTrack);
+                break
+            case 'accepted':
+                updateObj(0,2,defaultOrderTrack);
+                break
+            case 'shipped':
+                updateObj(0,3,defaultOrderTrack);
+                break
+            case 'completed':
+                defaultOrderTrack[4].status = 'done';
+                break
+            case 'returned':
+                updateObj(0,4,defaultOrderTrack);
+                defaultOrderTrack.pop();
+                defaultOrderTrack.push({label: 'returned', status: 'done'})
+                break
+            case 'cancelled':
+                const pendingVal = defaultOrderTrack[0];
+                pendingVal.status = 'done';
+                const cancelledVal : OrderTracking = {label: 'cancelled', status: 'done'}
+                defaultOrderTrack = [pendingVal, cancelledVal];
+                break
+            default:
+                break
+        }
+    
+    
+    return defaultOrderTrack;
+}
