@@ -145,7 +145,8 @@ export default class OrderService {
             "paid",
             "shipped",
             "completed",
-            "cancelled"
+            "cancelled",
+            "refund"
         ];
 
         if (!validStatuses.includes(status)) {
