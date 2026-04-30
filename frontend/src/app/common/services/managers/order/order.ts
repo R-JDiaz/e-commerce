@@ -11,6 +11,7 @@ import {
 } from '@common/services/api/order/order-api.service';
 import { OrderDetailDTO, OrderSummaryDTO } from '@common/dtos/order.dto';
 import { OrderMapper } from './mapper/order.mapper';
+import { createTracker } from './tracking';
 
 export interface OrderItem {
   id: string | number;
@@ -154,6 +155,7 @@ export class OrderManager {
         quantity: item.quantity,
         subtotal: item.subtotal,
       })),
+      tracking: createTracker(order.status),
       total: order.total_amount,
       status: order.status,
       createdAt: order.created_at,
@@ -167,6 +169,12 @@ export class OrderManager {
     };
 
     return this.api.createOrder(request).pipe(
+      tap(order => {
+        this.orderFullSubject.next([
+          ...this.orderFullSubject.value,
+          this.mapDetail(order)
+        ]);
+      }),
       map(order => this.mapDetail(order))
     );
   }
