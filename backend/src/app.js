@@ -9,6 +9,7 @@ import cartRoutes from "./features/cart/cart.routes.js";
 import orderRoutes from "./features/order/order.routes.js";
 import paymentRoutes from "./features/payment/payment.routes.js";
 import categoryRoutes from "./features/category/category.routes.js";
+import reviewRoutes from "./features/review/review.routes.js";
 
 import { globalErrorHandler } from './common/utilities/handler.js';
 const app = express();
@@ -30,6 +31,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.use(globalErrorHandler);
 
