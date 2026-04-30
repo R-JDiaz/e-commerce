@@ -1,4 +1,4 @@
-import { OrderItem } from "@common/services/managers/order/order";
+import { Order, OrderItem } from "@common/services/managers/order/order";
 
 export type OrderStatusDTO = 'pending' | 'accepted' | 'paid' | 'shipped' | 'completed' | 'cancelled';
 
@@ -22,6 +22,13 @@ export interface OrderItemDTO {
   subtotal: number;
 }
 
+export interface OrderReviewDTO {
+  id: number,
+  rating: number,
+  comment: string,
+  created_at: string
+}
+
 export interface OrderDetailDTO {
   id: number | string;
   user_id: number | string;
@@ -29,6 +36,7 @@ export interface OrderDetailDTO {
   status: OrderStatusDTO;
   shipping_addr: string;
   items: OrderItemDTO[];
+  review: OrderReviewDTO;
   created_at: string;
 }
 

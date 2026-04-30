@@ -33,12 +33,17 @@ export interface OrderTracking {
     status: 'pending' | 'current' | 'done',
     date?: string | null
 }
+export interface OrderReview {
+  rating: number,
+  comment: string;
+}
 
 export interface Order {
   id: string;
   userId: string;
   items: OrderItem[];
   tracking?: OrderTracking[] | null;
+  review?: OrderReview | null;
   total: number;
   status: OrderStatus;
   createdAt: string;
@@ -48,6 +53,7 @@ export interface Order {
 @Injectable({
   providedIn: 'root',
 })
+
 export class OrderManager {
   private isLoaded = false;
   private readonly orderDataSubject = new BehaviorSubject<OrderData>({
@@ -86,7 +92,6 @@ export class OrderManager {
       tap(fullOrders => {
         const mappedOrders = OrderMapper.toOrderList(fullOrders);
         this.orderFullSubject.next(mappedOrders);
-        console.log(this.orderFullSubject);
         const orderData = this.computeOrderData(mappedOrders);
         this.orderDataSubject.next(orderData);
       })
@@ -166,13 +171,14 @@ export class OrderManager {
     );
   }
 
-  getUserOrders(_userId: string): Observable<Order[]> {
+  getUserOrders(): Observable<Order[]> {
     return this.api.getOrders().pipe(
       map(orders => {
         const mapped = orders.map(order => this.mapSummary(order));
 
         this.orderDataSubject.next(this.computeOrderData(mapped));
 
+        console.log('users', mapped);
         return mapped;
       })
     );
@@ -213,7 +219,6 @@ export class OrderManager {
     let totalQuantity = 0;
     let totalSpent = 0;
 
-    console.log(orders);
     orders.forEach(order => {
       totalSpent += order.total;
 
