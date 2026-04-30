@@ -37,18 +37,19 @@ export function createTracker(status : OrderStatusDTO) {
     let c = 0;
     switch(status) {
             case 'pending':
-                updateObj(0,0,defaultOrderTrack);
-                break
-            case 'paid':
                 updateObj(0,1,defaultOrderTrack);
                 break
-            case 'accepted':
+            case 'paid':
                 updateObj(0,2,defaultOrderTrack);
                 break
-            case 'shipped':
+            case 'accepted':
                 updateObj(0,3,defaultOrderTrack);
                 break
+            case 'shipped':
+                updateObj(0,4,defaultOrderTrack);
+                break
             case 'completed':
+                updateObj(0,4,defaultOrderTrack);
                 defaultOrderTrack[4].status = 'done';
                 break
             case 'returned':
@@ -65,7 +66,5 @@ export function createTracker(status : OrderStatusDTO) {
             default:
                 break
         }
-    
-    
     return defaultOrderTrack;
 }
