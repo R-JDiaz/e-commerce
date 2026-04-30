@@ -87,8 +87,22 @@
         <button
           class="btn-receive"
           *ngIf="order.status === 'shipped'"
-          (click)="markReceived()">
+          (click)="receivedOrder()">
           Order received
+        </button>
+
+        <button
+          class="btn-receive"
+          *ngIf="order.status === 'pending' || order.status === 'paid'"
+          (click)="cancelOrder()">
+          Cancel Order
+        </button>
+
+        <button
+          class="btn-receive"
+          *ngIf="order.status === 'completed'"
+          (click)="returnOrder()">
+          Refund Order
         </button>
       </div>
     </div>
