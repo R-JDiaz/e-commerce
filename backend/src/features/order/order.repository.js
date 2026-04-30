@@ -27,7 +27,7 @@ export default class OrderRepository extends BaseModel {
         return result;
     }
 
-    // 🔹 Get FULL order (single order)
+    // 🔹 Get FULL order (single order) + REVIEW
     static async findFullById(orderId) {
         const [rows] = await this.pool.query(
             `SELECT
@@ -45,12 +45,20 @@ export default class OrderRepository extends BaseModel {
                 p.name,
                 p.price AS product_price,
 
-                pi.image_url
+                pi.image_url,
+
+                r.id AS review_id,
+                r.rating AS review_rating,
+                r.comment AS review_comment,
+                r.created_at AS review_created_at
 
             FROM orders o
             LEFT JOIN order_items oi ON oi.order_id = o.id
             LEFT JOIN products p ON p.id = oi.product_id
             LEFT JOIN product_images pi ON pi.product_id = p.id
+
+            -- 🔥 REVIEW JOIN
+            LEFT JOIN order_reviews r ON r.order_id = o.id
 
             WHERE o.id = ?`,
             [orderId]
@@ -59,7 +67,7 @@ export default class OrderRepository extends BaseModel {
         return rows;
     }
 
-    // 🔹 Get FULL orders (by user)
+    // 🔹 Get FULL orders (by user) + REVIEW
     static async findFullByUserId(userId) {
         const [rows] = await this.pool.query(
             `SELECT
@@ -77,12 +85,20 @@ export default class OrderRepository extends BaseModel {
                 p.name,
                 p.price AS product_price,
 
-                pi.image_url
+                pi.image_url,
+
+                r.id AS review_id,
+                r.rating AS review_rating,
+                r.comment AS review_comment,
+                r.created_at AS review_created_at
 
             FROM orders o
             LEFT JOIN order_items oi ON oi.order_id = o.id
             LEFT JOIN products p ON p.id = oi.product_id
             LEFT JOIN product_images pi ON pi.product_id = p.id
+
+            -- 🔥 REVIEW JOIN
+            LEFT JOIN order_reviews r ON r.order_id = o.id
 
             WHERE o.user_id = ?`,
             [userId]
@@ -91,7 +107,7 @@ export default class OrderRepository extends BaseModel {
         return rows;
     }
 
-    // ðŸ”¹ Get FULL orders (all users)
+    // 🔹 Get FULL orders (all users) + REVIEW
     static async findFullAll() {
         const [rows] = await this.pool.query(
             `SELECT
@@ -109,12 +125,20 @@ export default class OrderRepository extends BaseModel {
                 p.name,
                 p.price AS product_price,
 
-                pi.image_url
+                pi.image_url,
+
+                r.id AS review_id,
+                r.rating AS review_rating,
+                r.comment AS review_comment,
+                r.created_at AS review_created_at
 
             FROM orders o
             LEFT JOIN order_items oi ON oi.order_id = o.id
             LEFT JOIN products p ON p.id = oi.product_id
-            LEFT JOIN product_images pi ON pi.product_id = p.id`
+            LEFT JOIN product_images pi ON pi.product_id = p.id
+
+            -- 🔥 REVIEW JOIN
+            LEFT JOIN order_reviews r ON r.order_id = o.id`
         );
 
         return rows;

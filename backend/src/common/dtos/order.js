@@ -11,15 +11,27 @@ export const orderListDTO = (rows) => {
   };
 };
 
+export const orderReviewDTO = (row) => {
+  if (!row || !row.review_id) return null;
+
+  return {
+    id: row.review_id,
+    rating: row.review_rating,
+    comment: row.review_comment,
+    created_at: row.review_created_at
+  };
+};
 
 // 🔹 DETAIL VIEW
 export const orderDetailDTO = (rows) => {
-  console.log(rows[0]);
   const first = rows[0];
 
-  const mapped = rows
-    .filter(item => item.order_item_id) // avoid null rows (LEFT JOIN)
+  const items = rows
+    .filter(item => item.order_item_id)
     .map(item => orderItemFullDTO(item));
+
+  // 🔥 delegate review mapping to review DTO
+  const review = orderReviewDTO(first);
 
   return {
     id: first.order_id,
@@ -27,7 +39,8 @@ export const orderDetailDTO = (rows) => {
     total_amount: first.total_amount,
     status: first.status,
     shipping_addr: first.shipping_addr,
-    items: mapped,
+    items,
+    review, // clean injection
     created_at: first.created_at
   };
 };
