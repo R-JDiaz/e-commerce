@@ -28,10 +28,17 @@ export interface OrderData {
   totalOrders: number;
 }
 
+export interface OrderTracking {
+    label: string,
+    status: 'pending' | 'current' | 'done',
+    date?: string | null
+}
+
 export interface Order {
   id: string;
   userId: string;
   items: OrderItem[];
+  tracking?: OrderTracking[] | null;
   total: number;
   status: OrderStatus;
   createdAt: string;
@@ -59,7 +66,7 @@ export class OrderManager {
 
   constructor(private api: OrderApiService) {}
 
-  private load(): void {
+  public load(): void {
     if (this.isLoaded) return;
 
     this.api.getOrders().pipe(
@@ -78,9 +85,8 @@ export class OrderManager {
 
       tap(fullOrders => {
         const mappedOrders = OrderMapper.toOrderList(fullOrders);
-
         this.orderFullSubject.next(mappedOrders);
-
+        console.log(this.orderFullSubject);
         const orderData = this.computeOrderData(mappedOrders);
         this.orderDataSubject.next(orderData);
       })
