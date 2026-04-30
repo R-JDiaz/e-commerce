@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { finalize, Observable } from 'rxjs';
+import { BehaviorSubject, finalize, Observable, tap } from 'rxjs';
 
 import { Auth } from '@common/services/managers/auth/auth';
 import { Order, OrderData, OrderManager } from '@common/services/managers/order/order';
@@ -43,7 +43,8 @@ export class Orders implements OnInit {
   }
 
   loadOrders(): void {
-    this.orders$ = this.orderManager.getDetailedOrder();
+    this.orderManager.load();
+    this.orders$ = this.orderManager.orderFull$;
   }
 
   payAmount(event: { id: string; amount: number }): void {

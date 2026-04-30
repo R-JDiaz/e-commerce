@@ -1,80 +1,96 @@
 <article class="order-card">
-
-  <!-- HEADER (click to toggle) -->
-  <div class="header clickable" (click)="toggle()">
-
-    <div>
+  <!-- HEADER -->
+  <div class="card-header clickable" (click)="toggle()">
+    <div class="header-info">
       <p class="order-id">Order #{{ order.id }}</p>
-      <p class="date">{{ order.createdAt | date:'medium' }}</p>
+      <p class="order-date">{{ order.createdAt | date:'medium' }}</p>
     </div>
 
-    <div class="header-right">
-      <span class="status" [ngClass]="order.status">
+    <div class="header-controls">
+      <span class="status-badge" [ngClass]="order.status">
         {{ order.status }}
       </span>
-
-      <button class="toggle-btn">
+      <button class="toggle-icon" aria-label="Toggle details">
         {{ isExpanded ? '−' : '+' }}
       </button>
     </div>
-
   </div>
 
-  <!-- COLLAPSIBLE CONTENT -->
-  <div class="content" *ngIf="isExpanded">
+  <!-- CONTENT -->
+  <div class="card-content" *ngIf="isExpanded">
 
-    <div class="items">
-      <div class="item" *ngFor="let item of order.items">
-        <span>{{ item.product.name }}</span>
-        <span>x{{ item.quantity }}</span>
+    <!-- ITEMS LIST -->
+    <div class="items-list">
+      <h4 class="order-title">Order Items</h4>
+      <div class="item-row" *ngFor="let item of order.items">
+        <span class="item-name">{{ item.product.name }}</span>
+        <span class="item-qty">x{{ item.quantity }}</span>
       </div>
     </div>
 
-    <!-- PAYMENT -->
-    <div class="payment" *ngIf="order.status === 'pending'">
+    <!-- SHIPPING TRACKER -->
+    <div class="shipping-tracker" *ngIf="order.tracking?.length">
+      <h4 class="tracker-title">Shipping Tracking</h4>
 
-      <label class="pay-label">
-        Enter payment (≥ ₱{{ order.total | number:'1.2-2' }})
-      </label>
-
-      <input
-        type="number"
-        [(ngModel)]="paymentAmount"
-        placeholder="₱0.00"
-        class="pay-input"
-      />
-
-      <small class="error-msg"
-        *ngIf="paymentAmount !== null && paymentAmount < order.total">
-        Payment must be equal or higher than total
-      </small>
-
-      <button
-        type="button"
-        class="pay-btn"
-        (click)="payOrder()"
-        [disabled]="!isPaymentValid">
-        Pay Now
-      </button>
-
+      <div class="track-steps">
+        <div class="track-step" *ngFor="let step of order.tracking">
+          <div class="step-indicator" [ngClass]="step.status"></div>
+          <div class="step-info">
+            <p class="step-label">{{ step.label }}</p>
+            <small *ngIf="step.date" class="step-date">{{ step.date }}</small>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="footer">
-      <span>Total</span>
+    <!-- PAYMENT SECTION -->
+    <div class="payment-section" *ngIf="order.status === 'pending'">
+      <label class="payment-label">Enter payment ≥ ₱{{ order.total }}</label>
+      <input type="number" [(ngModel)]="paymentAmount" class="payment-input" placeholder="Enter amount" />
+      <button class="btn-primary" (click)="payOrder()" [disabled]="!isPaymentValid">
+        Pay Now
+      </button>
+    </div>
 
+    <!-- REVIEW SECTION -->
+    <div class="review-section" *ngIf="order.status === 'completed'">
+      <div class="div" *ngIf="order.review == null">
+      <h4 class="review-title">Write a Review</h4>
+
+      <div class="rating-stars">
+        <span
+          *ngFor="let star of [1,2,3,4,5]"
+          (click)="setRating(star)"
+          [class.active]="star <= reviewRating">
+          ★
+        </span>
+      </div>
+
+      <textarea [(ngModel)]="reviewComment" class="review-input" placeholder="Share your experience..." rows="3"></textarea>
+
+      <button class="btn-secondary" (click)="submitReview()" [disabled]="isLoading()">
+        Submit Review
+      </button>
+      </div>
+      <h4 class="review-title">MY REVIEW</h4>
+      <p *ngIf="order.review" class="existing-review">
+        ⭐ {{ order.review.rating }} - {{ order.review.comment }}
+      </p>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="card-footer">
+      <span class="total-label">Total</span>
       <div class="footer-actions">
-        <strong>{{ order.total | number:'1.2-2' }}</strong>
+        <strong class="total-amount">₱{{ order.total }}</strong>
 
         <button
-          type="button"
-          class="receive"
-          *ngIf="order.status === 'accepted'"
+          class="btn-receive"
+          *ngIf="order.status === 'shipped'"
           (click)="markReceived()">
           Order received
         </button>
       </div>
     </div>
-
   </div>
-
 </article>

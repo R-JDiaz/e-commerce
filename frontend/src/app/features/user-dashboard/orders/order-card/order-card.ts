@@ -1,7 +1,12 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Order } from '@common/services/managers/order/order';
+import { Order, OrderManager } from '@common/services/managers/order/order';
+import { ReviewManager } from '@common/services/managers/review/review';
+import { CreateReviewRequest } from '@common/services/api/review/review-api.service';
+import { ToastManager } from '@common/services/managers/toast/toast.manager';
+import { delay, finalize } from 'rxjs';
+
 
 @Component({
   selector: 'app-order-card',
@@ -17,9 +22,14 @@ export class OrderCardComponent {
   @Output() received = new EventEmitter<string>();
   @Output() pay = new EventEmitter<{ id: string; amount: number }>();
 
+  reviewRating = 0;
+  reviewComment = '';
+  hoverRating = 0;
   paymentAmount: number | null = null;
+  isLoading = signal(false);
 
-  isExpanded = true; // 🔥 NEW
+  isExpanded = true; 
+  constructor (private manager: ReviewManager, private toast: ToastManager, private orderManager: OrderManager) {}
 
   toggle(): void {
     this.isExpanded = !this.isExpanded;
@@ -33,7 +43,27 @@ export class OrderCardComponent {
   }
 
   markReceived(): void {
-    this.received.emit(this.order.id);
+    this.orderManager.updateOrderStatus(this.order.id, 'completed').pipe(
+      finalize(() => {
+        this.isLoading.set(false)}
+      )).subscribe({
+        next: () => {
+          this.toast.success('Order Sucessfully Updated');
+          this.orderManager.getOrderById(this.order.id).subscribe({
+            next: (order) => {
+              this.order = order;
+            },
+            error: () => {
+              this.toast.error("Error Fetching Order");
+            }
+          }
+          );
+        },
+        error: () => {
+          this.toast.error('Order Failed to complete');
+        }
+      }
+    )
   }
 
   payOrder(): void {
@@ -47,5 +77,45 @@ export class OrderCardComponent {
     this.paymentAmount = null;
   }
 
-  
+  setRating(value: number) {
+    this.reviewRating = value;
+  }
+
+  submitReview() {
+    if (!this.order.review && this.reviewRating > 0) {
+
+      this.isLoading.set(true);
+
+      const payload: CreateReviewRequest = {
+        order_id: Number(this.order.id),
+        rating: this.reviewRating,
+        comment: this.reviewComment
+      };
+
+      this.manager.createReview(payload).pipe(
+        finalize(() => {
+          this.isLoading.set(false);
+        })
+      ).subscribe({
+        next: () => {
+          this.toast.success('Successfully submitted review');
+          this.order = {
+          ...this.order,
+          review: {
+            rating: this.reviewRating,
+            comment: this.reviewComment
+          }
+        };
+
+        this.reviewRating = 0;
+        this.reviewComment = '';
+          
+        },
+        error: () => {
+          this.toast.error('Failed to submit review');
+        }
+      });
+
+    }
+} 
 }
