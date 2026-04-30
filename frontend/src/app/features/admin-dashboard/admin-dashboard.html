@@ -24,8 +24,7 @@
       </app-admin-products>
 
       <app-admin-orders
-        *ngIf="activeSection === 'orders'"
-        (statusChange)="updateOrderStatus($event.id, $event.status)">
+        *ngIf="activeSection === 'orders'">
       </app-admin-orders>
 
       <app-admin-users

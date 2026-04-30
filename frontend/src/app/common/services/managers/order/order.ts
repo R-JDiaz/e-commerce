@@ -76,7 +76,7 @@ export class OrderManager {
   public load(): void {
     if (this.isLoaded) return;
 
-    this.api.getOrders().pipe(
+    this.api.getAllOrders().pipe(
       tap(orders => {
         this.orderSubject.next(orders);
         this.isLoaded = true;
