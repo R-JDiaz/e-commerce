@@ -69,17 +69,6 @@ export default class OrderController {
         const { id } = req.params;
         const { status } = req.body;
 
-        if (role !== "admin" && status !== "completed") {
-            return res.status(403).json({
-                success: false,
-                message: "Forbidden",
-            });
-        }
-
-        if (role !== "admin") {
-            await orderService.getOrderById(userId, Number(id));
-        }
-
         const result = await orderService.updateOrderStatus(
             Number(id),
             status
