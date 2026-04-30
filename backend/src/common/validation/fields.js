@@ -135,6 +135,21 @@ export const optionalNumber = (field, value, options = {}) => {
   return { value: nextValue, errors };
 };
 
+export const requiredRating = (field, value) => {
+  const num = Number(value);
+
+  const errors = [];
+
+  if (!num || num < 1 || num > 5) {
+    errors.push(`${field} must be between 1 and 5`);
+  }
+
+  return {
+    value: num,
+    errors
+  };
+};
+
 export const requiredPositiveInteger = (field, value) =>
   requiredNumber(field, value, { integer: true, min: 1 });
 
