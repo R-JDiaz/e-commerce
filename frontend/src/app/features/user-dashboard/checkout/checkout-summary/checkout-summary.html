@@ -10,7 +10,7 @@
   </div>
 
   <!-- CART OR EMPTY SWITCH -->
-  <ng-container *ngIf="cartItems?.length > 0; else emptyCart">
+  <ng-container *ngIf="cartItems.length > 0; else emptyCart">
 
     <!-- CART CONTENT -->
     <div class="items">
@@ -52,7 +52,7 @@
   </ng-template>
 
   <!-- TOTALS (optional: you may also hide this when empty) -->
-  <div class="totals" *ngIf="cartItems?.length > 0">
+  <div class="totals" *ngIf="cartItems.length > 0">
     <div><span>Subtotal</span><strong>&#8369;{{ subtotal.toFixed(2) }}</strong></div>
     <div><span>Shipping</span><strong>Free</strong></div>
     <div><span>Total quantity</span><strong>{{ totalQuantity }}</strong></div>
