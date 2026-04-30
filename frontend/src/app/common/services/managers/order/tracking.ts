@@ -21,7 +21,7 @@ function updateObj(i: number, c: number, list : OrderTracking[]) {
                 list[i].status = 'done';
                 i++;
     }
-    if (c >= 4) return;
+    if (c >= 5) return;
 
     list[c].status = 'current';
     const key = list[c].label as keyof typeof CURRENT_LABELS;
@@ -49,7 +49,7 @@ export function createTracker(status : OrderStatusDTO) {
                 updateObj(0,4,defaultOrderTrack);
                 break
             case 'completed':
-                updateObj(0,4,defaultOrderTrack);
+                updateObj(0,5,defaultOrderTrack);
                 defaultOrderTrack[4].status = 'done';
                 break
             case 'returned':
