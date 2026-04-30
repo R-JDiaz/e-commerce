@@ -1,110 +1,209 @@
-.panel {
-  padding: 20px;
-  max-width: 900px;
-  margin: 0 auto;
+.panel.coffee-theme {
+  max-width: 1200px;
+  margin: auto;
+  padding: 28px;
+  font-family: "Inter", sans-serif;
+  background: #f7f3ee;
+  color: #2b2b2b;
+}
 
-  h2 {
-    font-size: 24px;
-    margin-bottom: 16px;
-    font-weight: 600;
+/* ===================== */
+/* TOOLBAR (POS CONTROL) */
+/* ===================== */
+.toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding: 14px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  
+
+  input, select {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e2e2e2;
+    background: #fff;
+    font-size: 14px;
+    transition: 0.2s ease;
+    outline: none;
+
+    &:focus {
+      border-color: #c49a6c;
+      box-shadow: 0 0 0 3px rgba(196, 154, 108, 0.15);
+    }
+  }
+
+  input {
+    flex: 1;
   }
 }
 
-.list {
+/* ===================== */
+/* ORDER CARD            */
+/* ===================== */
+.order-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
+  border-left: 6px solid #c49a6c;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.order-card {
-  background: #ffffff;
-  border: 1px solid #e6e6e6;
-  border-radius: 12px;
-  padding: 16px;
-  transition: 0.2s ease;
+  gap: 10px;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
   }
 }
 
-/* HEADER */
+/* ===================== */
+/* HEADER                */
+/* ===================== */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-
-  .order-id {
-    font-weight: 600;
-    margin: 0;
-  }
-
-  .meta {
-    font-size: 12px;
-    color: #777;
-    margin: 2px 0 0;
-  }
-
-  .amount {
-    font-weight: 700;
-    font-size: 16px;
-    color: #1a1a1a;
-  }
+  align-items: flex-start;
+  gap: 10px;
 }
 
-/* ITEMS */
+.order-id {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.meta {
+  font-size: 12px;
+  color: #777;
+  margin-top: 4px;
+}
+
+/* ===================== */
+/* STATUS CHIP           */
+/* ===================== */
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  &.pending { background: #fff3cd; color: #7a5b00; }
+  &.accepted { background: #cfe2ff; color: #0b4aa2; }
+  &.completed { background: #d1e7dd; color: #1b5e20; }
+  &.cancelled { background: #f8d7da; color: #8a1f2d; }
+}
+
+/* ===================== */
+/* ITEMS                 */
+/* ===================== */
 .items {
-  background: #fafafa;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 12px;
+  margin-top: 6px;
+  padding: 12px;
+  background: #faf7f2;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .item {
   display: flex;
   justify-content: space-between;
   font-size: 13px;
+  padding: 4px 0;
+  color: #333;
 
-  .item-name {
+  span:first-child {
     font-weight: 500;
-    color: #333;
   }
 
-  .item-meta {
-    color: #888;
-    font-size: 12px;
+  span:last-child {
+    color: #777;
   }
 }
 
-/* FOOTER */
+/* ===================== */
+/* ACTIONS (NEW)         */
+/* ===================== */
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.btn {
+  border: none;
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-weight: 600;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.btn-accept {
+  background: #1b3867;
+  color: #fff;
+}
+
+.btn-brew {
+  background: #7f5306;
+  color: #fff;
+}
+
+.btn-serve {
+  background: #11632f;
+  color: #fff;
+}
+
+.btn-cancel {
+  background: #6b1f1f;
+  color: #fff;
+}
+
+/* ===================== */
+/* FOOTER SELECT         */
+/* ===================== */
 .footer {
   display: flex;
   justify-content: flex-end;
 
   select {
-    padding: 6px 10px;
-    border-radius: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
     border: 1px solid #ddd;
-    background: #fff;
+    font-size: 13px;
     cursor: pointer;
 
     &:focus {
       outline: none;
-      border-color: #4a90e2;
+      border-color: #c49a6c;
     }
   }
 }
 
-/* EMPTY STATE */
+/* ===================== */
+/* EMPTY STATE           */
+/* ===================== */
 .empty {
   text-align: center;
-  padding: 40px;
+  padding: 50px;
   color: #888;
-  border: 1px dashed #ccc;
-  border-radius: 10px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px dashed #d0c7be;
 }
