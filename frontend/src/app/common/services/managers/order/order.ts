@@ -246,7 +246,9 @@ export class OrderManager {
     let totalSpent = 0;
 
     orders.forEach(order => {
-      totalSpent += Number(order.total);
+      if (order.status === 'completed' || order.status === 'shipped') {
+        totalSpent += Number(order.total);
+      }
 
       order.items.forEach(item => {
         totalQuantity += item.quantity;

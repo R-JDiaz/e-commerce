@@ -34,8 +34,6 @@ export interface AnalyticsData {
   completedOrders: number;
   cancelledOrders: number;
   conversionRate: number;
-
-  recentActivity: ActivityItem[];
 }
 
 @Injectable({
@@ -154,20 +152,7 @@ export class AnalyticsManager {
       completedOrders: completed,
       cancelledOrders: cancelled,
       conversionRate,
-
-      recentActivity: this.buildRecentActivity(orders),
     };
-  }
-
-  private buildRecentActivity(orders: Order[]): ActivityItem[] {
-    return orders
-      .slice(-5)
-      .reverse()
-      .map(order => ({
-        type: 'order',
-        message: `Order #${order.id} is ${order.status}`,
-        date: order.createdAt,
-      }));
   }
 
   private getDefault(): AnalyticsData {
@@ -191,8 +176,6 @@ export class AnalyticsManager {
       completedOrders: 0,
       cancelledOrders: 0,
       conversionRate: 0,
-
-      recentActivity: [],
     };
   }
 
@@ -225,7 +208,10 @@ export class AnalyticsManager {
 
   filterForWeeklySales(order: Order, weeklySales: WeeklySales[]): void {
     const key = new Date(order.createdAt).toISOString().split('T')[0];
-
+    if (!['completed', 'shipped'].includes(order.status)) {
+    return;
+    }
+    
     const target = weeklySales.find(s => s.date === key);
 
     if (target) {
