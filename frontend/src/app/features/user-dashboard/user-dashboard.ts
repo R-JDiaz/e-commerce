@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { NavigationComponent } from '@common/components/navigation/navigation';
 
 import { Products } from './products/products';
+import { OrderManager } from '@common/services/managers/order/order';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -22,7 +23,8 @@ export class UserDashboard {
   constructor(
     private CartManager: CartManager,
     private authService: Auth,
-    private router: Router
+    private router: Router,
+    private OrderManager: OrderManager
   ) {}
 
   addToCart(product: ProductListItem) {
@@ -30,6 +32,7 @@ export class UserDashboard {
   }
 
   logout() {
+    this.OrderManager.clearState();
     this.authService.logout();
     this.router.navigate(['/login']);
   }
