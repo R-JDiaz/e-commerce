@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { finalize, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { CartItem, CartManager } from '@common/services/managers/cart/cart';
 import { Auth } from '@common/services/managers/auth/auth';
@@ -160,42 +160,47 @@ export class Checkout implements OnInit, OnDestroy {
 
     const cash = Number(form.cashAmount || 0);
     
-    this.orderManager.placeOrder(user.id, this.cartItems, shippingAddr).subscribe({
-      next: (order) => {
+    this.isSubmitting = true;
 
-        // ✅ If no cash payment needed
+    this.orderManager.placeOrder(user.id, this.cartItems, shippingAddr).pipe(
+
+      switchMap((order) => {
+        // ✅ No payment needed
         if (cash <= 0) {
-          this.CartManager.refreshCart();
-          this.isSubmitting = false;
-          this.router.navigate(['/orders']);
-          return;
+          return of({ order, payment: null });
         }
 
         // ✅ Cash payment flow
-        this.paymentManager.checkoutPayment({
+        return this.paymentManager.checkoutPayment({
           order_id: order.id,
           payment_method: 'cash',
           cash: cash
-        }).subscribe({
-          next: (result: any) => {
-            this.toastManager.success(result.message || 'Payment successful');
-            this.CartManager.refreshCart();
-            this.isSubmitting = false;
-            this.router.navigate(['/orders']);
-          },
+        }).pipe(
+          map((payment) => ({ order, payment }))
+        );
+      }),
 
-          error: (error: any) => {
-            this.toastManager.error(error?.message || 'Payment failed');
-            this.isSubmitting = false;
-          }
-        });
+      finalize(() => {
+        this.isSubmitting = false;
+      })
 
+    ).subscribe({
+      next: ({ order, payment }) => {
+
+        if (payment) {
+          this.toastManager.success('Payment successful');
+          console.log(payment);
+          this.orderManager.refreshOrder(order.id).subscribe();
+        }
+
+        this.CartManager.refreshCart();
+        this.router.navigate(['/orders']);
       },
 
       error: (error: any) => {
-        this.isSubmitting = false;
-        this.errorMessage =
-          error?.error?.message || error?.message || 'Failed to place order';
+        this.toastManager.error(
+          error?.error?.message || error?.message || 'Process failed'
+        );
       }
     });
   }
