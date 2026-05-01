@@ -220,6 +220,10 @@ export class OrderManager {
     );
   }
 
+  getOrderData(): Observable<OrderData> {
+    this.adminLoad();
+    return this.orderData$;
+  }
   updateOrderStatus(orderId: string, status: Order['status']): Observable<Order> {
     const request: UpdateOrderStatusRequest = { status };
 
@@ -242,13 +246,15 @@ export class OrderManager {
     let totalSpent = 0;
 
     orders.forEach(order => {
-      totalSpent += order.total;
+      totalSpent += Number(order.total);
 
       order.items.forEach(item => {
         totalQuantity += item.quantity;
       });
     });
 
+    console.log('CUR: ',totalSpent);
+    console.log('CUR: ',totalQuantity);
     return {
       totalQuantity,
       totalSpent,
