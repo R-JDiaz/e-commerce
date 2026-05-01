@@ -1,36 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, of } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Chart } from 'chart.js/auto';
-
-/* 📊 Activity item type */
+import { AnalyticsManager, AnalyticsData } from '../../../common/services/managers/analytics/analytics';
 interface ActivityItem {
   message: string;
-  time: string;
-}
-
-/* 📈 Analytics data model */
-interface AnalyticsData {
-  totalSales: number;
-  ordersToday: number;
-  activeUsers: number;
-  avgOrderValue: number;
-
-  totalQuantity: number;
-  totalSpent: number;
-  totalOrders: number;
-
-  salesGrowth: number;
-  ordersYesterday: number;
-  userGrowth: number;
-  avgChange: number;
-
-  pendingOrders: number;
-  completedOrders: number;
-  cancelledOrders: number;
-  conversionRate: number;
-
-  recentActivity: ActivityItem[];
+  date: string; // ✅ match manager
 }
 
 @Component({
@@ -42,65 +17,52 @@ interface AnalyticsData {
 })
 export class AdminAnalyticsComponent implements OnInit {
 
-  /* 📊 Observable data */
+  private analyticsManager = inject(AnalyticsManager);
+
+  /* 📊 Real data stream */
   data$!: Observable<AnalyticsData>;
 
-  constructor() {}
+  private salesChart!: Chart;
+  private ordersChart!: Chart;
 
   ngOnInit(): void {
 
-    /* ☕ MOCK DATA */
-    const mockData: AnalyticsData = {
-      totalSales: 12450,
-      ordersToday: 38,
-      activeUsers: 1284,
-      avgOrderValue: 328.5,
+    this.data$ = this.analyticsManager.analytics$.pipe(
+      tap(data => {
+        this.renderCharts(data);
+      })
+    );
+  }
 
-      totalQuantity: 120,
-      totalSpent: 12450,
-      totalOrders: 38,
-
-      salesGrowth: 12.4,
-      ordersYesterday: 31,
-      userGrowth: 8.7,
-      avgChange: 3.2,
-
-      pendingOrders: 14,
-      completedOrders: 92,
-      cancelledOrders: 6,
-      conversionRate: 4.8,
-
-      recentActivity: [
-        { message: "New order #1023 placed", time: "2 mins ago" },
-        { message: "Payment received ₱850", time: "10 mins ago" },
-        { message: "User registered: Juan Dela Cruz", time: "30 mins ago" },
-        { message: "Order #1018 completed", time: "1 hr ago" }
-      ]
-    };
-
-    this.data$ = of(mockData);
-
-    /* 📈 CHARTS */
-    this.createSalesChart();
-    this.createOrdersChart();
+  /* 📊 Render Charts Dynamically */
+  private renderCharts(data: AnalyticsData): void {
+    this.createSalesChart(data);
+    this.createOrdersChart(data);
   }
 
   /* ☕ SALES OVERVIEW CHART */
-  createSalesChart() {
-    new Chart('salesChart', {
+  private createSalesChart(data: AnalyticsData) {
+
+    /* destroy previous instance to prevent overlap */
+    if (this.salesChart) {
+      this.salesChart.destroy();
+    }
+
+    this.salesChart = new Chart('salesChart', {
       type: 'line',
       data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        labels: data.weeklySales.map(data => data.date), // 🔥 you can expand later to weekly/monthly
         datasets: [
           {
             label: 'Sales (₱)',
-            data: [1200, 1900, 1500, 2200, 3000, 2800, 3500],
+            data: data.weeklySales.map(data => data.total),
             borderColor: '#a16207',
             backgroundColor: 'rgba(161, 98, 7, 0.15)',
             tension: 0.4,
             fill: true,
             pointBackgroundColor: '#5c4033',
-          }
+          },
+          
         ]
       },
       options: {
@@ -113,19 +75,27 @@ export class AdminAnalyticsComponent implements OnInit {
   }
 
   /* 🍩 ORDERS BREAKDOWN CHART */
-  createOrdersChart() {
-    new Chart('ordersChart', {
+  private createOrdersChart(data: AnalyticsData) {
+
+    if (this.ordersChart) {
+      this.ordersChart.destroy();
+    }
+
+    this.ordersChart = new Chart('ordersChart', {
       type: 'doughnut',
       data: {
-        labels: ['Completed', 'Pending', 'Cancelled', 'In Progress'],
+        labels: ['Completed', 'Pending', 'Cancelled'],
         datasets: [
           {
-            data: [65, 15, 10, 10],
+            data: [
+              data.completedOrders,
+              data.pendingOrders,
+              data.cancelledOrders
+            ],
             backgroundColor: [
-              '#7a9e7e', // completed
-              '#facc15', // pending
-              '#c26a5a', // cancelled
-              '#3b2a22'  // in progress
+              '#7a9e7e',
+              '#facc15',
+              '#c26a5a'
             ],
             borderWidth: 0
           }

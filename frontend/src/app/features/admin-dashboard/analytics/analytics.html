@@ -6,7 +6,7 @@
     <!-- KPI CARDS -->
     <article class="card">
       <span class="label">Total Sales</span>
-      <strong>₱{{ data.totalSales }}</strong>
+      <strong>₱{{ data.totalSales.toFixed(2) }}</strong>
       <small class="trend up">↑ {{ data.salesGrowth }}%</small>
     </article>
 
@@ -24,7 +24,7 @@
 
     <article class="card">
       <span class="label">Avg. Order Value</span>
-      <strong>₱{{ data.avgOrderValue }}</strong>
+      <strong>₱{{ data.avgOrderValue.toFixed(2) }}</strong>
       <small class="trend down">↓ {{ data.avgChange }}%</small>
     </article>
 
@@ -46,7 +46,7 @@
 
     <article class="card">
       <span class="label">Conversion Rate</span>
-      <strong>{{ data.conversionRate }}%</strong>
+      <strong>{{ data.conversionRate.toFixed(2) }}%</strong>
     </article>
   </div>
 
@@ -70,7 +70,7 @@
     <ul *ngIf="data$ | async as data">
       <li *ngFor="let item of data.recentActivity">
         {{ item.message }}
-        <small>{{ item.time }}</small>
+        <small>{{ item }}</small>
       </li>
     </ul>
   </aside>
