@@ -68,7 +68,6 @@ export default class OrderService {
             // 5. fetch full order (JOIN)
             const rows = await OrderRepository.findFullById(orderId, conn);
 
-            console.log("JOIN", orderDetailDTO(rows));
             return orderDetailDTO(rows);
         });
     }
@@ -91,7 +90,6 @@ export default class OrderService {
             ordersMap[row.order_id].push(row);
         });
 
-        console.log(ordersMap);
         return Object.values(ordersMap).map(group =>
             orderListDTO(group)
         );
@@ -114,26 +112,24 @@ export default class OrderService {
             ordersMap[row.order_id].push(row);
         });
 
-        console.log(ordersMap);
         return Object.values(ordersMap).map(group =>
             orderDetailDTO(group)
         );
     }
 
     // 🔹 4. GET SINGLE ORDER (SECURE)
-    async getOrderById(userId, orderId) {
+    async getOrderById(role, userId, orderId) {
         const rows = await OrderRepository.findFullById(orderId);
 
-        console.log(rows);
         if (!rows || rows.length === 0) {
             throw new AppError("Order not found", 404);
         }
 
-        // security check
-        if (rows[0].user_id !== userId) {
-            throw new AppError("Unauthorized access to order", 403);
+        if (role != 'admin') {
+            if (userId != rows[0].user_id) {
+                throw new AppError("Can't Access order", 401);
+            }
         }
-
         return orderDetailDTO(rows);
     }
 

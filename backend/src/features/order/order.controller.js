@@ -50,9 +50,11 @@ export default class OrderController {
 
     static getOrderById = asyncHandler(async (req, res) => {
         const userId = req.user.id;
+        const role = req.user.role;
         const { id } = req.params;
 
         const result = await orderService.getOrderById(
+            role,
             userId,
             Number(id)
         );
