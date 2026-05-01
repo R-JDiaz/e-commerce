@@ -116,6 +116,7 @@ export class AdminDashboard implements OnInit {
   }
 
   logout() {
+    this.orderManager.clearState();
     this.authService.logout();
     this.router.navigate(['/login']);
   }
