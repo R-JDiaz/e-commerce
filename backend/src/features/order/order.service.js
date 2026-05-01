@@ -157,7 +157,7 @@ export default class OrderService {
 
         const rows = await OrderRepository.findFullById(orderId);
 
-        return orderListDTO(rows);
+        return orderDetailDTO(rows);
     }
 
     // 🔹 6. CANCEL ORDER
