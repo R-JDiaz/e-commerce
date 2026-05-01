@@ -65,7 +65,7 @@ export class OrderManager {
 
   readonly orderData$ = this.orderDataSubject.asObservable(); 
 
-  private readonly orderSubject = new BehaviorSubject<OrderSummaryDTO[]>([]);
+  private readonly orderSubject = new BehaviorSubject<Order[]>([]);
   readonly orders$ = this.orderSubject.asObservable();
 
   private readonly orderFullSubject = new BehaviorSubject<Order[]>([]);
@@ -73,12 +73,13 @@ export class OrderManager {
 
   constructor(private api: OrderApiService) {}
 
-  public load(): void {
+  // INITITALIZE THE SOURCE OF TRUTHS
+  adminLoad(): void {
     if (this.isLoaded) return;
 
     this.api.getAllOrders().pipe(
       tap(orders => {
-        this.orderSubject.next(orders);
+        this.orderSubject.next(orders.map(order => this.mapSummary(order)));
         this.isLoaded = true;
       }),
 
@@ -91,7 +92,34 @@ export class OrderManager {
       }),
 
       tap(fullOrders => {
-        const mappedOrders = OrderMapper.toOrderList(fullOrders);
+        const mappedOrders = fullOrders.map(order => this.mapDetail(order));
+        this.orderFullSubject.next(mappedOrders);
+        const orderData = this.computeOrderData(mappedOrders);
+        this.orderDataSubject.next(orderData);
+      })
+    ).subscribe();
+  }
+  
+  userLoad(): void {
+    
+    if (this.isLoaded) return;
+    this.api.getOrders().pipe(
+      tap(orders => {
+        const mapped = orders.map(order => this.mapSummary(order));
+        this.orderSubject.next(mapped);
+        this.isLoaded = true;
+      }),
+
+      switchMap(orders => {
+        const requests = orders.map(order =>
+          this.api.getOrderById(order.id)
+        );
+
+        return forkJoin(requests);
+      }),
+
+      tap(fullOrders => {
+        const mappedOrders = fullOrders.map(order => this.mapDetail(order));
         this.orderFullSubject.next(mappedOrders);
         const orderData = this.computeOrderData(mappedOrders);
         this.orderDataSubject.next(orderData);
@@ -118,7 +146,7 @@ export class OrderManager {
         if (!exists) {
           updatedOrders.push(updatedOrder);
         }
-
+        
         this.orderFullSubject.next(updatedOrders);
 
         // Recompute aggregated stats
@@ -129,7 +157,7 @@ export class OrderManager {
   } 
 
   public getDetailedOrder() : Observable<Order[]> {
-    this.load();
+    this.adminLoad();
 
     return this.orderFull$;
   }
@@ -155,6 +183,7 @@ export class OrderManager {
         quantity: item.quantity,
         subtotal: item.subtotal,
       })),
+      review: order.review,
       tracking: createTracker(order.status),
       total: order.total_amount,
       status: order.status,
@@ -174,28 +203,15 @@ export class OrderManager {
           ...this.orderFullSubject.value,
           this.mapDetail(order)
         ]);
+
+        console.log(order);
       }),
       map(order => this.mapDetail(order))
     );
   }
 
-  getUserOrders(): Observable<Order[]> {
-    return this.api.getOrders().pipe(
-      map(orders => {
-        const mapped = orders.map(order => this.mapSummary(order));
-
-        this.orderDataSubject.next(this.computeOrderData(mapped));
-
-        console.log('users', mapped);
-        return mapped;
-      })
-    );
-  }
-
   getAllOrders(): Observable<Order[]> {
-    return this.api.getAllOrders().pipe(
-      map(orders => orders.map(order => this.mapSummary(order))),
-    );
+    return this.orderFull$;
   }
 
   getOrderById(orderId: string): Observable<Order> {
@@ -204,22 +220,20 @@ export class OrderManager {
     );
   }
 
-  updateOrderStatus(orderId: string, status: Order['status']): Observable<boolean> {
+  updateOrderStatus(orderId: string, status: Order['status']): Observable<Order> {
     const request: UpdateOrderStatusRequest = { status };
 
     return this.api.updateOrderStatus(orderId, request).pipe(
       map(order => this.mapDetail(order)),
 
       tap(updatedOrder => {
+        console.log(updatedOrder);
         const current = this.orderFullSubject.value;
         const updatedList = current.map(o =>
           o.id === updatedOrder.id ? updatedOrder : o
         );
         this.orderFullSubject.next(updatedList);
-      }),
-
-      map(() => true),
-      catchError(() => of(false)) // emit false on failure
+      })
     );
   }
 
@@ -241,4 +255,20 @@ export class OrderManager {
       totalOrders: orders.length,
     };
   }
+
+  clearState(): void {
+    // Reset loading flag
+    this.isLoaded = false;
+
+    // Clear all cached orders
+    this.orderSubject.next([]);
+    this.orderFullSubject.next([]);
+
+    // Reset aggregated data
+    this.orderDataSubject.next({
+      totalQuantity: 0,
+      totalSpent: 0,
+      totalOrders: 0,
+  });
+}
 }

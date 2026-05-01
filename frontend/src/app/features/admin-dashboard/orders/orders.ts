@@ -6,7 +6,7 @@ import { OrderStatusDTO } from '@common/dtos/order.dto';
 import { ToastManager } from '@common/services/managers/toast/toast.manager';
 
 type SortType = 'newest' | 'alpha';
-type StatusFilter = 'all' | 'pending' | 'accepted' | 'completed' | 'cancelled';
+type StatusFilter = 'all' | 'pending' | 'accepted' | 'completed' | 'cancelled' | 'paid' | 'shipped' | 'refund';
 
 @Component({
   selector: 'app-admin-orders',
@@ -28,8 +28,8 @@ export class AdminOrdersComponent implements OnInit {
   constructor(public manager: OrderManager, private toast: ToastManager) {}
 
   ngOnInit(): void {
-    this.manager.load();
-    const base$ = this.manager.getAllOrders();
+    this.manager.adminLoad();
+    const base$ = this.manager.orderFull$;
 
     this.orders$ = combineLatest([
       base$,

@@ -43,7 +43,7 @@ export class Orders implements OnInit {
   }
 
   loadOrders(): void {
-    this.orderManager.load();
+    this.orderManager.userLoad();
     this.orders$ = this.orderManager.orderFull$;
   }
 
