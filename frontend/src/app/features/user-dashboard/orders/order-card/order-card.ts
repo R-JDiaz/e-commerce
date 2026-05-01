@@ -62,7 +62,7 @@ export class OrderCardComponent {
       )).subscribe({
         next: () => {
           this.toast.success('Order Sucessfully Updated');
-          this.orderManager.getOrderById(this.order.id).subscribe({
+          /* this.orderManager.getOrderById(this.order.id).subscribe({
             next: (order) => {
               this.order = order;
             },
@@ -70,7 +70,7 @@ export class OrderCardComponent {
               this.toast.error("Error Fetching Order");
             }
           }
-          );
+          ); */
         },
         error: () => {
           this.toast.error('Order Failed to complete');
