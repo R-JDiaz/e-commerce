@@ -49,13 +49,9 @@ export class AnalyticsManager {
   constructor(
     private orderManager: OrderManager,
     private userManager: UserManager
-  ) {
-    this.orderManager.adminLoad();
-    this.init();
-    console.log('DATA:',this.analytics$);
-  }
+  ) { }
 
-  private init(): void {
+  public init(): void {
     combineLatest([
       this.orderManager.orders$,
       this.orderManager.orderData$,

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, tap } from 'rxjs';
 import { Chart } from 'chart.js/auto';
@@ -15,9 +15,7 @@ interface ActivityItem {
   templateUrl: './analytics.html',
   styleUrl: './analytics.scss',
 })
-export class AdminAnalyticsComponent implements OnInit {
-
-  private analyticsManager = inject(AnalyticsManager);
+export class AdminAnalyticsComponent implements OnInit, OnDestroy {
 
   /* 📊 Real data stream */
   data$!: Observable<AnalyticsData>;
@@ -25,13 +23,26 @@ export class AdminAnalyticsComponent implements OnInit {
   private salesChart!: Chart;
   private ordersChart!: Chart;
 
+  constructor(private analyticsManager: AnalyticsManager) {}
   ngOnInit(): void {
-
+    this.analyticsManager.init();
     this.data$ = this.analyticsManager.analytics$.pipe(
       tap(data => {
-        this.renderCharts(data);
+          requestAnimationFrame(() => {
+    this.renderCharts(data);
+  });
       })
     );
+  }
+
+  ngOnDestroy(): void {
+    if (this.salesChart) {
+      this.salesChart.destroy();
+    }
+
+    if (this.ordersChart) {
+      this.ordersChart.destroy();
+    }
   }
 
   /* 📊 Render Charts Dynamically */
@@ -42,16 +53,13 @@ export class AdminAnalyticsComponent implements OnInit {
 
   /* ☕ SALES OVERVIEW CHART */
   private createSalesChart(data: AnalyticsData) {
-
-    /* destroy previous instance to prevent overlap */
     if (this.salesChart) {
       this.salesChart.destroy();
     }
-
     this.salesChart = new Chart('salesChart', {
       type: 'line',
       data: {
-        labels: data.weeklySales.map(data => data.date), // 🔥 you can expand later to weekly/monthly
+        labels: data.weeklySales.map(data => data.date), 
         datasets: [
           {
             label: 'Sales (₱)',
@@ -76,7 +84,6 @@ export class AdminAnalyticsComponent implements OnInit {
 
   /* 🍩 ORDERS BREAKDOWN CHART */
   private createOrdersChart(data: AnalyticsData) {
-
     if (this.ordersChart) {
       this.ordersChart.destroy();
     }
