@@ -1,6 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { NotificationComponent } from '@common/components/notification/notification';
+import { NotificationManager } from '@common/services/managers/notification/notification.manager';
+import { Observable } from 'rxjs';
 
 export type NavigationContext = 'landing' | 'dashboard' | 'orders' | 'profile' | 'checkout' | 'admin';
 
@@ -13,15 +16,37 @@ interface NavigationLink {
 @Component({
   selector: 'app-navigation',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, NotificationComponent],
   templateUrl: './navigation.html',
   styleUrl: './navigation.scss',
 })
-export class NavigationComponent {
+export class NavigationComponent implements OnInit{
   @Input() context: NavigationContext = 'dashboard';
+  @Input() userId!: number; // 🔥 needed for notifications
   @Output() logout = new EventEmitter<void>();
+  
+  notifCount$! : Observable<number>;
 
   mobileOpen = false;
+  notifOpen = false; // 🔔 toggle dropdown
+
+  constructor(private notifManager: NotificationManager) {}
+
+  ngOnInit(): void {
+    this.notifCount$ = this.notifManager.getUnreadCount();
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileOpen = !this.mobileOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.mobileOpen = false;
+  }
+
+  toggleNotifications(): void {
+    this.notifOpen = !this.notifOpen;
+  }
 
   get links(): NavigationLink[] {
     switch (this.context) {
@@ -81,11 +106,5 @@ export class NavigationComponent {
     return this.context !== 'landing';
   }
 
-  toggleMobileMenu(): void {
-    this.mobileOpen = !this.mobileOpen;
-  }
 
-  closeMobileMenu(): void {
-    this.mobileOpen = false;
-  }
 }

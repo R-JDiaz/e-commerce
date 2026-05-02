@@ -17,6 +17,24 @@
   </nav>
 
   <div class="actions">
+
+    <!-- 🔔 Notification Bell -->
+  <div class="notif-wrapper" *ngIf="context !== 'landing'">
+    <button class="notif-btn" (click)="toggleNotifications()">
+      🔔
+
+      <!-- Badge -->
+      <span class="notif-badge" *ngIf="notifCount$ | async as unreadCount">
+        {{ unreadCount }}
+      </span>
+    </button>
+
+    <!-- Dropdown -->
+    <div class="notif-dropdown" *ngIf="notifOpen">
+      <app-notifications></app-notifications>
+    </div>
+  </div>
+
     <button
       *ngIf="links.length"
       type="button"
