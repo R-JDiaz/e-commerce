@@ -14,6 +14,8 @@ import { AdminOrdersComponent } from './orders/orders';
 import { AdminProductsComponent } from './products/products';
 import { AdminSettingsComponent } from './settings/settings';
 import { AdminUsersComponent } from './users/users';
+import { CartManager } from '@common/services/managers/cart/cart';
+import { NotificationManager } from '@common/services/managers/notification/notification.manager';
 
 type AdminSection = 'analytics' | 'products' | 'orders' | 'users' | 'settings' | 'site-links';
 
@@ -48,6 +50,7 @@ export class AdminDashboard implements OnInit {
   constructor(
     private productService: ProductManager,
     private orderManager: OrderManager,
+    private notifManager: NotificationManager,
     private authService: Auth,
     private router: Router
   ) {}
@@ -55,6 +58,7 @@ export class AdminDashboard implements OnInit {
   ngOnInit() {
     this.loadProducts();
     this.loadOrders();
+    this.notifManager.load();
   }
 
   setSection(section: AdminSection): void {
@@ -116,6 +120,7 @@ export class AdminDashboard implements OnInit {
   }
 
   logout() {
+    this.notifManager.clearNotifications();
     this.orderManager.clearState();
     this.authService.logout();
     this.router.navigate(['/login']);
