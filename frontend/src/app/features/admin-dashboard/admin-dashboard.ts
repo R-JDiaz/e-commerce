@@ -85,6 +85,7 @@ export class AdminDashboard implements OnInit {
   }
 
   loadOrders() {
+    this.orderManager.adminLoad();
     this.orderManager.getAllOrders().subscribe({
       next: (orders: any) => {
         this.orders = orders;
