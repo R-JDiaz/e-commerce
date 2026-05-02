@@ -5,6 +5,7 @@ import {
   NotificationDTO,
   CreateNotificationRequestDTO
 } from '@common/services/api/notification/notification-api.service';
+import { AuthManager } from '../auth/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -18,28 +19,30 @@ export class NotificationManager {
   private readonly notifCountSubject = new BehaviorSubject<number>(0);
   readonly notifCount$ = this.notifCountSubject.asObservable();
 
-  constructor(private api: NotificationApiService) {}
 
-  refresh(): void {
-    this.api.getUserNotifications().subscribe({
-      next: (notifications) => {
-        this.notificationsSubject.next(notifications);
+  constructor(private api: NotificationApiService, private auth: AuthManager) {}
+
+  load(): void {
+    console.log(this.auth.role);
+    if (this.auth.role === 'admin') {
+      this.refresh(this.api.getAdminNotifications());
+    } else {
+      this.refresh(this.api.getUserNotifications());
+    }
+  }
+
+  refresh(notifications$: Observable<NotificationDTO[]>): void {
+    notifications$.subscribe({
+      next: (notifs) => {
+        this.notificationsSubject.next(notifs);
+        this.notifCountSubject.next(notifs.filter(n => !n.is_read).length);
         this.isLoaded = true;
-        // Update the unread count
-        const unreadCount = notifications.filter(n => !n.is_read).length;
-        this.notifCountSubject.next(unreadCount);
       },
-      error: (err) => console.error(err)
+      error: (err) => console.error('Failed to load notifications:', err)
     });
   }
 
-  load(): void {
-    if (this.isLoaded) return;
-    this.refresh();
-  }
-
   getNotifications(): Observable<NotificationDTO[]> {
-    this.load();
     return this.notifications$;
   }
 

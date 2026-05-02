@@ -7,20 +7,34 @@ import { environment } from '@env/environment';
 export interface NotificationDTO {
   id: number;
   type: 'order' | 'payment' | 'system';
+  target_role: 'customer' | 'admin';
   message: string;
   is_read: boolean;
   created_at: string;
 }
 
-export interface CreateNotificationRequestDTO {
-  user_id: number;
+export interface CreateAdminNotificationDTO {
+  target_role: 'admin';
   type: 'order' | 'payment' | 'system';
   message: string;
 }
 
+export interface CreateUserNotificationDTO {
+  target_role: 'customer'; 
+  user_id: number | null;
+  type: 'order' | 'payment' | 'system';
+  message: string;
+}
+
+export type CreateNotificationRequestDTO =
+  | CreateAdminNotificationDTO
+  | CreateUserNotificationDTO;
+
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class NotificationApiService {
 
   private readonly baseUrl = `${environment.apiBaseUrl}/notifications`;
@@ -30,6 +44,11 @@ export class NotificationApiService {
   /** 🔔 Get all notifications of a user */
   getUserNotifications(): Observable<NotificationDTO[]> {
     return this.http.get<NotificationDTO[]>(`${this.baseUrl}/user`);
+  }
+
+    /** 🔔 Get all notifications of a user */
+  getAdminNotifications(): Observable<NotificationDTO[]> {
+    return this.http.get<NotificationDTO[]>(`${this.baseUrl}/admin`);
   }
 
   /** 🔍 Get single notification */
