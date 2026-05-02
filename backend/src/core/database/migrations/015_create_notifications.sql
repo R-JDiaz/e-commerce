@@ -1,7 +1,9 @@
 CREATE TABLE IF NOT EXISTS notifications (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 
-  user_id BIGINT UNSIGNED NOT NULL,
+  user_id BIGINT UNSIGNED NULL, -- 👈 allow NULL for admin/global
+
+  target_role ENUM('user', 'admin') NOT NULL DEFAULT 'user',
 
   type ENUM('order', 'payment', 'system') NOT NULL DEFAULT 'system',
 
@@ -12,14 +14,15 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-  -- 🔗 Foreign Key
+  -- 🔗 Foreign Key (still valid, but now optional)
   CONSTRAINT fk_notifications_user
     FOREIGN KEY (user_id)
     REFERENCES users(id)
     ON DELETE CASCADE,
 
-  -- ⚡ Indexes for performance
+  -- ⚡ Indexes
   INDEX idx_user_id (user_id),
+  INDEX idx_target_role (target_role),
   INDEX idx_is_read (is_read),
   INDEX idx_created_at (created_at)
 );
