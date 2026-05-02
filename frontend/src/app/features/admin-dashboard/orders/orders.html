@@ -69,14 +69,14 @@
           <button
             class="btn btn-accept"
             *ngIf="order.status === 'paid'"
-            (click)="updateOrder(order.id, 'accepted')"
+            (click)="updateOrder(order.userId, order.id, 'accepted')"
           >
             Accept
           </button>
 
           <button
             class="btn btn-brew"
-            (click)="updateOrder(order.id, 'shipped')"
+            (click)="updateOrder(order.userId, order.id, 'shipped')"
             *ngIf="order.status === 'accepted'"
           >
             Ship
@@ -85,7 +85,7 @@
           <button
             class="btn btn-brew"
             *ngIf="order.status === 'pending'"
-            (click)="updateOrder(order.id, 'cancelled')"
+            (click)="updateOrder(order.userId, order.id, 'cancelled')"
           >
            Reject
           </button>
@@ -93,7 +93,7 @@
           <button
           class="btn btn-cancel"
             *ngIf="order.status !== 'pending' && order.status !== 'cancelled'"
-            (click)="updateOrder(order.id, 'cancelled')"
+            (click)="updateOrder(order.userId, order.id, 'cancelled')"
           >
             Cancel
           </button>

@@ -4,6 +4,7 @@ import { Order, OrderManager } from '@common/services/managers/order/order';
 import { BehaviorSubject, combineLatest, finalize, map, Observable } from 'rxjs';
 import { OrderStatusDTO } from '@common/dtos/order.dto';
 import { ToastManager } from '@common/services/managers/toast/toast.manager';
+import { NotificationManager } from '@common/services/managers/notification/notification.manager';
 
 type SortType = 'newest' | 'alpha';
 type StatusFilter = 'all' | 'pending' | 'accepted' | 'completed' | 'cancelled' | 'paid' | 'shipped' | 'refund';
@@ -25,7 +26,10 @@ export class AdminOrdersComponent implements OnInit {
 
   isLoading = signal(false);
   
-  constructor(public manager: OrderManager, private toast: ToastManager) {}
+  constructor(
+    public manager: OrderManager, 
+    private toast: ToastManager,
+    private notif: NotificationManager) {}
 
   ngOnInit(): void {
     this.manager.adminLoad();
@@ -70,13 +74,19 @@ export class AdminOrdersComponent implements OnInit {
     );
   }
 
-  updateOrder(id: string,status: OrderStatusDTO): void {
+  updateOrder(userId: string, id: string,status: OrderStatusDTO): void {
+    console.log(userId);
       this.manager.updateOrderStatus(id, status).pipe(
         finalize(() => {
           this.isLoading.set(false)}
         )).subscribe({
           next: () => {
             this.toast.success('Order Sucessfully Updated');
+            this.notif.createNotification({
+              user_id: Number(userId),
+              type: 'order',
+              message: `Your order ${id} has been updated to ${status}.`
+            });
           },
           error: () => {
             this.toast.error('Order Failed to complete');
