@@ -31,7 +31,7 @@ export class CartManager {
   }
 
   // =========================
-  // 🔥 FIXED PRODUCT MAPPER
+  // PRODUCT MAPPER
   // =========================
   private mapApiProduct(item: CartProductItem): ProductListItem {
     const product = (item as any)?.product ?? item;
@@ -48,7 +48,7 @@ export class CartManager {
   }
 
   // =========================
-  // 🔥 FIXED CART MAPPER
+  // CART MAPPER
   // =========================
   private mapCartDetail(detail: CartDetail): CartItem[] {
     if (!detail?.products) return [];
