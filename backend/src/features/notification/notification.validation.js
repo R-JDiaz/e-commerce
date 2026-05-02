@@ -26,10 +26,6 @@ export const validateCreateNotification = (body) => {
   const errors = [];
   const value = {};
 
-  const userId = requiredPositiveInteger("user_id", body.user_id);
-  errors.push(...userId.errors);
-  value.user_id = userId.value;
-
   const type = requiredOneOf("type", body.type, notificationTypes);
   errors.push(...type.errors);
   value.type = type.value;

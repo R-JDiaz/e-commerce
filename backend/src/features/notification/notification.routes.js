@@ -13,8 +13,11 @@ import {
   validateUserIdParam,
   validateCreateNotification,
 } from "./notification.validation.js";
+import authMiddleware from "../../common/middleware/auth.js";
 
 const router = express.Router();
+
+router.use(authMiddleware);
 
 // 🔔 Get all notifications of a user
 router.get(
