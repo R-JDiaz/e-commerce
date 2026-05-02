@@ -1,0 +1,73 @@
+.notification-container {
+  width: 350px;
+  background: #daa47e; /* soft coffee dark */
+  color: #fff4e8;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.badge {
+  background: #b87438;
+  color: #fff;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ITEM */
+.notification-item {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  font-size: 13px;
+  line-height: 1.4;
+  color: #f3e6dc;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item.unread {
+  background: rgba(255, 255, 255, 0.05);
+  font-weight: 600;
+}
+
+/* ACTIONS */
+.actions {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+}
+
+button {
+  font-size: 11px;
+  padding: 4px 8px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff4e8;
+
+  cursor: pointer;
+}
+
+button:hover {
+  background: rgba(184, 116, 56, 0.6);
+}

@@ -1,0 +1,40 @@
+<div class="notification-container">
+
+  <!-- 🔔 Header -->
+  <div class="notification-header">
+    <h3>Notifications</h3>
+    <span class="badge" *ngIf="notifCount$ | async as unreadCount">
+      {{ unreadCount }}
+    </span>
+  </div>
+
+  <!-- 📭 Empty state -->
+  <div *ngIf="(notifications$ | async)?.length === 0" class="empty">
+    No notifications yet
+  </div>
+
+  <!-- 📜 List -->
+  <div *ngFor="let notif of (notifications$ | async)" 
+       class="notification-item"
+       [class.unread]="!notif.is_read">
+
+    <div class="message">
+      {{ notif.message }}
+    </div>
+
+    <div class="meta">
+      <small>{{ notif.created_at | date:'short' }}</small>
+    </div>
+
+    <div class="actions">
+      <button *ngIf="!notif.is_read" (click)="markAsRead(notif.id)">
+        Mark as read
+      </button>
+
+      <button (click)="deleteNotification(notif.id)">
+        Delete
+      </button>
+    </div>
+
+  </div>
+</div>
