@@ -19,9 +19,7 @@ export const getNotificationController = asyncHandler(async (req, res) => {
 });
 
 export const createNotificationController = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
-  const data = {...req.body, user_id: userId };
-  const notif = await createNotification(data);
+  const notif = await createNotification(req.body);
   res.status(201).json(notif);
 });
 

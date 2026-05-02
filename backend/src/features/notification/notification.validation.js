@@ -25,6 +25,10 @@ export const validateUserIdParam = (params) => {
 export const validateCreateNotification = (body) => {
   const errors = [];
   const value = {};
+  
+  const user_id = requiredPositiveInteger("user_id", body.user_id);
+  errors.push(...user_id.errors);
+  value.user_id = user_id.value;
 
   const type = requiredOneOf("type", body.type, notificationTypes);
   errors.push(...type.errors);

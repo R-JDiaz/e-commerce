@@ -13,6 +13,7 @@ export interface NotificationDTO {
 }
 
 export interface CreateNotificationRequestDTO {
+  user_id: number;
   type: 'order' | 'payment' | 'system';
   message: string;
 }
