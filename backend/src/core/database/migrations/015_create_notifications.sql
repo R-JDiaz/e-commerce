@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 
   user_id BIGINT UNSIGNED NULL, -- 👈 allow NULL for admin/global
 
-  target_role ENUM('user', 'admin') NOT NULL DEFAULT 'user',
+  target_role ENUM('customer', 'admin') NOT NULL DEFAULT 'customer',
 
   type ENUM('order', 'payment', 'system') NOT NULL DEFAULT 'system',
 
