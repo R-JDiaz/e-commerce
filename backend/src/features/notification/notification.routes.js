@@ -21,8 +21,7 @@ router.use(authMiddleware);
 
 // 🔔 Get all notifications of a user
 router.get(
-  "/user/:userId",
-  validateRequest(validateUserIdParam, "params"),
+  "/user",
   getNotificationsController
 );
 

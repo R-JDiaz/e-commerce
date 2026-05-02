@@ -9,7 +9,7 @@ import {
 import { asyncHandler } from "../../common/utilities/handler.js";
 
 export const getNotificationsController = asyncHandler(async (req, res) => {
-  const notifications = await getUserNotifications(req.params.userId);
+  const notifications = await getUserNotifications(req.user.id);
   res.json(notifications);
 });
 
