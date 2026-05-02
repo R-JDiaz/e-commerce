@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { Auth, User } from '@common/services/managers/auth/auth';
+import { AuthManager, User } from '@common/services/managers/auth/auth';
 import { UserManager } from '@common/services/managers/user/user';
 import { ToastManager } from '@common/services/managers/toast/toast.manager';
 import { NavigationComponent } from '@common/components/navigation/navigation';
@@ -23,7 +23,7 @@ export class Profile implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: Auth,
+    private authService: AuthManager,
     private userManager: UserManager,
     private toastManager: ToastManager,
     private router: Router

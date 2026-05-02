@@ -1,10 +1,10 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 
-import { Auth } from '@common/services/managers/auth/auth';
+import { AuthManager } from '@common/services/managers/auth/auth';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth = inject(Auth);
+  const auth = inject(AuthManager);
   const token = auth.getAccessToken();
 
   if (!token || req.headers.has('Authorization')) {

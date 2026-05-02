@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { Auth } from '@common/services/managers/auth/auth';
+import { AuthManager } from '@common/services/managers/auth/auth';
 
 @Component({
   selector: 'app-admin-settings',
@@ -19,7 +19,7 @@ export class AdminSettingsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: Auth,
+    private authService: AuthManager,
     private router: Router
   ) {
     this.settingsForm = this.fb.group({

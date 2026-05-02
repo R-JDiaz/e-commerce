@@ -3,12 +3,12 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
-import { Auth } from '@common/services/managers/auth/auth';
+import { AuthManager } from '@common/services/managers/auth/auth';
 
 const AUTH_ENDPOINT_PATTERN = /\/auth\/(login|register|refresh|logout)$/;
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth = inject(Auth);
+  const auth = inject(AuthManager);
   const router = inject(Router);
 
   return next(req).pipe(

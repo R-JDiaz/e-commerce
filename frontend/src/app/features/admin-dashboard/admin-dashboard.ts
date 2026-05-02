@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { ProductListItem } from '@common/models/product';
 import { ProductManager } from '@common/services/managers/product/product';
 import { Order, OrderManager } from '@common/services/managers/order/order';
-import { Auth } from '@common/services/managers/auth/auth';
+import { AuthManager } from '@common/services/managers/auth/auth';
 import { NavigationComponent } from '@common/components/navigation/navigation';
 import { AdminSiteLinksComponent } from './site-links/site-links';
 
@@ -51,7 +51,7 @@ export class AdminDashboard implements OnInit {
     private productService: ProductManager,
     private orderManager: OrderManager,
     private notifManager: NotificationManager,
-    private authService: Auth,
+    private authService: AuthManager,
     private router: Router
   ) {}
 

@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { finalize, switchMap, timer } from 'rxjs';
-import { Auth, User } from '@common/services/managers/auth/auth';
+import { AuthManager, User } from '@common/services/managers/auth/auth';
 import { ToastManager } from '@common/services/managers/toast/toast.manager';
 
 @Component({
@@ -22,7 +22,7 @@ export class Login implements OnInit {
 
   constructor(
     private router: Router, 
-    private authService: Auth, 
+    private authService: AuthManager, 
     private toastManager: ToastManager) {}
 
   ngOnInit(): void {

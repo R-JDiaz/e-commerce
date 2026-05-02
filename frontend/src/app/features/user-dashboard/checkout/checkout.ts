@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { finalize, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { CartItem, CartManager } from '@common/services/managers/cart/cart';
-import { Auth } from '@common/services/managers/auth/auth';
+import { AuthManager } from '@common/services/managers/auth/auth';
 import { OrderManager } from '@common/services/managers/order/order';
 import { NavigationComponent } from '@common/components/navigation/navigation';
 import { CheckoutSummaryComponent } from './checkout-summary/checkout-summary';
@@ -38,7 +38,7 @@ export class Checkout implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private CartManager: CartManager,
-    private authService: Auth,
+    private authService: AuthManager,
     private orderManager: OrderManager,
     private router: Router,
     private paymentManager: PaymentManager,

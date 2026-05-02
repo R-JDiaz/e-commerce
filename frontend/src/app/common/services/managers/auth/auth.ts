@@ -28,9 +28,11 @@ const CURRENT_USER_KEY = 'currentUser';
 @Injectable({
   providedIn: 'root',
 })
-export class Auth {
+export class AuthManager {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
-  public currentUser$ = this.currentUserSubject.asObservable();
+  public currentUser$ = this.currentUserSubject.asObservable(); 
+
+  public role : 'customer' | 'admin' | null = null;
 
   constructor(private authApi: AuthApiService) {
     this.restoreSession();
@@ -68,6 +70,7 @@ export class Auth {
   }
 
   logout(): void {
+    const user = this.currentUserSubject.value;
     this.clearSession();
 
     this.authApi.logout().subscribe({
@@ -78,6 +81,7 @@ export class Auth {
   }
 
   clearSession(): void {
+    this.role = null;
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(CURRENT_USER_KEY);
@@ -128,6 +132,8 @@ export class Auth {
 
   private persistSession(session: AuthSession): void {
     const user = this.mapSessionUser(session, session.user.role === 'admin' ? 'admin' : 'user');
+    
+    this.role = user.type === 'admin' ? 'admin' : 'customer';
 
     localStorage.setItem(ACCESS_TOKEN_KEY, session.access_token);
     localStorage.setItem(REFRESH_TOKEN_KEY, session.refresh_token);

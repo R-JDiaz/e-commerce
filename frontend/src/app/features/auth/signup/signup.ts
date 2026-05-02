@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ToastManager } from '@common/services/managers/toast/toast.manager';
-import { Auth, User } from '@common/services/managers/auth/auth';
+import { AuthManager, User } from '@common/services/managers/auth/auth';
 import { delay, finalize } from 'rxjs';
 
 @Component({
@@ -22,7 +22,7 @@ export class Signup implements OnInit {
   isLoading = false;
 
   constructor(
-    private authService: Auth,
+    private authService: AuthManager,
     private router: Router,
     private toastManager: ToastManager,
     private cdr: ChangeDetectorRef

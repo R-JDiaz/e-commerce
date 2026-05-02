@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ProductListItem } from '@common/models/product';
 import { CartManager } from '@common/services/managers/cart/cart';
-import { Auth } from '@common/services/managers/auth/auth';
+import { AuthManager } from '@common/services/managers/auth/auth';
 import { Router } from '@angular/router';
 import { NavigationComponent } from '@common/components/navigation/navigation';
 
@@ -24,13 +24,13 @@ export class UserDashboard implements OnInit {
   constructor(
     private CartManager: CartManager,
     private notifManager: NotificationManager,
-    private authService: Auth,
+    private authService: AuthManager,
     private router: Router,
     private OrderManager: OrderManager
   ) {}
   
   ngOnInit(): void {
-    this.notifManager.load();
+    //this.notifManager.load();
   }
   addToCart(product: ProductListItem) {
     this.CartManager.addToCart(product);

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { BehaviorSubject, finalize, Observable, tap } from 'rxjs';
 
-import { Auth } from '@common/services/managers/auth/auth';
+import { AuthManager } from '@common/services/managers/auth/auth';
 import { Order, OrderData, OrderManager } from '@common/services/managers/order/order';
 import { NavigationComponent } from '@common/components/navigation/navigation';
 import { OrderCardComponent } from './order-card/order-card';
@@ -32,7 +32,7 @@ export class Orders implements OnInit {
 
   constructor(
     private orderManager: OrderManager,
-    private authService: Auth,
+    private authService: AuthManager,
     private router: Router,
     private paymentManager: PaymentManager, 
     private toastManager: ToastManager

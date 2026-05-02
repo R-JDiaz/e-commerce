@@ -12,6 +12,7 @@ import {
 import { OrderDetailDTO, OrderSummaryDTO } from '@common/dtos/order.dto';
 import { OrderMapper } from './mapper/order.mapper';
 import { createTracker } from './tracking';
+import { NotificationManager } from '../notification/notification.manager';
 
 export interface OrderItem {
   id: string | number;
@@ -71,7 +72,7 @@ export class OrderManager {
   private readonly orderFullSubject = new BehaviorSubject<Order[]>([]);
   readonly orderFull$ = this.orderFullSubject.asObservable();
 
-  constructor(private api: OrderApiService) {}
+  constructor(private api: OrderApiService, private notifManager: NotificationManager) {}
 
   // INITITALIZE THE SOURCE OF TRUTHS
   adminLoad(): void {
@@ -224,6 +225,7 @@ export class OrderManager {
     this.adminLoad();
     return this.orderData$;
   }
+
   updateOrderStatus(orderId: string, status: Order['status']): Observable<Order> {
     const request: UpdateOrderStatusRequest = { status };
 

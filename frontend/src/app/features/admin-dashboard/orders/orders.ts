@@ -75,18 +75,12 @@ export class AdminOrdersComponent implements OnInit {
   }
 
   updateOrder(userId: string, id: string,status: OrderStatusDTO): void {
-    console.log(userId);
       this.manager.updateOrderStatus(id, status).pipe(
         finalize(() => {
           this.isLoading.set(false)}
         )).subscribe({
           next: () => {
             this.toast.success('Order Sucessfully Updated');
-            this.notif.createNotification({
-              user_id: Number(userId),
-              type: 'order',
-              message: `Your order ${id} has been updated to ${status}.`
-            });
           },
           error: () => {
             this.toast.error('Order Failed to complete');
