@@ -40,4 +40,19 @@ export default class NotificationModel extends BaseModel {
 
     return this.findById(id, conn);
   }
+
+  static async findAdminNotifications(db = null) {
+  const conn = db ?? this.pool;
+
+  const [rows] = await conn.query(
+    `
+    SELECT ${this.publicFields.join(", ")}, target_role
+    FROM ${this.table}
+    WHERE target_role = 'admin'
+    ORDER BY created_at DESC
+    `
+  );
+
+  return rows;
+}
 }

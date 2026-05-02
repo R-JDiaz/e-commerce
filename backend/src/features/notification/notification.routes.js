@@ -2,6 +2,7 @@ import express from "express";
 import {
   getNotificationsController,
   getNotificationController,
+  getAdminNotificationsController,
   createNotificationController,
   markAsReadController,
   deleteNotificationController,
@@ -23,6 +24,12 @@ router.use(authMiddleware);
 router.get(
   "/user",
   getNotificationsController
+);
+
+// 🔔 Get all notifications of admin
+router.get(
+  "/admin",
+  getAdminNotificationsController
 );
 
 // 🔍 Get single notification

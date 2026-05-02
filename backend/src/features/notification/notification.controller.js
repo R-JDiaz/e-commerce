@@ -1,6 +1,7 @@
 import {
   getUserNotifications,
   getNotification,
+  getAdminNotifications,
   createNotification,
   markNotificationAsRead,
   deleteNotification,
@@ -16,6 +17,15 @@ export const getNotificationsController = asyncHandler(async (req, res) => {
 export const getNotificationController = asyncHandler(async (req, res) => {
   const notif = await getNotification(req.params.id);
   res.json(notif);
+});
+
+export const getAdminNotificationsController = asyncHandler(async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+  
+  const notifications = await getAdminNotifications();
+  res.json(notifications);
 });
 
 export const createNotificationController = asyncHandler(async (req, res) => {

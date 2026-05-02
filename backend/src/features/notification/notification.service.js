@@ -13,6 +13,10 @@ export const getNotification = async (id) => {
   return notif;
 };
 
+export const getAdminNotifications = async () => {
+  return await NotificationModel.findAdminNotifications();
+};
+
 export const createNotification = async (data) => {
   const notif = await NotificationModel.create(data);
   return notif;
