@@ -189,7 +189,6 @@ export class Checkout implements OnInit, OnDestroy {
 
         if (payment) {
           this.toastManager.success('Payment successful');
-          console.log(payment);
           this.orderManager.refreshOrder(order.id).subscribe();
         }
 
