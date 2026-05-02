@@ -1,9 +1,11 @@
 {
   "info": {
+    "_postman_id": "dee25ad7-5540-472d-a8e7-36fe1a646e29",
     "name": "Products API Collection",
     "description": "Collection for managing products (CRUD operations)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_postman_id": "products-api-collection"
+    "_exporter_id": "52650416",
+    "_collection_link": "https://go.postman.co/collection/52650416-dee25ad7-5540-472d-a8e7-36fe1a646e29?source=collection_link"
   },
   "item": [
     {
@@ -21,8 +23,13 @@
             ],
             "url": {
               "raw": "{{base_url}}/api/products",
-              "host": ["{{base_url}}"],
-              "path": ["api", "products"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
             },
             "description": "List all products with their details including images and categories"
           },
@@ -40,8 +47,14 @@
             ],
             "url": {
               "raw": "{{base_url}}/api/products/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "products", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                ":id"
+              ],
               "variable": [
                 {
                   "key": "id",
@@ -74,8 +87,13 @@
             },
             "url": {
               "raw": "{{base_url}}/api/products",
-              "host": ["{{base_url}}"],
-              "path": ["api", "products"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
             },
             "description": "Create a new product (Admin only)"
           },
@@ -101,8 +119,14 @@
             },
             "url": {
               "raw": "{{base_url}}/api/products/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "products", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                ":id"
+              ],
               "variable": [
                 {
                   "key": "id",
@@ -131,8 +155,14 @@
             ],
             "url": {
               "raw": "{{base_url}}/api/products/:id",
-              "host": ["{{base_url}}"],
-              "path": ["api", "products", ":id"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                ":id"
+              ],
               "variable": [
                 {
                   "key": "id",
@@ -170,25 +200,18 @@
             },
             "url": {
               "raw": "{{base_url}}/api/products",
-              "host": ["{{base_url}}"],
-              "path": ["api", "products"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
             }
           },
           "response": []
         }
       ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:3000",
-      "type": "string"
-    },
-    {
-      "key": "admin_token",
-      "value": "your_jwt_token_here",
-      "type": "string"
     }
   ],
   "event": [
@@ -226,6 +249,16 @@
           "}"
         ]
       }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "admin_token",
+      "value": "your_jwt_token_here"
     }
   ]
 }
