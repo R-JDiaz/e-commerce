@@ -1,5 +1,9 @@
 <div class="cart-wrap">
-  <button type="button" class="cart-fab" (click)="checkout()" aria-label="Go to checkout">
+  <button
+    type="button"
+    class="cart-fab"
+    (click)="checkout()"
+    aria-label="Go to checkout">
     <span class="cart-fab__glow"></span>
     <svg class="cart-fab__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path d="M6 6h15l-1.5 7.5H8L6 6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -23,7 +27,7 @@
     </div>
     <div class="cart-popover__row">
       <span>Total</span>
-      <strong>₱{{ (totalPrice$ | async) | number:'1.2-2' }}</strong>
+      <strong>PHP {{ (totalPrice$ | async) | number:'1.2-2' }}</strong>
     </div>
     <p class="cart-popover__hint">Click to checkout</p>
   </div>

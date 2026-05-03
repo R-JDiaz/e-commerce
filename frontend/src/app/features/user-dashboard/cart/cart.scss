@@ -26,7 +26,7 @@
     0 18px 30px rgba(0, 0, 0, 0.28),
     0 0 0 0 rgba(212, 165, 125, 0.2);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
   overflow: visible;
 }
 
@@ -88,7 +88,7 @@
   opacity: 0;
   transform: translateY(8px) scale(0.98);
   pointer-events: none;
-  transition: opacity 0.18s ease, transform 0.18s ease;
+  transition: opacity 0.16s ease, transform 0.16s ease;
 }
 
 .cart-wrap:hover .cart-popover,
