@@ -46,6 +46,16 @@
     </div>
 
     <button
+      *ngIf="showSupportToggle"
+      type="button"
+      class="support-toggle"
+      (click)="toggleSupport()"
+      aria-label="Toggle chat support">
+      <span class="support-toggle__icon">?</span>
+      <span class="support-toggle__text">Chat</span>
+    </button>
+
+    <button
       *ngIf="links.length"
       type="button"
       class="menu-toggle"

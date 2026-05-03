@@ -104,7 +104,8 @@
 }
 
 .action-link,
-.logout {
+.logout,
+.support-toggle {
   border: 1px solid transparent;
   border-radius: 999px;
   padding: 0.76rem 1rem;
@@ -122,6 +123,30 @@
   background: rgba(255, 255, 255, 0.04);
   color: rgba(247, 232, 219, 0.82);
   border-color: rgba(227, 186, 140, 0.1);
+}
+
+.support-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: linear-gradient(135deg, rgba(107, 141, 136, 0.18), rgba(20, 14, 12, 0.04));
+  color: #f4f0eb;
+  border-color: rgba(131, 176, 173, 0.18);
+}
+
+.support-toggle__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(107, 141, 136, 0.2);
+  color: #d9f0ee;
+  font-weight: 800;
+}
+
+.support-toggle__text {
+  font-size: 0.9rem;
 }
 
 .action-link:hover,

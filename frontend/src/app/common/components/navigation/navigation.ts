@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/ro
 import { NotificationComponent } from '@common/components/notification/notification';
 import { NotificationManager } from '@common/services/managers/notification/notification.manager';
 import { filter, Observable, Subscription } from 'rxjs';
+import { SupportUiManager } from '@common/services/managers/support/support-ui';
 
 export type NavigationContext = 'landing' | 'dashboard' | 'orders' | 'profile' | 'checkout' | 'admin';
 
@@ -37,6 +38,7 @@ export class NavigationComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private notifManager: NotificationManager,
     private router: Router,
+    private supportUi: SupportUiManager,
   ) {}
 
   ngOnInit(): void {
@@ -144,6 +146,14 @@ export class NavigationComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get showLogout(): boolean {
     return this.context !== 'landing';
+  }
+
+  get showSupportToggle(): boolean {
+    return this.context !== 'admin';
+  }
+
+  toggleSupport(): void {
+    this.supportUi.toggle();
   }
 
   private setupLandingSectionObserver(): void {
