@@ -29,6 +29,14 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.bulk-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 /* SCROLLABLE LIST */
 .notification-list {
   flex: 1;
@@ -105,4 +113,19 @@ button {
 button:hover {
   background: #d18b47;
   color: #1e120c;
+}
+
+button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f5e6d8;
+}
+
+button.danger:hover {
+  background: #b45145;
+  color: #fff7f0;
 }

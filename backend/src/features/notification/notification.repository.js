@@ -41,6 +41,48 @@ export default class NotificationModel extends BaseModel {
     return this.findById(id, conn);
   }
 
+  static async markAllAsReadForUser(userId, db = null) {
+    const conn = db ?? this.pool;
+
+    const [result] = await conn.query(
+      `UPDATE ${this.table} SET is_read = TRUE WHERE user_id = ?`,
+      [userId]
+    );
+
+    return result.affectedRows;
+  }
+
+  static async markAllAsReadForAdmin(db = null) {
+    const conn = db ?? this.pool;
+
+    const [result] = await conn.query(
+      `UPDATE ${this.table} SET is_read = TRUE WHERE target_role = 'admin'`
+    );
+
+    return result.affectedRows;
+  }
+
+  static async deleteAllForUser(userId, db = null) {
+    const conn = db ?? this.pool;
+
+    const [result] = await conn.query(
+      `DELETE FROM ${this.table} WHERE user_id = ?`,
+      [userId]
+    );
+
+    return result.affectedRows;
+  }
+
+  static async deleteAllForAdmin(db = null) {
+    const conn = db ?? this.pool;
+
+    const [result] = await conn.query(
+      `DELETE FROM ${this.table} WHERE target_role = 'admin'`
+    );
+
+    return result.affectedRows;
+  }
+
   static async findAdminNotifications(db = null) {
   const conn = db ?? this.pool;
 

@@ -22,6 +22,11 @@ export class NotificationManager {
 
   constructor(private api: NotificationApiService, private auth: AuthManager) {}
 
+  private setNotifications(notifications: NotificationDTO[]): void {
+    this.notificationsSubject.next(notifications);
+    this.notifCountSubject.next(notifications.filter(n => !n.is_read).length);
+  }
+
   load(): void {
     const role = this.auth.getRole();
     if (role === 'admin') {
@@ -35,8 +40,7 @@ export class NotificationManager {
   refresh(notifications$: Observable<NotificationDTO[]>): void {
     notifications$.subscribe({
       next: (notifs) => {
-        this.notificationsSubject.next(notifs);
-        this.notifCountSubject.next(notifs.filter(n => !n.is_read).length);
+        this.setNotifications(notifs);
         this.isLoaded = true;
       },
       error: (err) => console.error('Failed to load notifications:', err)
@@ -62,7 +66,20 @@ export class NotificationManager {
         const updatedList = this.notificationsSubject.value.map(n =>
           n.id === updated.id ? updated : n
         );
-        this.notificationsSubject.next(updatedList);
+        this.setNotifications(updatedList);
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  markAllAsRead(): void {
+    this.api.markAllAsRead().subscribe({
+      next: () => {
+        const updatedList = this.notificationsSubject.value.map(n => ({
+          ...n,
+          is_read: true,
+        }));
+        this.setNotifications(updatedList);
       },
       error: (err) => console.error(err)
     });
@@ -72,7 +89,16 @@ export class NotificationManager {
     this.api.deleteNotification(id).subscribe({
       next: () => {
         const filtered = this.notificationsSubject.value.filter(n => n.id !== id);
-        this.notificationsSubject.next(filtered);
+        this.setNotifications(filtered);
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  deleteAllNotifications(): void {
+    this.api.deleteAllNotifications().subscribe({
+      next: () => {
+        this.setNotifications([]);
       },
       error: (err) => console.error(err)
     });

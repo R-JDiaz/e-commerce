@@ -31,9 +31,25 @@ export const markNotificationAsRead = async (id) => {
   return notif;
 };
 
+export const markAllNotificationsAsRead = async (user) => {
+  if (user.role === "admin") {
+    return await NotificationModel.markAllAsReadForAdmin();
+  }
+
+  return await NotificationModel.markAllAsReadForUser(user.id);
+};
+
 export const deleteNotification = async (id) => {
   const result = await NotificationModel.delete(id);
   return result;
+};
+
+export const deleteAllNotifications = async (user) => {
+  if (user.role === "admin") {
+    return await NotificationModel.deleteAllForAdmin();
+  }
+
+  return await NotificationModel.deleteAllForUser(user.id);
 };
 
 export const createOrderNotif = async (orderId, userId) => {

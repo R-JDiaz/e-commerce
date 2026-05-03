@@ -1,6 +1,4 @@
 <div class="notification-container">
-
-  <!-- 🔔 Header -->
   <div class="notification-header">
     <h3>Notifications</h3>
     <span class="badge" *ngIf="notifCount$ | async as unreadCount">
@@ -8,38 +6,51 @@
     </span>
   </div>
 
-  <!-- 📜 SCROLLABLE AREA -->
-  <div class="notification-list">
+  <ng-container *ngIf="notifications$ | async as notifications">
+    <div class="bulk-actions">
+      <button
+        type="button"
+        (click)="markAllAsRead()"
+        [disabled]="notifications.length === 0 || (notifCount$ | async) === 0">
+        Mark all
+      </button>
 
-    <!-- 📭 Empty state -->
-    <div *ngIf="(notifications$ | async)?.length === 0" class="empty">
-      No notifications yet
+      <button
+        type="button"
+        class="danger"
+        (click)="deleteAllNotifications()"
+        [disabled]="notifications.length === 0">
+        Delete all
+      </button>
     </div>
 
-    <!-- ITEMS -->
-    <div *ngFor="let notif of (notifications$ | async)" 
-         class="notification-item"
-         [class.unread]="!notif.is_read">
-
-      <div class="message">
-        {{ notif.message }}
+    <div class="notification-list">
+      <div *ngIf="notifications.length === 0" class="empty">
+        No notifications yet
       </div>
 
-      <div class="meta">
-        <small>{{ notif.created_at | date:'short' }}</small>
+      <div
+        *ngFor="let notif of notifications"
+        class="notification-item"
+        [class.unread]="!notif.is_read">
+        <div class="message">
+          {{ notif.message }}
+        </div>
+
+        <div class="meta">
+          <small>{{ notif.created_at | date:'short' }}</small>
+        </div>
+
+        <div class="actions">
+          <button *ngIf="!notif.is_read" type="button" (click)="markAsRead(notif.id)">
+            Mark as read
+          </button>
+
+          <button type="button" (click)="deleteNotification(notif.id)">
+            Delete
+          </button>
+        </div>
       </div>
-
-      <div class="actions">
-        <button *ngIf="!notif.is_read" (click)="markAsRead(notif.id)">
-          Mark as read
-        </button>
-
-        <button (click)="deleteNotification(notif.id)">
-          Delete
-        </button>
-      </div>
-
     </div>
-
-  </div>
+  </ng-container>
 </div>

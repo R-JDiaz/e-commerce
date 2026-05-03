@@ -27,8 +27,16 @@ export class NotificationComponent implements OnInit {
     this.notificationManager.markAsRead(id);
   }
 
+  markAllAsRead(): void {
+    this.notificationManager.markAllAsRead();
+  }
+
   deleteNotification(id: number): void {
     this.notificationManager.deleteNotification(id);
+  }
+
+  deleteAllNotifications(): void {
+    this.notificationManager.deleteAllNotifications();
   }
 
   getUnreadCount(): Observable<number> {
