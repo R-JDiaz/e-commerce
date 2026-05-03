@@ -5,7 +5,7 @@
   </div>
 
   <div class="testimonial-grid">
-    <article *ngFor="let testimonial of .topReviews$ | async" class="testimonial">
+    <article *ngFor="let testimonial of reviewManager.topReviews$ | async" class="testimonial">
       <div class="avatar">{{ testimonial.first_name[0] }}</div>
       <div>
         <h3>{{ testimonial.first_name }} {{ testimonial.last_name }}</h3>
