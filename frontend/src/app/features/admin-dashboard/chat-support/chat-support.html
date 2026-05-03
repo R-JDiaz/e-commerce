@@ -5,21 +5,6 @@
       <h2>Chat Support</h2>
       <p>Answer faster, keep the queue clear, and follow every customer thread in one place.</p>
     </div>
-
-    <div class="panel-header__stats" *ngIf="threads$ | async as threads">
-      <article class="stat-card">
-        <span>Threads</span>
-        <strong>{{ threads.length }}</strong>
-      </article>
-      <article class="stat-card">
-        <span>Open</span>
-        <strong>{{ getOpenThreadCount(threads) }}</strong>
-      </article>
-      <article class="stat-card">
-        <span>Unread</span>
-        <strong>{{ getUnreadThreadCount(threads) }}</strong>
-      </article>
-    </div>
   </header>
 
   <div class="support-grid" *ngIf="threads$ | async as threads">
@@ -38,6 +23,18 @@
           [(ngModel)]="searchQuery"
           placeholder="Search customer, email, or message..."
           aria-label="Search support threads" />
+      </div>
+
+      <div class="thread-filters" aria-label="Thread filters">
+        <button type="button" class="thread-filter" [class.active]="threadFilter === 'newest'" (click)="setThreadFilter('newest')">
+          Newest
+        </button>
+        <button type="button" class="thread-filter" [class.active]="threadFilter === 'unread'" (click)="setThreadFilter('unread')">
+          Unread
+        </button>
+        <button type="button" class="thread-filter" [class.active]="threadFilter === 'open'" (click)="setThreadFilter('open')">
+          Open
+        </button>
       </div>
 
       <div class="thread-list" *ngIf="filterThreads(threads).length > 0; else noThreads">
@@ -113,11 +110,14 @@
 
         <div class="conversation__actions">
           <span class="pill" [class.closed]="activeThread.status === 'closed'">{{ activeThread.status }}</span>
+          <button type="button" class="ghost-button" (click)="toggleCustomerProfile()">
+            {{ getCustomerProfileToggleLabel() }}
+          </button>
           <button type="button" class="ghost-button" (click)="closeThread(activeThread)">Mark done</button>
         </div>
       </header>
 
-      <div class="conversation__body">
+      <div class="conversation__body" [class.has-profile]="showCustomerProfile">
         <div class="timeline">
           <article
             class="message"
@@ -133,7 +133,7 @@
           </article>
         </div>
 
-        <aside class="context-panel">
+        <aside class="context-panel" *ngIf="showCustomerProfile">
           <div class="context-card">
             <p class="eyebrow">Customer profile</p>
             <h4>{{ getThreadLabel(activeThread) }}</h4>
