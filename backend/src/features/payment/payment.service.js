@@ -2,6 +2,7 @@ import OrdersRepository from "../order/order.repository.js";
 import PaymentsRepository from "./payment.repository.js";
 import AppError from "../../common/utilities/error.js";
 import { getFullPaymentDTO } from "../../common/dtos/payment.js";
+import { createPaymentNotif } from "../notification/notification.service.js";
 
 export default class PaymentService {
 
@@ -68,6 +69,7 @@ export default class PaymentService {
     // 10. Fetch full payment details (JOIN)
     const fullPayment = await PaymentsRepository.findFullById(paymentId);
 
+    await createPaymentNotif(order.id, userId);
     return getFullPaymentDTO(fullPayment);
   }
 

@@ -7,6 +7,8 @@ import {
     orderDetailDTO
 } from "../../common/dtos/order.js";
 
+import { requiredOneOf } from "../../common/validation/fields.js";
+import { createOrderNotif, handleAdminUpdateNotification, handleCustomerUpdateNotification, customNotification} from "../notification/notification.service.js";
 import OrderRepository from "./order.repository.js";
 import OrderItemRepository from "./order_items/order_items.repository.js";
 import { withTransaction } from "../../common/utilities/handler.js";
@@ -17,7 +19,8 @@ export default class OrderService {
     async buildOrderFromCart(userId, shipping_addr) {
         const cart = await CartService.getCart(userId);
 
-        if (!cart.products || cart.products.length === 0) {
+        
+        if (!cart.products || cart.products[0].product_id === null) {
             throw new AppError("Cart is empty", 400);
         }
 
@@ -27,7 +30,7 @@ export default class OrderService {
             (sum, item) => sum + (item.price * item.quantity),
             0
         );
-
+        
         return {
             user_id: userId,
             total_amount,
@@ -68,6 +71,9 @@ export default class OrderService {
             // 5. fetch full order (JOIN)
             const rows = await OrderRepository.findFullById(orderId, conn);
 
+            console.log('rows', userId);
+            await createOrderNotif(orderId, userId);
+            
             return orderDetailDTO(rows);
         });
     }
@@ -156,7 +162,9 @@ export default class OrderService {
         }
 
         const rows = await OrderRepository.findFullById(orderId);
-
+        
+        await handleCustomerUpdateNotification(orderId, rows[0].user_id, status);
+        await handleAdminUpdateNotification(orderId, status);
         return orderDetailDTO(rows);
     }
 
@@ -184,6 +192,7 @@ export default class OrderService {
 
         const updatedRows = await OrderRepository.findFullById(orderId);
 
+        await handleCustomerUpdateNotification(orderId, userId, 'cancelled');
         return orderListDTO(updatedRows);
     }
 }
