@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { Observable } from 'rxjs';
-
-import { AnalyticsData } from '@common/services/managers/analytics/analytics';
+import { AdminHeroMetric } from '../admin-dashboard.types';
 
 @Component({
   selector: 'app-admin-content-hero',
@@ -14,5 +12,5 @@ import { AnalyticsData } from '@common/services/managers/analytics/analytics';
 export class AdminContentHeroComponent {
   @Input() activeSectionLabel = '';
   @Input() activeSectionDescription = '';
-  @Input() analytics$!: Observable<AnalyticsData>;
+  @Input() metrics: AdminHeroMetric[] = [];
 }
