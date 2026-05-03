@@ -51,7 +51,6 @@ export default class BaseModel {
   }
 
   static async bulkCreate(data, conn = null) {
-    console.log("Bulk create data:", data);
     const db = conn ?? this.pool;
 
   if (Array.isArray(data)) {
@@ -63,11 +62,6 @@ export default class BaseModel {
       .join(",");
     
     const values = data.flatMap(obj => keys.map(k => obj[k]));
-
-    console.log("Bulk create values:", values);
-    console.log("keys:", keys);
-    console.log("placeholders:", placeholders);
-    console.log('table:', this.table);
 
     const [result] = await db.query(
       `INSERT INTO ${this.table} (${keys.join(",")})
