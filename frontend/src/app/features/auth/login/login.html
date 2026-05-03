@@ -30,26 +30,7 @@
 
     <section class="auth-form-panel">
       <div class="auth-header">
-        <div class="auth-toggle-group" role="tablist" aria-label="Login type">
-          <button
-            type="button"
-            (click)="loginType = 'user'"
-            [class.active]="loginType === 'user'"
-            class="auth-toggle"
-          >
-            Customer
-          </button>
-          <button
-            type="button"
-            (click)="loginType = 'admin'"
-            [class.active]="loginType === 'admin'"
-            class="auth-toggle"
-          >
-            Admin
-          </button>
-        </div>
-
-        <h2>{{ loginType === 'user' ? 'Customer' : 'Admin' }} Login</h2>
+        <h2>Login</h2>
         <p>Enter your credentials to access your account.</p>
       </div>
 
