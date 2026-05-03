@@ -1,0 +1,20 @@
+<aside class="sidebar">
+  <div class="sidebar-intro">
+    <p class="eyebrow">Admin command center</p>
+    <h1>Cafe operations</h1>
+    <p>
+      Manage the shop with a darker, calmer workspace that matches the rest of the experience.
+    </p>
+  </div>
+
+  <nav class="sidebar-nav" aria-label="Admin sections">
+    <button
+      *ngFor="let section of sections"
+      type="button"
+      [class.active]="activeSection === section.key"
+      (click)="selectSection(section.key)">
+      <span>{{ section.label }}</span>
+      <small>{{ section.description }}</small>
+    </button>
+  </nav>
+</aside>
