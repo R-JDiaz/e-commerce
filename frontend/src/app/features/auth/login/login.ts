@@ -14,7 +14,6 @@ import { ToastManager } from '@common/services/managers/toast/toast.manager';
   styleUrl: './login.scss',
 })
 export class Login implements OnInit {
-  loginType: 'user' | 'admin' = 'user';
   email: string = '';
   password: string = '';
   isLoading: boolean = false;
@@ -41,7 +40,7 @@ export class Login implements OnInit {
     this.isLoading = true;
     this.loadingMessage = 'Signing in...';
 
-     this.authService.login(this.email, this.password, this.loginType).pipe(
+     this.authService.login(this.email, this.password, 'user').pipe(
       finalize(() => {
         this.isLoading = false;
       })

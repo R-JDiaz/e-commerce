@@ -1,14 +1,15 @@
 :host {
   display: block;
+  color: #f7e8dc;
 }
 
 .auth-page {
-  min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem;
+  padding: clamp(1rem, 2vw, 2rem);
   overflow: hidden;
   background:
     radial-gradient(circle at 15% 15%, rgba(212, 165, 125, 0.14), transparent 18%),
@@ -58,7 +59,7 @@
 .auth-brand,
 .auth-form-panel {
   position: relative;
-  padding: 2rem;
+  padding: clamp(1.4rem, 2.4vw, 3rem);
 }
 
 .auth-brand {
@@ -70,7 +71,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 2.4rem;
+  gap: clamp(1.6rem, 3vw, 2.6rem);
 }
 
 .auth-back {
@@ -127,7 +128,7 @@
 .auth-kicker {
   display: inline-flex;
   margin: 0 0 1rem;
-  padding: 0.35rem 0.9rem;
+  padding: 0.4rem 0.95rem;
   border-radius: 999px;
   border: 1px solid rgba(227, 186, 140, 0.14);
   background: rgba(255, 255, 255, 0.05);
@@ -147,8 +148,8 @@
 .auth-brand h1 {
   margin: 0;
   max-width: 30rem;
-  font-size: clamp(2.4rem, 5vw, 4.25rem);
-  line-height: 1;
+  font-size: clamp(2.15rem, 4.2vw, 4.1rem);
+  line-height: 0.98;
   font-weight: 700;
   letter-spacing: -0.04em;
 }
@@ -156,9 +157,9 @@
 .auth-lead {
   max-width: 38rem;
   margin: 1.2rem 0 0;
-  color: rgba(247, 232, 219, 0.8);
-  font-size: 1rem;
-  line-height: 1.8;
+  color: rgba(247, 232, 219, 0.86);
+  font-size: clamp(0.96rem, 0.9rem + 0.15vw, 1.05rem);
+  line-height: 1.75;
 }
 
 .auth-highlights {
@@ -190,9 +191,9 @@
 }
 
 .auth-highlight span:last-child {
-  font-size: 0.92rem;
+  font-size: clamp(0.88rem, 0.84rem + 0.12vw, 0.98rem);
   line-height: 1.45;
-  color: rgba(247, 232, 219, 0.82);
+  color: rgba(247, 232, 219, 0.88);
 }
 
 .auth-form-panel {
@@ -200,6 +201,10 @@
     linear-gradient(180deg, rgba(24, 16, 13, 0.96), rgba(18, 12, 10, 0.98)),
     rgba(19, 12, 10, 0.95);
   border-top: 1px solid rgba(227, 186, 140, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.2rem;
 }
 
 .auth-ambient {
@@ -229,55 +234,22 @@
 .auth-header {
   position: relative;
   z-index: 1;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1rem;
 }
 
 .auth-header h2 {
   margin: 0;
-  color: #f7e8dc;
-  font-size: 2rem;
+  color: #fff2e7;
+  font-size: clamp(1.7rem, 1.45rem + 0.8vw, 2.25rem);
   font-weight: 800;
   letter-spacing: -0.03em;
 }
 
 .auth-header p {
   margin: 0.55rem 0 0;
-  color: rgba(247, 232, 219, 0.68);
-  font-size: 0.95rem;
+  color: rgba(247, 232, 219, 0.76);
+  font-size: clamp(0.92rem, 0.88rem + 0.12vw, 1rem);
   line-height: 1.65;
-}
-
-.auth-toggle-group {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  gap: 0.3rem;
-  padding: 0.3rem;
-  border-radius: 999px;
-  border: 1px solid rgba(227, 186, 140, 0.1);
-  background: rgba(255, 255, 255, 0.04);
-  margin-bottom: 1.25rem;
-}
-
-.auth-toggle {
-  border: 0;
-  border-radius: 999px;
-  padding: 0.72rem 1rem;
-  background: transparent;
-  color: rgba(247, 232, 219, 0.72);
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.22s ease, color 0.22s ease, transform 0.22s ease;
-}
-
-.auth-toggle:hover {
-  transform: translateY(-1px);
-}
-
-.auth-toggle.active {
-  background: linear-gradient(135deg, rgba(212, 165, 125, 0.95), rgba(123, 77, 58, 0.92));
-  color: #140f0d;
-  box-shadow: 0 10px 20px rgba(184, 95, 52, 0.18);
 }
 
 .auth-form {
@@ -293,29 +265,33 @@
 }
 
 .auth-field span {
-  color: #f1d9c4;
-  font-size: 0.875rem;
-  font-weight: 600;
+  color: rgba(241, 217, 196, 0.92);
+  font-size: clamp(0.84rem, 0.8rem + 0.1vw, 0.92rem);
+  font-weight: 650;
 }
 
 .auth-field input {
   width: 100%;
   border: 1px solid rgba(227, 186, 140, 0.12);
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 0.95rem 1rem;
-  color: #f7e8dc;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.98rem 1rem;
+  color: #fff2e7;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .auth-field input::placeholder {
-  color: rgba(247, 232, 219, 0.38);
+  color: rgba(247, 232, 219, 0.44);
 }
 
 .auth-field input:focus {
   border-color: rgba(227, 186, 140, 0.34);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.07);
   box-shadow: 0 0 0 4px rgba(212, 165, 125, 0.12);
 }
 
@@ -331,8 +307,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: rgba(247, 232, 219, 0.82);
-  font-size: 0.875rem;
+  color: rgba(247, 232, 219, 0.9);
+  font-size: clamp(0.84rem, 0.8rem + 0.1vw, 0.92rem);
 }
 
 .auth-checkbox input {
@@ -397,8 +373,8 @@
 
 .auth-footer p {
   margin: 0;
-  color: rgba(247, 232, 219, 0.68);
-  font-size: 0.95rem;
+  color: rgba(247, 232, 219, 0.75);
+  font-size: clamp(0.92rem, 0.88rem + 0.12vw, 1rem);
 }
 
 @keyframes spin {
@@ -420,7 +396,7 @@
 
 @media (min-width: 1024px) {
   .auth-card {
-    grid-template-columns: 1.02fr 0.98fr;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
   }
 
   .auth-brand,
@@ -431,12 +407,12 @@
 
 @media (max-width: 767px) {
   .auth-page {
-    padding: 1rem;
+    padding: 0.85rem;
   }
 
   .auth-brand,
   .auth-form-panel {
-    padding: 1.4rem;
+    padding: 1.25rem;
   }
 
   .auth-highlights {
