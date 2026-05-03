@@ -11,6 +11,7 @@ import paymentRoutes from "./features/payment/payment.routes.js";
 import categoryRoutes from "./features/category/category.routes.js";
 import reviewRoutes from "./features/review/review.routes.js";
 import notificationRoutes from "./features/notification/notification.routes.js";
+import supportRoutes from "./features/support/support.routes.js";
 
 import { globalErrorHandler } from './common/utilities/handler.js';
 const app = express();
@@ -34,6 +35,7 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/support', supportRoutes);
 
 app.use(globalErrorHandler);
 
