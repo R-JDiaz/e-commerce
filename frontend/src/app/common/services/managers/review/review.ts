@@ -24,7 +24,8 @@ export class ReviewManager {
 
   private readonly topReviewsSubject = new BehaviorSubject<TopReview[]>([]);
   readonly topReviews$ = this.topReviewsSubject.asObservable();
-
+  
+  REVIEW_COUNT = 3;
 
   constructor(private api: ReviewApiService) {}
 
@@ -55,7 +56,7 @@ export class ReviewManager {
   // ========================
   loadTopReviews(): void{
     if (!this.topReviewLoaded) {
-      this.api.getTopReviews(3).pipe(
+      this.api.getTopReviews(this.REVIEW_COUNT).pipe(
         tap(topReviews => {
           this.topReviewsSubject.next(topReviews);
           this.topReviewLoaded = true;
