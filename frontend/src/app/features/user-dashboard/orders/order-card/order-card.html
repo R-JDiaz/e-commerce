@@ -1,5 +1,4 @@
 <article class="order-card">
-  <!-- HEADER -->
   <div class="card-header clickable" (click)="toggle()">
     <div class="header-info">
       <p class="order-id">Order #{{ order.id }}</p>
@@ -10,16 +9,17 @@
       <span class="status-badge" [ngClass]="order.status">
         {{ order.status }}
       </span>
-      <button class="toggle-icon" aria-label="Toggle details">
-        {{ isExpanded ? '−' : '+' }}
+      <button
+        type="button"
+        class="toggle-icon"
+        aria-label="Toggle details"
+        (click)="$event.stopPropagation(); toggle()">
+        {{ isExpanded ? '-' : '+' }}
       </button>
     </div>
   </div>
 
-  <!-- CONTENT -->
   <div class="card-content" *ngIf="isExpanded">
-
-    <!-- ITEMS LIST -->
     <div class="items-list">
       <h4 class="order-title">Order Items</h4>
       <div class="item-row" *ngFor="let item of order.items">
@@ -28,61 +28,67 @@
       </div>
     </div>
 
-    <!-- SHIPPING TRACKER -->
     <div class="shipping-tracker" *ngIf="order.tracking?.length">
       <h4 class="tracker-title">Shipping Tracking</h4>
 
       <div class="track-steps">
-        <div class="track-step" *ngFor="let step of order.tracking">
-          <div class="step-indicator" [ngClass]="step.status"></div>
+        <div class="track-step" *ngFor="let step of order.tracking; let last = last; let i = index">
+          <div class="step-rail">
+            <span class="step-node" [ngClass]="step.status"></span>
+            <span class="step-line" *ngIf="!last"></span>
+          </div>
+
           <div class="step-info">
-            <p class="step-label">{{ step.label }}</p>
+            <div class="step-head">
+              <p class="step-label">{{ step.label }}</p>
+              <span class="step-index">0{{ i + 1 }}</span>
+            </div>
             <small *ngIf="step.date" class="step-date">{{ step.date }}</small>
+            <p class="step-copy">
+              {{ step.status === 'done' ? 'Completed milestone' : step.status === 'current' ? 'Current milestone' : 'Waiting for this step' }}
+            </p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- PAYMENT SECTION -->
     <div class="payment-section" *ngIf="order.status === 'pending'">
-      <label class="payment-label">Enter payment ≥ ₱{{ order.total }}</label>
+      <label class="payment-label">Enter payment >= PHP {{ order.total }}</label>
       <input type="number" [(ngModel)]="paymentAmount" class="payment-input" placeholder="Enter amount" />
       <button class="btn-primary" (click)="payOrder()" [disabled]="!isPaymentValid">
         Pay Now
       </button>
     </div>
 
-    <!-- REVIEW SECTION -->
     <div class="review-section" *ngIf="order.status === 'completed'">
       <div class="div" *ngIf="order.review == null">
-      <h4 class="review-title">Write a Review</h4>
+        <h4 class="review-title">Write a Review</h4>
 
-      <div class="rating-stars">
-        <span
-          *ngFor="let star of [1,2,3,4,5]"
-          (click)="setRating(star)"
-          [class.active]="star <= reviewRating">
-          ★
-        </span>
-      </div>
+        <div class="rating-stars">
+          <span
+            *ngFor="let star of [1,2,3,4,5]"
+            (click)="setRating(star)"
+            [class.active]="star <= reviewRating">
+            *
+          </span>
+        </div>
 
-      <textarea [(ngModel)]="reviewComment" class="review-input" placeholder="Share your experience..." rows="3"></textarea>
+        <textarea [(ngModel)]="reviewComment" class="review-input" placeholder="Share your experience..." rows="3"></textarea>
 
-      <button class="btn-secondary" (click)="submitReview()" [disabled]="isLoading()">
-        Submit Review
-      </button>
+        <button class="btn-secondary" (click)="submitReview()" [disabled]="isLoading()">
+          Submit Review
+        </button>
       </div>
       <h4 class="review-title">MY REVIEW</h4>
       <p *ngIf="order.review" class="existing-review">
-        ⭐ {{ order.review.rating }} - {{ order.review.comment }}
+        {{ order.review.rating }} / 5 - {{ order.review.comment }}
       </p>
     </div>
 
-    <!-- FOOTER -->
     <div class="card-footer">
       <span class="total-label">Total</span>
       <div class="footer-actions">
-        <strong class="total-amount">₱{{ order.total }}</strong>
+        <strong class="total-amount">PHP {{ order.total }}</strong>
 
         <button
           class="btn-receive"

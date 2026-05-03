@@ -4,20 +4,20 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  border: 1px solid rgba(92, 64, 51, 0.08);
+  border: 1px solid rgba(227, 186, 140, 0.1);
   border-radius: 1rem;
   padding: 1rem;
-  background: linear-gradient(180deg, rgba(255, 250, 244, 0.95), rgba(247, 243, 238, 0.95));
+  background: linear-gradient(180deg, rgba(31, 19, 15, 0.94), rgba(20, 13, 11, 0.98));
   cursor: pointer;
   text-align: left;
-  color: #3b2a22;
+  color: #f7e8dc;
 
   .eyebrow {
-    margin: 0 0 0.2rem;
+    margin: 0 0 0.25rem;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.16em;
     font-size: 0.7rem;
-    color: #8b7a6e;
+    color: #d4a57d;
   }
 
   h2 {
@@ -27,7 +27,7 @@
 
   p {
     margin: 0.35rem 0 0;
-    color: #7b6a5f;
+    color: rgba(246, 228, 214, 0.72);
     font-size: 0.88rem;
     line-height: 1.55;
   }
@@ -36,10 +36,10 @@
     flex-shrink: 0;
     padding: 0.45rem 0.75rem;
     border-radius: 999px;
-    background: #f3e8d7;
-    color: #7a4b28;
+    background: rgba(212, 165, 125, 0.12);
+    color: #e7c8ae;
     font-size: 0.82rem;
-    font-weight: 700;
+    font-weight: 800;
   }
 }
 
@@ -67,24 +67,47 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  color: #3b2a22;
+  color: #f7e8dc;
   font-size: 0.92rem;
   font-weight: 600;
 }
 
 .section-body input {
   min-height: 2.95rem;
-  border: 1px solid #e6ddd7;
-  border-radius: 0.9rem;
+  border: 1px solid rgba(227, 186, 140, 0.12);
+  border-radius: 0.95rem;
   padding: 0.75rem 0.95rem;
-  background: #fff;
-  color: #3b2a22;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f7e8dc;
 
   &:focus {
     outline: none;
-    border-color: #f59e0b;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.14);
+    border-color: rgba(227, 186, 140, 0.26);
+    box-shadow: 0 0 0 4px rgba(212, 165, 125, 0.1);
   }
+}
+
+.error {
+  margin-top: 0.35rem;
+
+  small {
+    display: block;
+    color: #fca5a5;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+}
+
+input.ng-touched.ng-invalid {
+  border: 1px solid rgba(248, 113, 113, 0.7);
+  background-color: rgba(248, 113, 113, 0.06);
+}
+
+input:focus {
+  outline: none;
+  border-color: rgba(227, 186, 140, 0.26);
+  box-shadow: 0 0 0 4px rgba(212, 165, 125, 0.1);
 }
 
 @media (max-width: 760px) {
@@ -97,28 +120,4 @@
   .three-up {
     grid-template-columns: 1fr;
   }
-}
-.error {
-  margin-top: 0.35rem;
-
-  small {
-    display: block;
-    color: #e74c3c;
-    font-size: 0.75rem;
-    font-weight: 500;
-    line-height: 1.2;
-  }
-}
-
-/* Highlight invalid inputs after user interaction */
-input.ng-touched.ng-invalid {
-  border: 1px solid #e74c3c;
-  background-color: rgba(231, 76, 60, 0.05);
-}
-
-/* Optional: smooth focus effect */
-input:focus {
-  outline: none;
-  border-color: #5c4033;
-  box-shadow: 0 0 0 2px rgba(92, 64, 51, 0.15);
 }

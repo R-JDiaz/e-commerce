@@ -1,8 +1,13 @@
 <section class="panel coffee-theme">
+  <div class="panel-head">
+    <div>
+      <p class="eyebrow">Operations</p>
+      <h2>Orders</h2>
+      <p>Search and process the queue from a darker, calmer control surface.</p>
+    </div>
+  </div>
 
-  <!-- TOP BAR -->
   <div class="toolbar">
-
     <input
       type="text"
       placeholder="Search order ID or user..."
@@ -21,22 +26,16 @@
       <option value="newest">Newest First</option>
       <option value="alpha">Alphabetical</option>
     </select>
-
   </div>
 
   <ng-container *ngIf="orders$ | async as orders">
-
     <div class="empty" *ngIf="orders.length === 0">
-      No coffee orders found ☕
+      No coffee orders found.
     </div>
 
     <div class="list">
-
       <article class="order-card" *ngFor="let order of orders">
-
-        <!-- HEADER -->
         <div class="header">
-
           <div>
             <h3 class="order-id">#{{ order.id }}</h3>
             <p class="meta">
@@ -44,18 +43,13 @@
             </p>
           </div>
 
-          <div class="amount">
-            ₱{{ order.total }}
-          </div>
-
+          <div class="amount">₱{{ order.total }}</div>
         </div>
 
-        <!-- STATUS -->
         <div class="status-chip" [ngClass]="order.status">
           {{ order.status }}
         </div>
 
-        <!-- ITEMS -->
         <div class="items">
           <div class="item" *ngFor="let item of order.items">
             <span>{{ item.product.name }}</span>
@@ -63,9 +57,7 @@
           </div>
         </div>
 
-        <!-- ⚡ NEW QUICK ACTION BUTTONS -->
         <div class="actions">
-
           <button
             class="btn btn-accept"
             *ngIf="order.status === 'paid' || order.status === 'pending'"
@@ -87,24 +79,18 @@
             *ngIf="order.status === 'pending'"
             (click)="updateOrder(order.userId, order.id, 'cancelled')"
           >
-           Reject
+            Reject
           </button>
 
           <button
-          class="btn btn-cancel"
+            class="btn btn-cancel"
             *ngIf="order.status !== 'pending' && order.status !== 'cancelled'"
             (click)="updateOrder(order.userId, order.id, 'cancelled')"
           >
             Cancel
           </button>
-
         </div>
-
-
       </article>
-
     </div>
-
   </ng-container>
-
 </section>

@@ -1,78 +1,48 @@
 <section class="panel">
-  <h2>Analytics</h2>
-
-  <div class="grid" *ngIf="data$ | async as data">
-
-    <!-- KPI CARDS -->
-    <article class="card">
-      <span class="label">Total Sales</span>
-      <strong>₱{{ data.totalSales.toFixed(2) }}</strong>
-      <small class="trend up">↑ {{ data.salesGrowth }}%</small>
-    </article>
-
-    <article class="card">
-      <span class="label">Orders Today</span>
-      <strong>{{ data.ordersToday }}</strong>
-      <small class="trend">{{ data.ordersYesterday }} yesterday</small>
-    </article>
-
-    <article class="card">
-      <span class="label">Active Users</span>
-      <strong>{{ data.activeUsers }}</strong>
-      <small class="trend up">↑ {{ data.userGrowth }}%</small>
-    </article>
-
-    <article class="card">
-      <span class="label">Avg. Order Value</span>
-      <strong>₱{{ data.avgOrderValue.toFixed(2) }}</strong>
-      <small class="trend down">↓ {{ data.avgChange }}%</small>
-    </article>
-
-    <!-- NEW KPI CARDS -->
-    <article class="card">
-      <span class="label">Pending Orders</span>
-      <strong>{{ data.pendingOrders }}</strong>
-    </article>
-
-    <article class="card">
-      <span class="label">Completed Orders</span>
-      <strong>{{ data.completedOrders }}</strong>
-    </article>
-
-    <article class="card">
-      <span class="label">Cancelled Orders</span>
-      <strong>{{ data.cancelledOrders }}</strong>
-    </article>
-
-    <article class="card">
-      <span class="label">Conversion Rate</span>
-      <strong>{{ data.conversionRate.toFixed(2) }}%</strong>
-    </article>
-  </div>
-
-  <!-- CHART SECTION -->
-  <div class="charts">
-    <div class="chart-box">
-      <h3>Sales Overview</h3>
-      <canvas id="salesChart"></canvas>
-    </div>
-
-    <div class="chart-box">
-      <h3>Orders Breakdown</h3>
-      <canvas id="ordersChart"></canvas>
+  <div class="panel-head">
+    <div>
+      <p class="eyebrow">Overview</p>
+      <h2>Analytics</h2>
+      <p>Track sales, demand, and store momentum from a single dashboard surface.</p>
     </div>
   </div>
 
-  <!-- ACTIVITY FEED -->
-<!--   <aside class="activity">
-    <h3>Recent Activity</h3>
+  <div class="featured-shell" *ngIf="data$ | async as data">
+    <article class="featured-card">
+      <div class="featured-copy">
+        <p class="label">Featured metric</p>
+        <h3>{{ getSelectedMetric().label }}</h3>
+        <p class="description">{{ getSelectedMetric().description }}</p>
+      </div>
 
-    <ul *ngIf="data$ | async as data">
-      <li *ngFor="let item of data.recentActivity">
-        {{ item.message }}
-        <small>{{ item }}</small>
-      </li>
-    </ul>
-  </aside> -->
+      <div class="featured-value">
+        <strong>{{ formatMetricValue(data) }}</strong>
+        <small>{{ getMetricDelta(data) }}</small>
+      </div>
 
+      <div class="metric-switcher" role="tablist" aria-label="Featured metric selector">
+        <button
+          *ngFor="let metric of featuredMetrics"
+          type="button"
+          class="metric-pill"
+          [class.active]="selectedMetric === metric.key"
+          (click)="selectMetric(metric.key)">
+          <span>{{ metric.label }}</span>
+          <small>{{ metric.helper }}</small>
+        </button>
+      </div>
+    </article>
+
+    <div class="charts">
+      <div class="chart-box">
+        <h3>Sales Overview</h3>
+        <canvas id="salesChart"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h3>Orders Breakdown</h3>
+        <canvas id="ordersChart"></canvas>
+      </div>
+    </div>
+  </div>
 </section>

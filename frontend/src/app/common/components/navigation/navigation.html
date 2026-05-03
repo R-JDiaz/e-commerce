@@ -9,37 +9,48 @@
 
   <nav class="desktop-links" aria-label="Primary navigation" *ngIf="links.length">
     <ng-container *ngFor="let link of links">
-      <a *ngIf="link.route; else externalDesktop" [routerLink]="link.href">{{ link.label }}</a>
-      <ng-template #externalDesktop>
-        <a [href]="link.href">{{ link.label }}</a>
+      <a
+        *ngIf="link.route; else anchorDesktop"
+        [routerLink]="link.href"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        [ariaCurrentWhenActive]="'page'"
+        (click)="onLinkClick(link)">
+        {{ link.label }}
+      </a>
+
+      <ng-template #anchorDesktop>
+        <a
+          [href]="link.href"
+          [class.is-active]="isLinkActive(link)"
+          [attr.aria-current]="isLinkActive(link) ? 'page' : null"
+          (click)="onLinkClick(link)">
+          {{ link.label }}
+        </a>
       </ng-template>
     </ng-container>
   </nav>
 
   <div class="actions">
+    <div class="notif-wrapper" *ngIf="context !== 'landing'">
+      <button class="notif-btn" (click)="toggleNotifications()" aria-label="Toggle notifications">
+        <span class="notif-icon">N</span>
+        <span class="notif-badge" *ngIf="notifCount$ | async as unreadCount">
+          {{ unreadCount }}
+        </span>
+      </button>
 
-    <!-- 🔔 Notification Bell -->
-  <div class="notif-wrapper" *ngIf="context !== 'landing'">
-    <button class="notif-btn" (click)="toggleNotifications()">
-      🔔
-
-      <!-- Badge -->
-      <span class="notif-badge" *ngIf="notifCount$ | async as unreadCount">
-        {{ unreadCount }}
-      </span>
-    </button>
-
-    <!-- Dropdown -->
-    <div class="notif-dropdown" *ngIf="notifOpen">
-      <app-notifications></app-notifications>
+      <div class="notif-dropdown" *ngIf="notifOpen">
+        <app-notifications></app-notifications>
+      </div>
     </div>
-  </div>
 
     <button
       *ngIf="links.length"
       type="button"
       class="menu-toggle"
       (click)="toggleMobileMenu()"
+      [attr.aria-expanded]="mobileOpen"
       aria-label="Toggle navigation">
       <span></span>
       <span></span>
@@ -53,11 +64,24 @@
 
 <div class="mobile-links" *ngIf="mobileOpen && links.length">
   <ng-container *ngFor="let link of links">
-    <a *ngIf="link.route; else externalMobile" [routerLink]="link.href" (click)="closeMobileMenu()">
+    <a
+      *ngIf="link.route; else anchorMobile"
+      [routerLink]="link.href"
+      routerLinkActive="is-active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [ariaCurrentWhenActive]="'page'"
+      (click)="closeMobileMenu()">
       {{ link.label }}
     </a>
-    <ng-template #externalMobile>
-      <a [href]="link.href" (click)="closeMobileMenu()">{{ link.label }}</a>
+
+    <ng-template #anchorMobile>
+      <a
+        [href]="link.href"
+        [class.is-active]="isLinkActive(link)"
+        [attr.aria-current]="isLinkActive(link) ? 'page' : null"
+        (click)="onLinkClick(link)">
+        {{ link.label }}
+      </a>
     </ng-template>
   </ng-container>
 </div>

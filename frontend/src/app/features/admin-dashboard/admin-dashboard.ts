@@ -1,12 +1,15 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
+import { NavigationComponent } from '@common/components/navigation/navigation';
+import { AnalyticsData, AnalyticsManager } from '@common/services/managers/analytics/analytics';
+import { AuthManager } from '@common/services/managers/auth/auth';
+import { NotificationManager } from '@common/services/managers/notification/notification.manager';
 import { ProductListItem } from '@common/models/product';
 import { ProductManager } from '@common/services/managers/product/product';
-import { Order, OrderManager } from '@common/services/managers/order/order';
-import { AuthManager } from '@common/services/managers/auth/auth';
-import { NavigationComponent } from '@common/components/navigation/navigation';
+import { OrderManager } from '@common/services/managers/order/order';
 import { AdminSiteLinksComponent } from './site-links/site-links';
 
 import { AdminAnalyticsComponent } from './analytics/analytics';
@@ -14,10 +17,14 @@ import { AdminOrdersComponent } from './orders/orders';
 import { AdminProductsComponent } from './products/products';
 import { AdminSettingsComponent } from './settings/settings';
 import { AdminUsersComponent } from './users/users';
-import { CartManager } from '@common/services/managers/cart/cart';
-import { NotificationManager } from '@common/services/managers/notification/notification.manager';
 
-type AdminSection = 'analytics' | 'products' | 'orders' | 'users' | 'settings' | 'site-links';
+type AdminSection =
+  | 'analytics'
+  | 'products'
+  | 'orders'
+  | 'users'
+  | 'settings'
+  | 'site-links';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -37,41 +44,80 @@ type AdminSection = 'analytics' | 'products' | 'orders' | 'users' | 'settings' |
 })
 export class AdminDashboard implements OnInit {
   products: ProductListItem[] = [];
-  orders: Order[] = [];
+  analytics$!: Observable<AnalyticsData>;
+
   isLoading = false;
   errorMessage = '';
-  activeSection: AdminSection = 'analytics';
 
-  totalSales = 12345;
-  ordersToday = 156;
-  activeUsers = 2847;
-  avgOrderValue = 24.5;
+  activeSection: AdminSection = 'analytics';
 
   constructor(
     private productService: ProductManager,
     private orderManager: OrderManager,
+    private analyticsManager: AnalyticsManager,
     private notifManager: NotificationManager,
     private authService: AuthManager,
     private router: Router
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.notifManager.load();
+    this.orderManager.adminLoad();
+    this.analyticsManager.init();
+    this.analytics$ = this.analyticsManager.analytics$;
     this.loadProducts();
-    this.loadOrders();
   }
 
   setSection(section: AdminSection): void {
     this.activeSection = section;
   }
 
-  loadProducts() {
+  get activeSectionLabel(): string {
+    switch (this.activeSection) {
+      case 'analytics':
+        return 'Analytics';
+      case 'products':
+        return 'Products';
+      case 'orders':
+        return 'Orders';
+      case 'users':
+        return 'Users';
+      case 'settings':
+        return 'Settings';
+      case 'site-links':
+        return 'Footer Links';
+      default:
+        return 'Analytics';
+    }
+  }
+
+  get activeSectionDescription(): string {
+    switch (this.activeSection) {
+      case 'analytics':
+        return 'Watch sales, order volume, and store activity from a calm control room.';
+      case 'products':
+        return 'Review the catalog, edit product details, and keep the menu fresh.';
+      case 'orders':
+        return 'Process incoming orders with a faster workflow.';
+      case 'users':
+        return 'Check customer access and roles.';
+      case 'settings':
+        return 'Update admin security settings.';
+      case 'site-links':
+        return 'Manage footer links and branding.';
+      default:
+        return 'Monitor the coffee shop dashboard.';
+    }
+  }
+
+  loadProducts(): void {
     this.isLoading = true;
+
     this.productService.getProducts().subscribe({
       next: (products: ProductListItem[]) => {
         this.products = products;
-        this.errorMessage = '';
         this.isLoading = false;
+        this.errorMessage = '';
       },
       error: () => {
         this.errorMessage = 'Failed to load products';
@@ -84,34 +130,14 @@ export class AdminDashboard implements OnInit {
     this.loadProducts();
   }
 
-  loadOrders() {
-    this.orderManager.adminLoad();
-    this.orderManager.getAllOrders().subscribe({
-      next: (orders: any) => {
-        this.orders = orders;
-        this.updateAnalytics();
-      },
-      error: (error: any) => {
-        console.error('Failed to load orders', error);
-      },
-    });
-  }
-
-  updateAnalytics() {
-    this.totalSales = this.orders.reduce((sum, order) => sum + order.total, 0);
-    this.ordersToday = this.orders.filter(order =>
-      new Date(order.createdAt).toDateString() === new Date().toDateString()
-    ).length;
-    this.avgOrderValue = this.orders.length > 0 ? this.totalSales / this.orders.length : 0;
-  }
-
-  updateOrderStatus(orderId: string, status: Order['status']) {
+  updateOrderStatus(
+    orderId: string,
+    status: 'pending' | 'accepted' | 'paid' | 'shipped' | 'completed' | 'cancelled' | 'refund'
+  ): void {
     this.orderManager.updateOrderStatus(orderId, status).subscribe({
-      next: () => {
-        this.loadOrders();
-      },
-      error: (error: any) => {
-        this.errorMessage = error ?? 'Failed to update order status';
+      next: () => {},
+      error: (error: unknown) => {
+        this.errorMessage = error ? String(error) : 'Failed to update order status';
       },
     });
   }
@@ -120,7 +146,7 @@ export class AdminDashboard implements OnInit {
     this.errorMessage = `User ${userId} marked as ${status}.`;
   }
 
-  logout() {
+  logout(): void {
     this.notifManager.clearNotifications();
     this.orderManager.clearState();
     this.authService.logout();

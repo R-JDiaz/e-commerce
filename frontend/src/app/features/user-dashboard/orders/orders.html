@@ -1,8 +1,8 @@
 <app-navigation context="orders" (logout)="logout()"></app-navigation>
 
-<div class="list" *ngIf="!isLoading && !errorMessage">
-
-  <header class="topbar">
+<div class="orders-page">
+  <section class="shell">
+    <header class="topbar">
       <div>
         <p class="eyebrow">Orders</p>
         <h1>Order history</h1>
@@ -12,11 +12,50 @@
         Back to shop
       </button>
     </header>
-  <app-order-card
-  *ngFor="let order of orders$ | async"
-  [order]="order"
-  (pay)="payAmount($event)"
-  (received)="markReceived($event)">
-  </app-order-card> 
 
+    <section class="filters-panel" aria-label="Order filters">
+      <div class="filter-group">
+        <label for="statusFilter">Status</label>
+        <select id="statusFilter" [ngModel]="statusFilter" (ngModelChange)="setStatusFilter($event)">
+          <option *ngFor="let option of statusOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="sortMode">Sort</label>
+        <select id="sortMode" [ngModel]="sortMode" (ngModelChange)="setSortMode($event)">
+          <option *ngFor="let option of sortOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+
+      <button type="button" class="reset" (click)="setStatusFilter('all'); setSortMode('newest')">
+        Reset filters
+      </button>
+    </section>
+
+    <div class="state" *ngIf="isLoading">Loading your orders...</div>
+    <div class="state error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <ng-container *ngIf="filteredOrders$ | async as orders">
+      <div class="orders-grid" *ngIf="orders.length > 0; else emptyOrders">
+        <app-order-card
+          *ngFor="let order of orders; trackBy: trackByOrderId"
+          [order]="order"
+          (pay)="payAmount($event)"
+          (received)="markReceived($event)">
+        </app-order-card>
+      </div>
+    </ng-container>
+
+    <ng-template #emptyOrders>
+      <div class="empty-state" *ngIf="!isLoading">
+        <h2>No orders match these filters</h2>
+        <p>Try a different status or sort mode to find the orders you want.</p>
+      </div>
+    </ng-template>
+  </section>
 </div>

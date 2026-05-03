@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, Subscription } from 'rxjs';
 import { OrderManager, Order } from '../order/order';
 import { UserManager } from '../user/user';
-import { OrderSummaryDTO } from '@common/dtos/order.dto';
 
 export interface ActivityItem {
   type: 'order' | 'user' | 'system';
@@ -31,8 +30,12 @@ export interface AnalyticsData {
   avgChange: number;
 
   pendingOrders: number;
+  acceptedOrders: number;
+  paidOrders: number;
+  shippedOrders: number;
   completedOrders: number;
   cancelledOrders: number;
+  refundOrders: number;
   conversionRate: number;
 }
 
@@ -43,6 +46,7 @@ export class AnalyticsManager {
   private readonly analyticsSubject = new BehaviorSubject<AnalyticsData>(
     this.getDefault()
   );
+  private analyticsSubscription?: Subscription;
 
   readonly analytics$ = this.analyticsSubject.asObservable();
 
@@ -52,7 +56,11 @@ export class AnalyticsManager {
   ) { }
 
   public init(): void {
-    combineLatest([
+    if (this.analyticsSubscription) {
+      return;
+    }
+
+    this.analyticsSubscription = combineLatest([
       this.orderManager.orders$,
       this.orderManager.orderData$,
       this.userManager.getUsers(),
@@ -76,8 +84,12 @@ export class AnalyticsManager {
     let ordersYesterday = 0;
     let weeklySales : WeeklySales[] = this.generateWeeklySales();
     let pending = 0;
+    let accepted = 0;
+    let paid = 0;
+    let shipped = 0;
     let completed = 0;
     let cancelled = 0;
+    let refund = 0;
 
     
     const yesterdayDate = new Date();
@@ -95,11 +107,23 @@ export class AnalyticsManager {
         case 'pending':
           pending++;
           break;
+        case 'accepted':
+          accepted++;
+          break;
+        case 'paid':
+          paid++;
+          break;
+        case 'shipped':
+          shipped++;
+          break;
         case 'completed':
           completed++;
           break;
         case 'cancelled':
           cancelled++;
+          break;
+        case 'refund':
+          refund++;
           break;
       }
     });
@@ -145,8 +169,12 @@ export class AnalyticsManager {
       avgChange,
 
       pendingOrders: pending,
+      acceptedOrders: accepted,
+      paidOrders: paid,
+      shippedOrders: shipped,
       completedOrders: completed,
       cancelledOrders: cancelled,
+      refundOrders: refund,
       conversionRate,
     };
   }
@@ -169,8 +197,12 @@ export class AnalyticsManager {
       avgChange: 0,
 
       pendingOrders: 0,
+      acceptedOrders: 0,
+      paidOrders: 0,
+      shippedOrders: 0,
       completedOrders: 0,
       cancelledOrders: 0,
+      refundOrders: 0,
       conversionRate: 0,
     };
   }

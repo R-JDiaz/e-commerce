@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject, finalize, Observable, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, finalize, map, Observable, tap } from 'rxjs';
 
 import { AuthManager } from '@common/services/managers/auth/auth';
 import { Order, OrderData, OrderManager } from '@common/services/managers/order/order';
@@ -16,6 +17,7 @@ import { ToastManager } from '@common/services/managers/toast/toast.manager';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     NavigationComponent,
     OrderCardComponent
   ],
@@ -26,9 +28,32 @@ import { ToastManager } from '@common/services/managers/toast/toast.manager';
 export class Orders implements OnInit {
 
   orders$!: Observable<Order[]>;
-  orderData$!: Observable<OrderData>
+  filteredOrders$!: Observable<Order[]>;
+  orderData$!: Observable<OrderData>;
   isLoading = false;
   errorMessage = '';
+  statusFilter = 'all';
+  sortMode: 'newest' | 'oldest' | 'alpha-asc' | 'alpha-desc' = 'newest';
+  private readonly statusFilterSubject = new BehaviorSubject<string>(this.statusFilter);
+  private readonly sortModeSubject = new BehaviorSubject<'newest' | 'oldest' | 'alpha-asc' | 'alpha-desc'>(this.sortMode);
+
+  readonly statusOptions = [
+    { value: 'all', label: 'All status' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'accepted', label: 'Accepted' },
+    { value: 'paid', label: 'Paid' },
+    { value: 'shipped', label: 'Shipped' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'cancelled', label: 'Cancelled' },
+    { value: 'refund', label: 'Refund' },
+  ] as const;
+
+  readonly sortOptions = [
+    { value: 'newest', label: 'Newest first' },
+    { value: 'oldest', label: 'Oldest first' },
+    { value: 'alpha-asc', label: 'A to Z' },
+    { value: 'alpha-desc', label: 'Z to A' },
+  ] as const;
 
   constructor(
     private orderManager: OrderManager,
@@ -39,12 +64,37 @@ export class Orders implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.loadOrders();
+    this.filteredOrders$ = combineLatest([
+      this.orderManager.orderFull$,
+      this.statusFilterSubject,
+      this.sortModeSubject,
+    ]).pipe(
+      tap(() => {
+        this.isLoading = false;
+      }),
+      map(([orders, status, sortMode]) => this.filterAndSortOrders(orders, status, sortMode)),
+    );
   }
 
   loadOrders(): void {
     this.orderManager.userLoad();
     this.orders$ = this.orderManager.orderFull$;
+  }
+
+  setStatusFilter(value: string): void {
+    this.statusFilter = value;
+    this.statusFilterSubject.next(value);
+  }
+
+  setSortMode(value: 'newest' | 'oldest' | 'alpha-asc' | 'alpha-desc'): void {
+    this.sortMode = value;
+    this.sortModeSubject.next(value);
+  }
+
+  trackByOrderId(_: number, order: Order): string {
+    return order.id;
   }
 
   payAmount(event: { id: string; amount: number }): void {
@@ -99,5 +149,35 @@ export class Orders implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  private filterAndSortOrders(
+    orders: Order[],
+    statusFilter: string,
+    sortMode: 'newest' | 'oldest' | 'alpha-asc' | 'alpha-desc',
+  ): Order[] {
+    const filtered = statusFilter === 'all'
+      ? [...orders]
+      : orders.filter((order) => order.status === statusFilter);
+
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortMode) {
+        case 'oldest':
+          return this.compareDates(a.createdAt, b.createdAt);
+        case 'alpha-asc':
+          return a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' });
+        case 'alpha-desc':
+          return b.id.localeCompare(a.id, undefined, { numeric: true, sensitivity: 'base' });
+        case 'newest':
+        default:
+          return this.compareDates(b.createdAt, a.createdAt);
+      }
+    });
+
+    return sorted;
+  }
+
+  private compareDates(left: string, right: string): number {
+    return new Date(left).getTime() - new Date(right).getTime();
   }
 }

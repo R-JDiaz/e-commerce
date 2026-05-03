@@ -1,5 +1,9 @@
 <section class="panel">
-  <h2>Settings</h2>
+  <div class="panel-head">
+    <p class="eyebrow">Account</p>
+    <h2>Settings</h2>
+    <p>Keep the admin profile and password tools in the same coffee-dark workspace.</p>
+  </div>
 
   <div class="forms">
     <form class="card" [formGroup]="settingsForm" (ngSubmit)="saveSettings()">

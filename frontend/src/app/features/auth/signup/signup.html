@@ -1,57 +1,77 @@
-<div class="signup-page">
-  <div class="signup-card">
-    <section class="signup-brand">
-      <div class="signup-brand__glow signup-brand__glow--one"></div>
-      <div class="signup-brand__glow signup-brand__glow--two"></div>
+<div class="auth-page signup-page">
+  <div class="auth-orb auth-orb--one" aria-hidden="true"></div>
+  <div class="auth-orb auth-orb--two" aria-hidden="true"></div>
 
-      <div class="signup-brand__content">
-        <p class="signup-kicker">Join the cafe</p>
+  <div class="auth-card signup-card">
+    <section class="auth-brand signup-brand">
+      <div class="auth-brand__glow auth-brand__glow--one"></div>
+      <div class="auth-brand__glow auth-brand__glow--two"></div>
+
+      <a routerLink="/" class="auth-back">Back to cafe</a>
+
+      <div class="auth-brand__content signup-brand__content">
+        <p class="auth-kicker">Join the cafe</p>
         <h1>Create your account and start ordering faster.</h1>
-        <p class="signup-lead">
+        <p class="auth-lead">
           Save your details, track your orders, and enjoy a smoother checkout experience from your first cup to your next craving.
         </p>
       </div>
 
-      <div class="signup-highlights">
-        <div class="signup-highlight">
-          <p class="signup-highlight__title">Fast checkout</p>
-          <p>Register once and reuse your info.</p>
+      <div class="signup-highlights auth-highlights">
+        <div class="signup-highlight auth-highlight">
+          <span class="auth-highlight__icon">01</span>
+          <div>
+            <p class="signup-highlight__title">Fast checkout</p>
+            <p>Register once and reuse your info.</p>
+          </div>
         </div>
-        <div class="signup-highlight">
-          <p class="signup-highlight__title">Order tracking</p>
-          <p>Keep your orders organized in one place.</p>
+        <div class="signup-highlight auth-highlight">
+          <span class="auth-highlight__icon">02</span>
+          <div>
+            <p class="signup-highlight__title">Order tracking</p>
+            <p>Keep your orders organized in one place.</p>
+          </div>
         </div>
-        <div class="signup-highlight">
-          <p class="signup-highlight__title">Member perks</p>
-          <p>Be ready for future rewards and offers.</p>
+        <div class="signup-highlight auth-highlight">
+          <span class="auth-highlight__icon">03</span>
+          <div>
+            <p class="signup-highlight__title">Member perks</p>
+            <p>Be ready for future rewards and offers.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="signup-form-panel">
-      <div class="signup-header">
+    <section class="auth-form-panel">
+      <div class="auth-ambient auth-ambient--one" aria-hidden="true"></div>
+      <div class="auth-ambient auth-ambient--two" aria-hidden="true"></div>
+
+      <div class="auth-header">
+        <p class="auth-kicker auth-kicker--subtle">Cafe access</p>
         <h2>Sign up</h2>
         <p>Create your customer account with your name, email, and password.</p>
       </div>
 
-      <form class="signup-form" (ngSubmit)="onSubmit()">
+      <form class="auth-form signup-form" (ngSubmit)="onSubmit()">
         <div class="signup-grid">
-          <label class="signup-field">
+          <label class="auth-field" for="firstName">
             <span>First name</span>
             <input
               [(ngModel)]="firstName"
               name="firstName"
+              id="firstName"
               type="text"
               autocomplete="given-name"
               placeholder="Jane"
             />
           </label>
 
-          <label class="signup-field">
+          <label class="auth-field" for="lastName">
             <span>Last name</span>
             <input
               [(ngModel)]="lastName"
               name="lastName"
+              id="lastName"
               type="text"
               autocomplete="family-name"
               placeholder="Doe"
@@ -59,46 +79,49 @@
           </label>
         </div>
 
-        <label class="signup-field">
+        <label class="auth-field" for="email">
           <span>Email address</span>
           <input
             [(ngModel)]="email"
             name="email"
+            id="email"
             type="email"
             autocomplete="email"
             placeholder="you@example.com"
           />
         </label>
 
-        <label class="signup-field">
+        <label class="auth-field" for="password">
           <span>Password</span>
           <input
             [(ngModel)]="password"
             name="password"
+            id="password"
             type="password"
             autocomplete="new-password"
             placeholder="Create a strong password"
           />
         </label>
 
-        <label class="signup-field">
+        <label class="auth-field" for="confirmPassword">
           <span>Confirm password</span>
           <input
             [(ngModel)]="confirmPassword"
             name="confirmPassword"
+            id="confirmPassword"
             type="password"
             autocomplete="new-password"
             placeholder="Repeat your password"
           />
         </label>
 
-        <button type="submit" [disabled]="isLoading" class="signup-submit">
-          <span *ngIf="isLoading" class="signup-spinner"></span>
+        <button type="submit" [disabled]="isLoading" class="auth-submit">
+          <span *ngIf="isLoading" class="auth-spinner"></span>
           {{ isLoading ? 'Creating account...' : 'Create account' }}
         </button>
       </form>
 
-      <p class="signup-footer">
+      <p class="auth-footer">
         Already have an account?
         <a routerLink="/login">Sign in</a>
       </p>

@@ -1,9 +1,36 @@
 <app-navigation context="dashboard" (logout)="logout()"></app-navigation>
 
 <div class="dashboard">
-  <div class="main-content">
-    <div class="products-section">
-      <app-products (addToCart)="addToCart($event)"></app-products>
+  <div class="dashboard-shell">
+    <section class="dashboard-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Your cafe dashboard</p>
+        <h1>Browse the menu, refine your cart, and move through checkout with less friction.</h1>
+        <p class="lede">
+          A darker, calmer workspace built to match the coffee brand. Search items, compare categories, and keep your order flow easy.
+        </p>
+      </div>
+
+      <div class="hero-notes" aria-label="Quick highlights">
+        <div>
+          <span>Fresh roast</span>
+          <strong>Daily picks</strong>
+        </div>
+        <div>
+          <span>Simple flow</span>
+          <strong>Fast checkout</strong>
+        </div>
+        <div>
+          <span>Warm tone</span>
+          <strong>Consistent layout</strong>
+        </div>
+      </div>
+    </section>
+
+    <div class="main-content">
+      <div class="products-section">
+        <app-products (addToCart)="addToCart($event)"></app-products>
+      </div>
     </div>
   </div>
 </div>

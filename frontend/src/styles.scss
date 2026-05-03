@@ -12,4 +12,35 @@ body {
 
 html {
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #b97b50 #140f0d;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #140f0d, #1d1310);
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #c98a5c, #8a5337);
+  border-radius: 999px;
+  border: 3px solid #140f0d;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #d49767, #9a5d3d);
+}
+
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner {
+  background: #140f0d;
 }

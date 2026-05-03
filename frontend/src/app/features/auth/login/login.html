@@ -1,8 +1,13 @@
 <div class="auth-page">
+  <div class="auth-orb auth-orb--one" aria-hidden="true"></div>
+  <div class="auth-orb auth-orb--two" aria-hidden="true"></div>
+
   <div class="auth-card">
     <section class="auth-brand">
       <div class="auth-brand__glow auth-brand__glow--one"></div>
       <div class="auth-brand__glow auth-brand__glow--two"></div>
+
+      <a routerLink="/" class="auth-back">Back to cafe</a>
 
       <div class="auth-brand__content">
         <p class="auth-kicker">Welcome back</p>
@@ -14,24 +19,45 @@
 
       <div class="auth-highlights">
         <div class="auth-highlight">
-          <span class="auth-highlight__icon">✓</span>
-          <span>Premium Quality</span>
+          <span class="auth-highlight__icon">01</span>
+          <span>Fast checkout</span>
         </div>
         <div class="auth-highlight">
-          <span class="auth-highlight__icon">★</span>
-          <span>Fast Delivery</span>
+          <span class="auth-highlight__icon">02</span>
+          <span>Order tracking</span>
         </div>
         <div class="auth-highlight">
-          <span class="auth-highlight__icon">♥</span>
-          <span>Loyalty Rewards</span>
+          <span class="auth-highlight__icon">03</span>
+          <span>Loyalty rewards</span>
         </div>
       </div>
     </section>
 
     <section class="auth-form-panel">
+      <div class="auth-ambient auth-ambient--one" aria-hidden="true"></div>
+      <div class="auth-ambient auth-ambient--two" aria-hidden="true"></div>
+
       <div class="auth-header">
+        <p class="auth-kicker auth-kicker--subtle">Cafe access</p>
         <h2>Login</h2>
         <p>Enter your credentials to access your account.</p>
+      </div>
+
+      <div class="auth-toggle-group" role="tablist" aria-label="Account type">
+        <button
+          type="button"
+          class="auth-toggle"
+          [class.active]="loginType === 'user'"
+          (click)="loginType = 'user'">
+          Customer
+        </button>
+        <button
+          type="button"
+          class="auth-toggle"
+          [class.active]="loginType === 'admin'"
+          (click)="loginType = 'admin'">
+          Admin
+        </button>
       </div>
 
       <form (ngSubmit)="onSubmit()" class="auth-form">
