@@ -68,7 +68,7 @@
 
           <button
             class="btn btn-accept"
-            *ngIf="order.status === 'paid'"
+            *ngIf="order.status === 'paid' || order.status === 'pending'"
             (click)="updateOrder(order.userId, order.id, 'accepted')"
           >
             Accept
