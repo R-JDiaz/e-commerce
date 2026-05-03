@@ -1,0 +1,33 @@
+<section class="content-hero">
+  <div class="hero-copy">
+    <p class="eyebrow">Current view</p>
+    <h2>{{ activeSectionLabel }}</h2>
+    <p>{{ activeSectionDescription }}</p>
+  </div>
+
+  <div class="hero-metrics" *ngIf="analytics$ | async as analytics">
+    <article class="metric">
+      <span class="label">Sales</span>
+      <strong>PHP {{ analytics.totalSales | number:'1.2-2' }}</strong>
+      <small>{{ analytics.salesGrowth | number:'1.0-0' }}% vs yesterday</small>
+    </article>
+
+    <article class="metric">
+      <span class="label">Today</span>
+      <strong>{{ analytics.ordersToday }}</strong>
+      <small>{{ analytics.ordersYesterday }} yesterday</small>
+    </article>
+
+    <article class="metric">
+      <span class="label">Users</span>
+      <strong>{{ analytics.activeUsers }}</strong>
+      <small>Active customer base</small>
+    </article>
+
+    <article class="metric">
+      <span class="label">Average</span>
+      <strong>PHP {{ analytics.avgOrderValue | number:'1.2-2' }}</strong>
+      <small>{{ analytics.conversionRate | number:'1.1-1' }}% conversion</small>
+    </article>
+  </div>
+</section>
