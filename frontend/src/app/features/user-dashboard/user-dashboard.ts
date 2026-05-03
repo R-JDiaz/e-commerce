@@ -30,7 +30,7 @@ export class UserDashboard implements OnInit {
   ) {}
   
   ngOnInit(): void {
-    //this.notifManager.load();
+    this.notifManager.load();
   }
   addToCart(product: ProductListItem) {
     this.CartManager.addToCart(product);

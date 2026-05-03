@@ -204,8 +204,6 @@ export class OrderManager {
           ...this.orderFullSubject.value,
           this.mapDetail(order)
         ]);
-
-        console.log(order);
       }),
       map(order => this.mapDetail(order))
     );

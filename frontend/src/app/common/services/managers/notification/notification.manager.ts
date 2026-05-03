@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import {
   NotificationApiService,
   NotificationDTO,
@@ -23,7 +23,6 @@ export class NotificationManager {
   constructor(private api: NotificationApiService, private auth: AuthManager) {}
 
   load(): void {
-    console.log(this.auth.role);
     if (this.auth.role === 'admin') {
       this.refresh(this.api.getAdminNotifications());
     } else {
@@ -47,13 +46,12 @@ export class NotificationManager {
   }
 
   createNotification(data: CreateNotificationRequestDTO): void {
-    this.api.createNotification(data).subscribe({
-      next: (notif) => {
-        const current = this.notificationsSubject.value;
-        this.notificationsSubject.next([notif, ...current]);
-      },
-      error: (err) => console.error(err)
-    });
+    this.api.createNotification(data).pipe(
+      tap(newNotif => {
+        const updatedList = [...this.notificationsSubject.value, newNotif];
+        this.notificationsSubject.next(updatedList);
+      })
+    )
   }
 
   markAsRead(id: number | string): void {
