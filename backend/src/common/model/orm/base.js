@@ -50,6 +50,35 @@ export default class BaseModel {
 
   }
 
+  static async bulkCreate(data, conn = null) {
+    console.log("Bulk create data:", data);
+    const db = conn ?? this.pool;
+
+  if (Array.isArray(data)) {
+    if (data.length === 0) return null;
+
+    const keys = Object.keys(data[0]);
+    const placeholders = data
+      .map(() => `(${keys.map(() => "?").join(",")})`)
+      .join(",");
+    
+    const values = data.flatMap(obj => keys.map(k => obj[k]));
+
+    console.log("Bulk create values:", values);
+    console.log("keys:", keys);
+    console.log("placeholders:", placeholders);
+    console.log('table:', this.table);
+
+    const [result] = await db.query(
+      `INSERT INTO ${this.table} (${keys.join(",")})
+       VALUES ${placeholders}`,
+      values
+    );
+
+    return result;
+  }
+  }
+
   static async update(id, data) {
     const keys = Object.keys(data);
 
