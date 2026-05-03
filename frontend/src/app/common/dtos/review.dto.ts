@@ -11,4 +11,8 @@ export interface OrderReviewDTO {
   created_at: string;
 }
 
+export interface TopReview extends OrderReviewDTO {
+  first_name: string;
+  last_name: string;
+}
 

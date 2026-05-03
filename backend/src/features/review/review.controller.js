@@ -52,4 +52,21 @@ export default class OrderReviewController {
       next(err);
     }
   }
+
+
+  // -------------------------
+  // GET TOP REVIEWS
+  // -------------------------
+  static async getTopReviews(req, res, next) {
+    try {
+      const limit = parseInt(req.query.limit) || 10;
+
+      const count = parseInt(req.params.count) || limit;
+      const result = await service.getTopReviews(count);
+
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 }

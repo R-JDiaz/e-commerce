@@ -5,7 +5,8 @@ import { environment } from '../../../../../environments/environment';
 
 import {
   CreateOrderReviewDTO,
-  OrderReviewDTO
+  OrderReviewDTO,
+  TopReview
 } from '@common/dtos/review.dto';
 
 export type CreateReviewRequest = CreateOrderReviewDTO;
@@ -32,6 +33,13 @@ export class ReviewApiService {
    */
   getMyReviews(): Observable<Review[]> {
     return this.http.get<Review[]>(this.baseUrl);
+  }
+
+  /**
+   * Get all reviews of logged-in user
+   */
+  getTopReviews(count: number): Observable<TopReview[]> {
+    return this.http.get<TopReview[]>(`${this.baseUrl}/top/${count}`);
   }
 
   /**

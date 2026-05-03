@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 
 import { CreateReviewRequest, ReviewApiService } from '../../api/review/review-api.service';
-import {
-} from '@common/dtos/review.dto';
+import { TopReview } from '@common/dtos/review.dto';
 import { OrderReviewDTO } from '@common/dtos/order.dto';
 
 @Injectable({
@@ -17,10 +16,15 @@ export class ReviewManager {
   // STATE
   // =========================
   private readonly reviewSubject = new BehaviorSubject<OrderReviewDTO[]>([]);
+  topReviewLoaded = false;
   readonly reviews$ = this.reviewSubject.asObservable();
 
   private readonly selectedReviewSubject = new BehaviorSubject<OrderReviewDTO | null>(null);
   readonly selectedReview$ = this.selectedReviewSubject.asObservable();
+
+  private readonly topReviewsSubject = new BehaviorSubject<TopReview[]>([]);
+  readonly topReviews$ = this.topReviewsSubject.asObservable();
+
 
   constructor(private api: ReviewApiService) {}
 
@@ -44,6 +48,21 @@ export class ReviewManager {
   getReviews(): Observable<OrderReviewDTO[]> {
     this.load();
     return this.reviews$;
+  }
+
+  // =========================
+  // GET TOP REVIEWS
+  // ========================
+  loadTopReviews(): void{
+    if (!this.topReviewLoaded) {
+      this.api.getTopReviews(3).pipe(
+        tap(topReviews => {
+          this.topReviewsSubject.next(topReviews);
+          this.topReviewLoaded = true;
+          console.log(this.topReviewsSubject.value);
+        })
+      ).subscribe();
+    }
   }
 
   // =========================

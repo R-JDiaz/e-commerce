@@ -112,4 +112,17 @@ export default class OrderReviewService {
 
     return true;
   }
+
+  // -------------------------
+  // GET TOP REVIEWS
+  // -------------------------
+  async getTopReviews(limit = 10) {
+    const reviews = await OrderReviewRepository.findTopHighRating(limit);
+
+    if (!reviews || reviews.length === 0) {
+      throw new AppError("No reviews found", 404);
+    }
+
+    return reviews;
+  }
 }

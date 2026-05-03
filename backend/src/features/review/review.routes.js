@@ -11,6 +11,8 @@ import {
 
 const router = Router();
 
+router.get("/top/:count", OrderReviewController.getTopReviews);
+
 router.use(authMiddleware);
 
 // -------------------------
@@ -29,6 +31,7 @@ router.get(
   "/",
   OrderReviewController.getUserReviews
 );
+
 
 // -------------------------
 // GET REVIEW BY ORDER

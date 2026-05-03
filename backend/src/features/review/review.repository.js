@@ -97,4 +97,28 @@ export default class OrderReviewRepository extends BaseModel {
         }
         return safe;
     }
+
+    // =========================
+    // GET TOP HIGH RATING REVIEWS
+    // =========================
+    static async findTopHighRating(limit = 10) {
+        const [rows] = await this.pool.query(
+            `SELECT 
+                r.*,
+                u.first_name,
+                u.last_name
+            FROM ${this.table} r
+            JOIN users u ON u.id = r.user_id
+            ORDER BY r.rating DESC, r.created_at DESC
+            LIMIT ?`,
+            [limit]
+        );
+
+        return rows;
+}
+
+    static async findTopHighRatingSafe(limit = 10) {
+        const data = await this.findTopHighRating(limit);
+        return this.applySafe(data);
+    }
 }
