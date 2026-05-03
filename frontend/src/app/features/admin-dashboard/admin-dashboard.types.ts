@@ -13,6 +13,12 @@ export interface AdminSectionItem {
   description: string;
 }
 
+export interface AdminHeroMetric {
+  label: string;
+  value: string;
+  helper: string;
+}
+
 export const ADMIN_SECTION_ITEMS: AdminSectionItem[] = [
   { key: 'analytics', label: 'Analytics', description: 'Sales and trends' },
   { key: 'products', label: 'Products', description: 'Catalog and edits' },
