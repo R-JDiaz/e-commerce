@@ -1,0 +1,188 @@
+<section class="support-panel">
+  <header class="panel-header">
+    <div class="panel-header__copy">
+      <p class="eyebrow">Support inbox</p>
+      <h2>Chat Support</h2>
+      <p>Answer faster, keep the queue clear, and follow every customer thread in one place.</p>
+    </div>
+
+    <div class="panel-header__stats" *ngIf="threads$ | async as threads">
+      <article class="stat-card">
+        <span>Threads</span>
+        <strong>{{ threads.length }}</strong>
+      </article>
+      <article class="stat-card">
+        <span>Open</span>
+        <strong>{{ getOpenThreadCount(threads) }}</strong>
+      </article>
+      <article class="stat-card">
+        <span>Unread</span>
+        <strong>{{ getUnreadThreadCount(threads) }}</strong>
+      </article>
+    </div>
+  </header>
+
+  <div class="support-grid" *ngIf="threads$ | async as threads">
+    <aside class="thread-rail">
+      <div class="thread-rail__header">
+        <div>
+          <p class="eyebrow">Conversations</p>
+          <h3>Latest threads</h3>
+        </div>
+        <span class="rail-count">{{ threads.length }}</span>
+      </div>
+
+      <div class="thread-search">
+        <input
+          type="search"
+          [(ngModel)]="searchQuery"
+          placeholder="Search customer, email, or message..."
+          aria-label="Search support threads" />
+      </div>
+
+      <div class="thread-list" *ngIf="filterThreads(threads).length > 0; else noThreads">
+        <button
+          type="button"
+          class="thread-card"
+          *ngFor="let thread of filterThreads(threads); trackBy: trackByThread"
+          [class.active]="(activeThread$ | async)?.id === thread.id"
+          [class.closed]="thread.status === 'closed'"
+          (click)="selectThread(thread)">
+          <div class="thread-card__avatar">
+            {{ getThreadInitials(thread) }}
+          </div>
+
+          <div class="thread-card__body">
+            <div class="thread-card__topline">
+              <div class="thread-card__titlewrap">
+                <strong>{{ getThreadLabel(thread) }}</strong>
+                <span>{{ getThreadChannel(thread) }}</span>
+              </div>
+
+              <div class="thread-card__meta">
+                <span class="pill" [class.closed]="thread.status === 'closed'">{{ thread.status }}</span>
+                <time>{{ getThreadLastActivity(thread) }}</time>
+              </div>
+            </div>
+
+            <p class="thread-card__preview">{{ getThreadPreview(thread) }}</p>
+
+            <div class="thread-card__footer">
+              <small>{{ getThreadMessageCount(thread) }} messages</small>
+              <span class="badge" *ngIf="thread.unread_count > 0">{{ thread.unread_count }} new</span>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <ng-template #noThreads>
+        <div class="empty empty--rail">
+          <h4 *ngIf="threads.length === 0">No active chats</h4>
+          <h4 *ngIf="threads.length > 0">No matches found</h4>
+          <p *ngIf="threads.length === 0">
+            New support messages will appear here as soon as customers start a conversation.
+          </p>
+          <p *ngIf="threads.length > 0">
+            Try a different name, email, or phrase to narrow the list.
+          </p>
+        </div>
+      </ng-template>
+    </aside>
+
+    <article class="conversation" *ngIf="activeThread$ | async as activeThread; else emptyState">
+      <header class="conversation__header">
+        <div class="conversation__identity">
+          <div class="thread-card__avatar thread-card__avatar--large">
+            {{ getThreadInitials(activeThread) }}
+          </div>
+
+          <div>
+            <p class="eyebrow">Active thread</p>
+            <h3>{{ getThreadLabel(activeThread) }}</h3>
+            <div class="conversation__meta">
+              <span>{{ activeThread.user_email || 'No email available' }}</span>
+              <span class="dot"></span>
+              <span>{{ getThreadChannel(activeThread) }}</span>
+              <span class="dot"></span>
+              <span>{{ getThreadMessageCount(activeThread) }} messages</span>
+              <span class="dot"></span>
+              <span>{{ getThreadActivityLabel(activeThread) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="conversation__actions">
+          <span class="pill" [class.closed]="activeThread.status === 'closed'">{{ activeThread.status }}</span>
+          <button type="button" class="ghost-button" (click)="closeThread(activeThread)">Mark done</button>
+        </div>
+      </header>
+
+      <div class="conversation__body">
+        <div class="timeline">
+          <article
+            class="message"
+            *ngFor="let message of activeThread.messages; trackBy: trackByMessage"
+            [class.is-incoming]="getMessageAlignment(message) === 'incoming'"
+            [class.is-outgoing]="getMessageAlignment(message) === 'outgoing'"
+            [class.is-system]="getMessageAlignment(message) === 'system'">
+            <div class="message__head">
+              <strong>{{ getMessageRoleLabel(message) }}</strong>
+              <time>{{ getMessageTimestamp(message) }}</time>
+            </div>
+            <p class="message__body">{{ message.body }}</p>
+          </article>
+        </div>
+
+        <aside class="context-panel">
+          <div class="context-card">
+            <p class="eyebrow">Customer profile</p>
+            <h4>{{ getThreadLabel(activeThread) }}</h4>
+            <div class="context-card__list">
+              <div>
+                <span>Contact</span>
+                <strong>{{ getCustomerContactLabel(activeThread) }}</strong>
+              </div>
+              <div>
+                <span>Source</span>
+                <strong>{{ getCustomerSourceLabel(activeThread) }}</strong>
+              </div>
+              <div>
+                <span>Opened</span>
+                <strong>{{ getThreadCreatedAt(activeThread) }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="context-card context-card--quiet">
+            <p class="eyebrow">Quick replies</p>
+            <p>Keep replies short and direct to move the queue faster.</p>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="composer">
+        <label class="composer__label" for="admin-reply">Reply to customer</label>
+        <div class="composer__bar">
+          <textarea
+            id="admin-reply"
+            [(ngModel)]="draftReply"
+            rows="2"
+            placeholder="Write a concise reply..."
+            [disabled]="activeThread.status === 'closed'"
+            (keydown.enter)="$event.preventDefault(); reply(activeThread)"></textarea>
+          <button type="button" (click)="reply(activeThread)" [disabled]="activeThread.status === 'closed'">
+            Send reply
+          </button>
+        </div>
+      </footer>
+    </article>
+
+    <ng-template #emptyState>
+      <article class="conversation empty empty--conversation">
+        <p class="eyebrow">Conversation view</p>
+        <h3>Select a thread</h3>
+        <p>Pick a chat from the left to read the messages and respond from the composer.</p>
+      </article>
+    </ng-template>
+  </div>
+</section>

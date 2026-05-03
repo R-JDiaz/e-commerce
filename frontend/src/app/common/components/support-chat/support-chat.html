@@ -1,0 +1,72 @@
+<ng-container *ngIf="open$ | async">
+  <div class="support-backdrop" (click)="close()"></div>
+
+  <aside class="support-drawer" role="dialog" aria-modal="true" aria-label="Support chat">
+    <header class="support-drawer__header">
+      <div class="support-drawer__brand">
+        <span class="support-drawer__mark">CS</span>
+        <div>
+          <p>Chat Support</p>
+          <span>Quick help for orders and products</span>
+        </div>
+      </div>
+
+      <button type="button" class="support-drawer__close" (click)="close()" aria-label="Close chat">
+        ×
+      </button>
+    </header>
+
+    <ng-container *ngIf="thread$ | async as thread; else emptyState">
+      <div class="support-drawer__summary">
+        <span>{{ thread.status | titlecase }}</span>
+        <span>{{ thread.user_name }}</span>
+      </div>
+
+      <div class="support-drawer__messages" *ngIf="thread.messages.length; else starterState">
+        <article
+          class="support-message"
+          *ngFor="let message of thread.messages; trackBy: trackByMessage"
+          [class.is-admin]="message.sender === 'admin'"
+          [class.is-system]="message.sender === 'system'">
+          <p class="support-message__author">{{ message.author_name }}</p>
+          <p class="support-message__body">{{ message.body }}</p>
+          <time>{{ message.created_at | date:'shortTime' }}</time>
+        </article>
+      </div>
+
+      <ng-template #starterState>
+        <div class="support-drawer__empty">
+          <h3>Need help?</h3>
+          <p>Send a short message and we will reply here.</p>
+        </div>
+      </ng-template>
+
+      <footer class="support-drawer__composer">
+        <textarea
+          [(ngModel)]="draft"
+          rows="2"
+          placeholder="Write a message..."
+          (focus)="ensureThreadLoaded()"
+          (keydown.enter)="$event.preventDefault(); sendMessage()"></textarea>
+        <button type="button" (click)="sendMessage()">Send</button>
+      </footer>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="support-drawer__empty">
+        <h3>Need help?</h3>
+        <p>Send a short message and we will reply here.</p>
+      </div>
+
+      <footer class="support-drawer__composer">
+        <textarea
+          [(ngModel)]="draft"
+          rows="2"
+          placeholder="Write a message..."
+          (focus)="ensureThreadLoaded()"
+          (keydown.enter)="$event.preventDefault(); sendMessage()"></textarea>
+        <button type="button" (click)="sendMessage()">Send</button>
+      </footer>
+    </ng-template>
+  </aside>
+</ng-container>
