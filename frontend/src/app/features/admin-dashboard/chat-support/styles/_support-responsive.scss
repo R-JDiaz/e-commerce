@@ -1,0 +1,51 @@
+@media (max-width: 1120px) {
+  .support-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-header {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-header__stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .conversation__body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .panel-header,
+  .thread-rail__header,
+  .conversation__header,
+  .composer {
+    padding: 0.95rem 0.9rem;
+  }
+
+  .panel-header__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .thread-card {
+    padding: 0.82rem;
+  }
+
+  .thread-card__meta,
+  .thread-card__footer,
+  .conversation__header,
+  .conversation__actions,
+  .composer__bar {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .conversation__identity {
+    align-items: flex-start;
+  }
+
+  .message {
+    max-width: 100%;
+  }
+}

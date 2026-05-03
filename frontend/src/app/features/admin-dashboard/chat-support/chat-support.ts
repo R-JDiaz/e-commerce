@@ -22,6 +22,8 @@ export class AdminChatSupportComponent implements OnInit {
 
   draftReply = '';
   searchQuery = '';
+  threadFilter: 'newest' | 'unread' | 'open' = 'newest';
+  showCustomerProfile = false;
 
   constructor(private supportManager: SupportManager) {}
 
@@ -32,6 +34,7 @@ export class AdminChatSupportComponent implements OnInit {
   }
 
   selectThread(thread: SupportThreadDTO): void {
+    this.showCustomerProfile = false;
     this.supportManager.selectAdminThread(thread.id).subscribe({
       next: () => {
         this.supportManager.markThreadRead(thread.id).subscribe();
@@ -60,6 +63,14 @@ export class AdminChatSupportComponent implements OnInit {
     this.supportManager.closeThread(activeThread.id).subscribe();
   }
 
+  toggleCustomerProfile(): void {
+    this.showCustomerProfile = !this.showCustomerProfile;
+  }
+
+  getCustomerProfileToggleLabel(): string {
+    return this.showCustomerProfile ? 'Hide profile' : 'Show profile';
+  }
+
   trackByThread(_: number, thread: SupportThreadDTO): number {
     return thread.id;
   }
@@ -77,13 +88,25 @@ export class AdminChatSupportComponent implements OnInit {
     return lastMessage?.body ?? 'No messages yet';
   }
 
+  setThreadFilter(filter: 'newest' | 'unread' | 'open'): void {
+    this.threadFilter = filter;
+  }
+
   filterThreads(threads: SupportThreadDTO[]): SupportThreadDTO[] {
     const query = this.searchQuery.trim().toLowerCase();
-    if (!query) {
-      return threads;
-    }
+    const filtered = threads.filter((thread) => {
+      if (this.threadFilter === 'unread' && thread.unread_count === 0) {
+        return false;
+      }
 
-    return threads.filter((thread) => {
+      if (this.threadFilter === 'open' && thread.status !== 'open') {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
       const haystack = [
         this.getThreadLabel(thread),
         thread.user_email ?? '',
@@ -95,6 +118,12 @@ export class AdminChatSupportComponent implements OnInit {
         .toLowerCase();
 
       return haystack.includes(query);
+    });
+
+    return filtered.sort((left, right) => {
+      const leftTime = new Date(left.last_message_at || left.updated_at).getTime();
+      const rightTime = new Date(right.last_message_at || right.updated_at).getTime();
+      return rightTime - leftTime;
     });
   }
 

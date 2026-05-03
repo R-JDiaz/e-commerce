@@ -1,0 +1,307 @@
+.conversation {
+  min-width: 0;
+  height: clamp(38rem, 74vh, 52rem);
+  border-radius: 1.4rem;
+  border: 1px solid rgba(227, 186, 140, 0.12);
+  background: linear-gradient(180deg, rgba(33, 23, 19, 0.97), rgba(22, 16, 13, 0.95));
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.conversation__header {
+  padding: 1rem 1.05rem;
+  border-bottom: 1px solid rgba(227, 186, 140, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.conversation__identity {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.conversation__identity > div:last-child {
+  min-width: 0;
+}
+
+.conversation__identity strong {
+  color: #fff2e7;
+  font-size: clamp(0.92rem, 0.84rem + 0.2vw, 1rem);
+  line-height: 1.2;
+}
+
+.conversation__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: clamp(0.76rem, 0.72rem + 0.12vw, 0.9rem);
+}
+
+.dot {
+  width: 0.24rem;
+  height: 0.24rem;
+  border-radius: 999px;
+  background: rgba(245, 231, 219, 0.32);
+}
+
+.conversation__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.ghost-button,
+.composer button {
+  border: 1px solid rgba(227, 186, 140, 0.2);
+  border-radius: 0.9rem;
+  padding: clamp(0.62rem, 0.56rem + 0.18vw, 0.78rem) clamp(0.85rem, 0.78rem + 0.2vw, 1.05rem);
+  background: linear-gradient(135deg, rgba(212, 165, 125, 0.24), rgba(123, 77, 58, 0.55));
+  color: #fff2e7;
+  font: inherit;
+  font-weight: 800;
+  font-size: clamp(0.78rem, 0.74rem + 0.12vw, 0.92rem);
+  line-height: 1.1;
+  cursor: pointer;
+  transition:
+    transform 150ms ease,
+    opacity 150ms ease;
+}
+
+.ghost-button:hover,
+.composer button:hover {
+  transform: translateY(-1px);
+}
+
+.ghost-button:disabled,
+.composer button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+.conversation__body {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  align-items: start;
+  overflow-y: auto;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+}
+
+.conversation__body.has-profile {
+  grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 18rem);
+}
+
+.conversation__body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.conversation__body:hover,
+.conversation__body:focus-within {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 165, 125, 0.5) rgba(255, 255, 255, 0.04);
+}
+
+.conversation__body:hover::-webkit-scrollbar,
+.conversation__body:focus-within::-webkit-scrollbar {
+  width: 0.45rem;
+}
+
+.conversation__body:hover::-webkit-scrollbar-thumb,
+.conversation__body:focus-within::-webkit-scrollbar-thumb {
+  background: rgba(212, 165, 125, 0.5);
+  border-radius: 999px;
+}
+
+.conversation__body:hover::-webkit-scrollbar-track,
+.conversation__body:focus-within::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.timeline {
+  min-height: 0;
+  padding: 1rem;
+  display: grid;
+  align-content: start;
+  gap: 0.7rem;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(227, 186, 140, 0.08);
+  background: radial-gradient(circle at top, rgba(212, 165, 125, 0.05), transparent 36%);
+}
+
+.message {
+  max-width: min(42rem, 92%);
+  padding: 0.9rem 0.95rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(227, 186, 140, 0.08);
+}
+
+.message.is-incoming {
+  justify-self: start;
+}
+
+.message.is-outgoing {
+  justify-self: end;
+  background: linear-gradient(180deg, rgba(212, 165, 125, 0.14), rgba(123, 77, 58, 0.1));
+  border-color: rgba(212, 165, 125, 0.22);
+}
+
+.message.is-system {
+  justify-self: center;
+  max-width: 36rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-style: dashed;
+}
+
+.message__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.message__head strong {
+  color: #fff2e7;
+  font-size: clamp(0.72rem, 0.68rem + 0.08vw, 0.82rem);
+}
+
+.message__head time {
+  color: rgba(245, 231, 219, 0.52);
+  font-size: clamp(0.66rem, 0.62rem + 0.08vw, 0.76rem);
+}
+
+.message__body {
+  margin: 0;
+  color: rgba(245, 231, 219, 0.9);
+  line-height: 1.55;
+  font-size: clamp(0.84rem, 0.8rem + 0.1vw, 0.95rem);
+  white-space: pre-wrap;
+}
+
+.context-panel {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.context-card {
+  padding: 1rem;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(227, 186, 140, 0.1);
+  background: rgba(255, 255, 255, 0.035);
+  display: grid;
+  gap: 0.8rem;
+}
+
+.context-card h4 {
+  margin: 0;
+  color: #fff2e7;
+  font-size: clamp(0.92rem, 0.84rem + 0.2vw, 1rem);
+  line-height: 1.2;
+}
+
+.context-card--quiet {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.context-card--quiet p {
+  margin: 0;
+  color: rgba(245, 231, 219, 0.72);
+  line-height: 1.6;
+}
+
+.context-card__list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.context-card__list div {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.context-card__list strong {
+  color: #f7e8dc;
+  font-size: clamp(0.82rem, 0.78rem + 0.1vw, 0.94rem);
+  line-height: 1.45;
+}
+
+.composer {
+  border-top: 1px solid rgba(227, 186, 140, 0.08);
+  display: grid;
+  gap: 0.55rem;
+  padding: 1rem 1.05rem;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.composer__bar {
+  display: flex;
+  gap: 0.6rem;
+  align-items: end;
+}
+
+.composer__label {
+  color: rgba(245, 231, 219, 0.58);
+  font-size: clamp(0.64rem, 0.6rem + 0.08vw, 0.74rem);
+  letter-spacing: 0.14em;
+}
+
+.composer textarea {
+  resize: vertical;
+  min-height: 4rem;
+  max-height: 10rem;
+  padding: clamp(0.78rem, 0.7rem + 0.16vw, 0.95rem) clamp(0.9rem, 0.82rem + 0.16vw, 1.05rem);
+  border-radius: 0.95rem;
+  font-size: clamp(0.84rem, 0.8rem + 0.1vw, 0.96rem);
+  line-height: 1.45;
+  color: #f7e8dc;
+  scrollbar-width: none;
+}
+
+.composer textarea::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.composer textarea:hover,
+.composer textarea:focus {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 165, 125, 0.5) rgba(255, 255, 255, 0.04);
+}
+
+.composer textarea:hover::-webkit-scrollbar,
+.composer textarea:focus::-webkit-scrollbar {
+  width: 0.45rem;
+}
+
+.composer textarea:hover::-webkit-scrollbar-thumb,
+.composer textarea:focus::-webkit-scrollbar-thumb {
+  background: rgba(212, 165, 125, 0.5);
+  border-radius: 999px;
+}
+
+.composer textarea:hover::-webkit-scrollbar-track,
+.composer textarea:focus::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.composer textarea::placeholder {
+  color: rgba(245, 231, 219, 0.4);
+}
+
+.empty--conversation {
+  min-height: 34rem;
+}

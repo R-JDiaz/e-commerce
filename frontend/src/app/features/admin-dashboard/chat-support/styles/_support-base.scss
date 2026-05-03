@@ -1,0 +1,105 @@
+.support-panel {
+  display: grid;
+  gap: 1rem;
+  color: #f7e8dc;
+  font-size: clamp(0.94rem, 0.88rem + 0.18vw, 1rem);
+}
+
+.panel-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  padding: 1.2rem;
+  border-radius: 1.45rem;
+  background: linear-gradient(180deg, rgba(35, 24, 20, 0.98), rgba(22, 16, 13, 0.96));
+  border: 1px solid rgba(227, 186, 140, 0.12);
+}
+
+.panel-header__copy {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #d9a980;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: clamp(0.66rem, 0.62rem + 0.08vw, 0.76rem);
+  font-weight: 700;
+}
+
+.panel-header h2,
+.thread-rail__header h3,
+.conversation__header h3,
+.empty h3 {
+  margin: 0;
+  color: #f7e8dc;
+  line-height: 1.1;
+}
+
+.panel-header h2 {
+  font-size: clamp(1.35rem, 1.15rem + 1vw, 2.1rem);
+}
+
+.panel-header p {
+  margin: 0;
+  color: rgba(245, 231, 219, 0.72);
+  max-width: 65ch;
+  line-height: 1.65;
+}
+
+.panel-header__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(7rem, 1fr));
+  gap: 0.75rem;
+}
+
+.stat-card {
+  min-width: 7.5rem;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(227, 186, 140, 0.08);
+}
+
+.stat-card span,
+.thread-card__titlewrap span,
+.conversation__meta,
+.conversation__header span,
+.thread-card__footer small,
+.thread-card__meta time {
+  color: rgba(245, 231, 219, 0.62);
+}
+
+.stat-card span,
+.context-card__list span,
+.composer__label,
+.pill {
+  font-size: clamp(0.62rem, 0.58rem + 0.06vw, 0.7rem);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: #fff2e7;
+  font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.45rem);
+}
+
+.empty {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  color: rgba(245, 231, 219, 0.72);
+}
+
+.empty p {
+  margin: 0;
+  max-width: 40ch;
+  line-height: 1.6;
+}
