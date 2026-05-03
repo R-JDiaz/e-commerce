@@ -32,8 +32,6 @@ export class AuthManager {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable(); 
 
-  public role : 'customer' | 'admin' | null = null;
-
   constructor(private authApi: AuthApiService) {
     this.restoreSession();
   }
@@ -81,7 +79,6 @@ export class AuthManager {
   }
 
   clearSession(): void {
-    this.role = null;
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(CURRENT_USER_KEY);
@@ -132,8 +129,6 @@ export class AuthManager {
 
   private persistSession(session: AuthSession): void {
     const user = this.mapSessionUser(session, session.user.role === 'admin' ? 'admin' : 'user');
-    
-    this.role = user.type === 'admin' ? 'admin' : 'customer';
 
     localStorage.setItem(ACCESS_TOKEN_KEY, session.access_token);
     localStorage.setItem(REFRESH_TOKEN_KEY, session.refresh_token);
@@ -165,4 +160,11 @@ export class AuthManager {
 
     window.dispatchEvent(new CustomEvent(`auth:${name}`));
   }
+
+  public getRole(): 'customer' | 'admin' | null {
+    console.log('currentUser', this.currentUserSubject.value);
+    console.log('user',localStorage.getItem(CURRENT_USER_KEY));
+    return this.currentUserSubject.value?.type === 'admin' ? 'admin' : this.currentUserSubject.value?.type === 'user' ? 'customer' : null;
+  }
+
 }

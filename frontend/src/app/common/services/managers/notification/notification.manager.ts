@@ -23,11 +23,13 @@ export class NotificationManager {
   constructor(private api: NotificationApiService, private auth: AuthManager) {}
 
   load(): void {
-    if (this.auth.role === 'admin') {
+    const role = this.auth.getRole();
+    if (role === 'admin') {
       this.refresh(this.api.getAdminNotifications());
-    } else {
+    } else if (role === 'customer') {
       this.refresh(this.api.getUserNotifications());
     }
+    console.log('NotificationManager loaded for role:', role);
   }
 
   refresh(notifications$: Observable<NotificationDTO[]>): void {

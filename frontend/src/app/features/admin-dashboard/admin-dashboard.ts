@@ -56,9 +56,9 @@ export class AdminDashboard implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.notifManager.load();
     this.loadProducts();
     this.loadOrders();
-    this.notifManager.load();
   }
 
   setSection(section: AdminSection): void {
