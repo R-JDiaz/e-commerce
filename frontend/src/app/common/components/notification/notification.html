@@ -8,32 +8,37 @@
     </span>
   </div>
 
-  <!-- 📭 Empty state -->
-  <div *ngIf="(notifications$ | async)?.length === 0" class="empty">
-    No notifications yet
-  </div>
+  <!-- 📜 SCROLLABLE AREA -->
+  <div class="notification-list">
 
-  <!-- 📜 List -->
-  <div *ngFor="let notif of (notifications$ | async)" 
-       class="notification-item"
-       [class.unread]="!notif.is_read">
-
-    <div class="message">
-      {{ notif.message }}
+    <!-- 📭 Empty state -->
+    <div *ngIf="(notifications$ | async)?.length === 0" class="empty">
+      No notifications yet
     </div>
 
-    <div class="meta">
-      <small>{{ notif.created_at | date:'short' }}</small>
-    </div>
+    <!-- ITEMS -->
+    <div *ngFor="let notif of (notifications$ | async)" 
+         class="notification-item"
+         [class.unread]="!notif.is_read">
 
-    <div class="actions">
-      <button *ngIf="!notif.is_read" (click)="markAsRead(notif.id)">
-        Mark as read
-      </button>
+      <div class="message">
+        {{ notif.message }}
+      </div>
 
-      <button (click)="deleteNotification(notif.id)">
-        Delete
-      </button>
+      <div class="meta">
+        <small>{{ notif.created_at | date:'short' }}</small>
+      </div>
+
+      <div class="actions">
+        <button *ngIf="!notif.is_read" (click)="markAsRead(notif.id)">
+          Mark as read
+        </button>
+
+        <button (click)="deleteNotification(notif.id)">
+          Delete
+        </button>
+      </div>
+
     </div>
 
   </div>
