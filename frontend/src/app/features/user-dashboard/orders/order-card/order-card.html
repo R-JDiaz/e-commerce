@@ -61,28 +61,42 @@
     </div>
 
     <div class="review-section" *ngIf="order.status === 'completed'">
-      <div class="div" *ngIf="order.review == null">
-        <h4 class="review-title">Write a Review</h4>
+      <div class="review-form" *ngIf="order.review == null">
+        <div class="review-head">
+          <h4 class="review-title">Write a Review</h4>
+          <span class="review-hint">{{ reviewRating || 0 }} / 5</span>
+        </div>
 
         <div class="rating-stars">
           <span
             *ngFor="let star of [1,2,3,4,5]"
             (click)="setRating(star)"
             [class.active]="star <= reviewRating">
-            *
+            ★
           </span>
         </div>
 
-        <textarea [(ngModel)]="reviewComment" class="review-input" placeholder="Share your experience..." rows="3"></textarea>
+        <label class="review-label" for="review-{{ order.id }}">Your experience</label>
+        <textarea
+          id="review-{{ order.id }}"
+          [(ngModel)]="reviewComment"
+          class="review-input"
+          placeholder="Share what stood out about this order..."
+          rows="4">
+        </textarea>
 
         <button class="btn-secondary" (click)="submitReview()" [disabled]="isLoading()">
           Submit Review
         </button>
       </div>
-      <h4 class="review-title">MY REVIEW</h4>
-      <p *ngIf="order.review" class="existing-review">
-        {{ order.review.rating }} / 5 - {{ order.review.comment }}
-      </p>
+
+      <div class="review-summary" *ngIf="order.review">
+        <h4 class="review-title">My Review</h4>
+        <p class="existing-review">
+          <strong>{{ order.review.rating }} / 5</strong>
+          <span>{{ order.review.comment }}</span>
+        </p>
+      </div>
     </div>
 
     <div class="card-footer">

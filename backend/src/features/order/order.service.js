@@ -11,20 +11,33 @@ import { requiredOneOf } from "../../common/validation/fields.js";
 import { createOrderNotif, handleAdminUpdateNotification, handleCustomerUpdateNotification, customNotification} from "../notification/notification.service.js";
 import OrderRepository from "./order.repository.js";
 import OrderItemRepository from "./order_items/order_items.repository.js";
+import ProductRepository from "../products/product.repository.js";
 import { withTransaction } from "../../common/utilities/handler.js";
 
 export default class OrderService {
 
     // 🔹 1. BUILD ORDER DATA ONLY (NO DB SIDE EFFECTS)
-    async buildOrderFromCart(userId, shipping_addr) {
-        const cart = await CartService.getCart(userId);
+    async buildOrderFromCart(userId, shipping_addr, conn) {
+        const cart = await CartService.getCheckoutCart(userId, conn);
 
         
-        if (!cart.products || cart.products[0].product_id === null) {
+        if (!cart.products?.length || cart.products[0].product_id === null) {
             throw new AppError("Cart is empty", 400);
         }
 
-        const items = cart.products.map(p => productCartDTO(p));
+        const itemsByProductId = new Map();
+
+        cart.products.forEach((p) => {
+            const item = productCartDTO(p);
+            if (!item.product_id || itemsByProductId.has(item.product_id)) return;
+            itemsByProductId.set(item.product_id, item);
+        });
+
+        const items = [...itemsByProductId.values()];
+
+        if (items.length === 0) {
+            throw new AppError("Cart is empty", 400);
+        }
 
         const total_amount = items.reduce(
             (sum, item) => sum + (item.price * item.quantity),
@@ -40,13 +53,48 @@ export default class OrderService {
     }
 
     // 🔹 2. CREATE ORDER (ATOMIC)
+    async validateAndReserveStock(items, conn) {
+        const productIds = items.map(item => item.product_id);
+        const products = await ProductRepository.findStocksForUpdate(productIds, conn);
+        const productsById = new Map(products.map(product => [Number(product.id), product]));
+
+        for (const item of items) {
+            const product = productsById.get(Number(item.product_id));
+
+            if (!product) {
+                throw new AppError(`Product #${item.product_id} is no longer available`, 404);
+            }
+
+            if (Number(product.stock) < Number(item.quantity)) {
+                throw new AppError(
+                    `${product.name} only has ${product.stock} item(s) left in stock`,
+                    400
+                );
+            }
+        }
+
+        for (const item of items) {
+            const updated = await ProductRepository.decrementStock(
+                item.product_id,
+                item.quantity,
+                conn
+            );
+
+            if (!updated) {
+                throw new AppError(`Insufficient stock for product #${item.product_id}`, 400);
+            }
+        }
+    }
+
     async createOrder(userId, data) {
         const { shipping_addr } = data;
 
-        return await withTransaction(OrderRepository.pool, async (conn) => {
+        const order = await withTransaction(OrderRepository.pool, async (conn) => {
 
             // 1. build order
-            const orderData = await this.buildOrderFromCart(userId, shipping_addr);
+            const orderData = await this.buildOrderFromCart(userId, shipping_addr, conn);
+
+            await this.validateAndReserveStock(orderData.items, conn);
 
             // 2. create order
             const result = await OrderRepository.create({ 
@@ -54,7 +102,7 @@ export default class OrderService {
                 total_amount: orderData.total_amount,
                 status: "pending",
                 shipping_addr: orderData.shipping_addr
-            });
+            }, conn);
 
             if (!result || result.affectedRows === 0) {
                 throw new AppError("Order failed to create", 500);
@@ -71,11 +119,16 @@ export default class OrderService {
             // 5. fetch full order (JOIN)
             const rows = await OrderRepository.findFullById(orderId, conn);
 
-            console.log('rows', userId);
-            await createOrderNotif(orderId, userId);
-            
             return orderDetailDTO(rows);
         });
+
+        try {
+            await createOrderNotif(order.id, userId);
+        } catch (error) {
+            console.error("Failed to create order notification", error);
+        }
+
+        return order;
     }
 
     // 🔹 3. GET ALL USER ORDERS

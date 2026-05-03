@@ -9,7 +9,7 @@ import { CategoryItem } from '@common/services/api/category/category-api.service
 
 import { ProductCardComponent } from '../../../common/components/product-card/product-card';
 import { CartComponent } from '../cart/cart';
-import { Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-products',
@@ -51,7 +51,7 @@ export class Products implements OnInit {
   loadProducts() {
     this.isLoading = true;
     this.productManager.load()
-    this.filteredProducts$ = this.productManager.product$;
+    this.filteredProducts$ = this.availableOnly(this.productManager.product$);
 
     // If product$ is a BehaviorSubject, loading should stop after first emit
     this.filteredProducts$.subscribe({
@@ -61,11 +61,6 @@ export class Products implements OnInit {
         this.isLoading = false;
       }
     });
-    this.filteredProducts$.pipe(
-      tap(product => {
-        console.log(product);
-      })
-    )
   }
 
   onSearch() {
@@ -76,7 +71,7 @@ export class Products implements OnInit {
       return;
     }
 
-    this.filteredProducts$ = this.productManager.searchProducts(query);
+    this.filteredProducts$ = this.availableOnly(this.productManager.searchProducts(query));
   }
 
   onCategoryChange(category: string) {
@@ -87,12 +82,18 @@ export class Products implements OnInit {
       return;
     }
 
-    this.filteredProducts$ = this.productManager.filterByCategory(category);
+    this.filteredProducts$ = this.availableOnly(this.productManager.filterByCategory(category));
   }
 
   getCategoryLabel(slug: string): string {
     if (slug === 'all') return 'All categories';
 
     return this.categories.find(c => c.slug === slug)?.name ?? slug;
+  }
+
+  private availableOnly(products$: Observable<ProductListItem[]>): Observable<ProductListItem[]> {
+    return products$.pipe(
+      map(products => products.filter(product => Number(product.stock) > 0))
+    );
   }
 }

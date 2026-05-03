@@ -1,4 +1,5 @@
-<div *ngIf="open"
+<section
+  *ngIf="open"
   role="status"
   aria-live="polite"
   class="toast"
@@ -7,22 +8,22 @@
     'toast-error': type === 'error',
     'toast-info': type === 'info'
   }">
+  <span class="toast-accent" aria-hidden="true"></span>
 
-  <div class="toast-content">
-    <span class="toast-icon">{{ icon }}</span>
-
-    <div class="toast-text">
-      <strong class="toast-title">{{ title }}</strong>
-      <p class="toast-message">{{ message }}</p>
-    </div>
-
-    <button
-      class="toast-close"
-      type="button"
-      (click)="closeToast()"
-      aria-label="Close notification">
-      ×
-    </button>
+  <div class="toast-icon" aria-hidden="true">
+    {{ icon }}
   </div>
 
-</div>
+  <div class="toast-text">
+    <strong class="toast-title">{{ title }}</strong>
+    <p class="toast-message">{{ message }}</p>
+  </div>
+
+  <button
+    class="toast-close"
+    type="button"
+    (click)="closeToast()"
+    aria-label="Close notification">
+    x
+  </button>
+</section>

@@ -3,6 +3,36 @@ import BaseModel from "../../common/model/orm/base.js";
 export default class ProductRepository extends BaseModel {
   static table = "products";
 
+  static async findStocksForUpdate(productIds, db = null) {
+    if (!productIds.length) return [];
+
+    const conn = db ?? this.pool;
+    const placeholders = productIds.map(() => "?").join(",");
+
+    const [rows] = await conn.query(
+      `SELECT id, name, stock
+       FROM ${this.table}
+       WHERE id IN (${placeholders})
+       FOR UPDATE`,
+      productIds
+    );
+
+    return rows;
+  }
+
+  static async decrementStock(productId, quantity, db = null) {
+    const conn = db ?? this.pool;
+
+    const [result] = await conn.query(
+      `UPDATE ${this.table}
+       SET stock = stock - ?
+       WHERE id = ? AND stock >= ?`,
+      [quantity, productId, quantity]
+    );
+
+    return result.affectedRows > 0;
+  }
+
 
   static async findFullById(id) {
         const [rows] = await this.pool.query(

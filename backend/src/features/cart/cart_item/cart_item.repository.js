@@ -19,8 +19,9 @@ export default class CartItemRepository extends BaseModel {
         return rows[0];
     }
 
-    static async deleteByCartId(cartId) {
-        const [result] = await this.pool.query(
+    static async deleteByCartId(cartId, db = null) {
+        const conn = db ?? this.pool;
+        const [result] = await conn.query(
             `DELETE FROM ${this.table} WHERE cart_id = ?`,
             [cartId]
         );

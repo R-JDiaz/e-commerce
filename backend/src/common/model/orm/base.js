@@ -9,8 +9,9 @@ export default class BaseModel {
     return getPool();
   }
 
-  static async findById(id) {
-    const [rows] = await this.pool.query(
+  static async findById(id, db = null) {
+    const conn = db ?? this.pool;
+    const [rows] = await conn.query(
       `SELECT * FROM ${this.table} WHERE id = ? LIMIT 1`,
       [id]
     );
@@ -91,8 +92,9 @@ export default class BaseModel {
     return this.findByIdSafe(id);
   }
 
-  static async delete(id) {
-    const [result] = await this.pool.query(
+  static async delete(id, db = null) {
+    const conn = db ?? this.pool;
+    const [result] = await conn.query(
       `DELETE FROM ${this.table} WHERE id = ?`,
       [id]
     );

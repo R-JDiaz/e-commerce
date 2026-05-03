@@ -19,7 +19,7 @@ export const CartService = {
   async getOrCreate(userId, conn = null) {
     await this.ensureUserExists(userId, conn);
 
-    let cart = await CartRepository.findByUserId(userId);
+    let cart = await CartRepository.findByUserId(userId, conn);
 
     if (!cart) {
       const result = await CartRepository.createForUser(userId, conn);
@@ -29,16 +29,23 @@ export const CartService = {
     return cart;
   },
 
-  async getCart(userId) {
-    await this.ensureUserExists(userId);
+  async getCart(userId, conn = null) {
+    await this.ensureUserExists(userId, conn);
 
-    const result = await CartRepository.findFullByUserId(userId);
+    const result = await CartRepository.findFullByUserId(userId, conn);
 
     if (!result || result.length === 0) {
-      await CartRepository.createForUser(userId);
+      await CartRepository.createForUser(userId, conn);
       return cartFullDTO([]);
     }
 
+    return cartFullDTO(result);
+  },
+
+  async getCheckoutCart(userId, conn) {
+    await this.ensureUserExists(userId, conn);
+
+    const result = await CartRepository.findCheckoutItemsByUserId(userId, conn);
     return cartFullDTO(result);
   },
 
@@ -102,14 +109,14 @@ export const CartService = {
       return this.getCart(userId);
   },
 
-  async deleteCart(userId) {
-    await this.ensureUserExists(userId);
+  async deleteCart(userId, conn = null) {
+    await this.ensureUserExists(userId, conn);
 
-    const cart = await CartRepository.findByUserId(userId);
+    const cart = await CartRepository.findByUserId(userId, conn);
     if (!cart) throw new Error("Cart not found");
 
-    await CartItemRepository.deleteByCartId(cart.id);
-    await CartRepository.delete(cart.id);
+    await CartItemRepository.deleteByCartId(cart.id, conn);
+    await CartRepository.delete(cart.id, conn);
 
     return true;
   }

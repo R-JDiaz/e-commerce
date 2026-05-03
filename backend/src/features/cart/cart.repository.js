@@ -3,8 +3,9 @@ import BaseModel from "../../common/model/orm/base.js";
 export default class CartRepository extends BaseModel {
     static table = "carts";
 
-    static async findFullByUserId(userId) {
-        const [rows] = await this.pool.query(
+    static async findFullByUserId(userId, db = null) {
+        const conn = db ?? this.pool;
+        const [rows] = await conn.query(
             `
             SELECT 
             c.id AS cart_id,
@@ -36,8 +37,43 @@ export default class CartRepository extends BaseModel {
         return rows;
     }
 
-    static async findByUserId(userId) {
-        const [rows] = await this.pool.query(
+    static async findCheckoutItemsByUserId(userId, db = null) {
+        const conn = db ?? this.pool;
+        const [rows] = await conn.query(
+            `
+            SELECT
+            c.id AS cart_id,
+            c.user_id,
+            c.created_at,
+
+            ci.id AS cart_item_id,
+            ci.product_id AS cart_item_product_id,
+            ci.quantity,
+
+            p.id AS product_id,
+            p.name,
+            p.price,
+            p.description,
+            p.stock,
+
+            NULL AS image_url
+
+            FROM carts c
+            INNER JOIN cart_items ci ON ci.cart_id = c.id
+            INNER JOIN products p ON p.id = ci.product_id
+
+            WHERE c.user_id = ?
+            FOR UPDATE
+            `,
+            [userId]
+        );
+
+        return rows;
+    }
+
+    static async findByUserId(userId, db = null) {
+        const conn = db ?? this.pool;
+        const [rows] = await conn.query(
         `SELECT * FROM ${this.table} WHERE user_id = ?`,
         [userId]
         );

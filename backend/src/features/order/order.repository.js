@@ -28,8 +28,9 @@ export default class OrderRepository extends BaseModel {
     }
 
     // 🔹 Get FULL order (single order) + REVIEW
-    static async findFullById(orderId) {
-        const [rows] = await this.pool.query(
+    static async findFullById(orderId, db = null) {
+        const conn = db ?? this.pool;
+        const [rows] = await conn.query(
             `SELECT
                 o.id AS order_id,
                 o.user_id,

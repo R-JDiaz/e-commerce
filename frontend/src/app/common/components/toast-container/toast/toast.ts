@@ -1,6 +1,5 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-toast',
@@ -9,52 +8,69 @@ import { CommonModule } from '@angular/common';
   styleUrl: './toast.scss',
   templateUrl: './toast.html',
 })
-
 export class Toast implements OnChanges, OnDestroy {
   @Input() message = '';
   @Input() type: 'success' | 'error' | 'info' = 'success';
   @Input() open = false;
   @Input() autoClose = true;
   @Input() duration = 4000;
+
   @Output() closed = new EventEmitter<void>();
 
   private timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-    ngOnChanges(changes: SimpleChanges) {
-      if (changes['open'] || changes['message']) {
-        if (this.open) {
-          this.startAutoClose();
-        } else {
-          this.clearAutoClose();
-        }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['open'] || changes['message']) {
+      if (this.open) {
+        this.startAutoClose();
+      } else {
+        this.clearAutoClose();
       }
     }
+  }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.clearAutoClose();
   }
 
-  get title() {
-    return this.type === 'success' ? 'Success' : this.type === 'error' ? 'Error' : 'Info';
+  get title(): string {
+    switch (this.type) {
+      case 'success':
+        return 'Success';
+      case 'error':
+        return 'Action needed';
+      case 'info':
+      default:
+        return 'Update';
+    }
   }
 
-  get icon() {
-    return this.type === 'success' ? '✓' : this.type === 'error' ? '⚠️' : 'ℹ️';
+  get icon(): string {
+    switch (this.type) {
+      case 'success':
+        return 'OK';
+      case 'error':
+        return '!';
+      case 'info':
+      default:
+        return 'i';
+    }
   }
 
-  closeToast() {
+  closeToast(): void {
     this.clearAutoClose();
     this.closed.emit();
   }
 
-  private startAutoClose() {
+  private startAutoClose(): void {
     this.clearAutoClose();
+
     if (this.autoClose && this.duration > 0) {
       this.timeoutId = setTimeout(() => this.closeToast(), this.duration);
     }
   }
 
-  private clearAutoClose() {
+  private clearAutoClose(): void {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
       this.timeoutId = null;

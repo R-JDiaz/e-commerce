@@ -1,0 +1,84 @@
+<div class="product-display-overlay">
+  <div class="product-display modal-style">
+    <ng-container *ngIf="!isLoading; else loadingState">
+      <ng-container *ngIf="product; else emptyState">
+        <div class="display-content">
+          <div class="details-section">
+            <h3>{{ product.name }}</h3>
+            <p class="description">{{ product.description }}</p>
+
+            <div class="price-row">
+              <strong>PHP {{ product.price | number:'1.2-2' }}</strong>
+              <span [class.out]="product.stock === 0">
+                {{ product.stock > 0 ? product.stock + ' in stock' : 'Sold out' }}
+              </span>
+            </div>
+
+            <div class="quantity-row">
+              <label for="quantity">Quantity:</label>
+              <input id="quantity" type="number" min="1" max="{{ product.stock }}" [(ngModel)]="quantity" />
+            </div>
+
+            <button class="add-to-cart" (click)="addToCart(product, quantity)">Add to Cart</button>
+          </div>
+
+          <div class="image-section">
+            <div class="image-frame" [class.empty]="!currentImageUrl">
+              <img *ngIf="currentImageUrl; else noImage" [src]="currentImageUrl" [alt]="product.name">
+
+              <ng-template #noImage>
+                <div class="image-empty">No product image available</div>
+              </ng-template>
+
+              <div class="image-controls" *ngIf="hasMultipleImages">
+                <button type="button" class="nav" (click)="previousImage()">‹</button>
+                <button type="button" class="nav" (click)="nextImage()">›</button>
+              </div>
+            </div>
+
+            <div class="image-dots" *ngIf="hasMultipleImages">
+              <button
+                type="button"
+                class="dot"
+                *ngFor="let image of images; let i = index; trackBy: trackByImageId"
+                [class.active]="i === activeImageIndex"
+                (click)="selectImage(i)"
+                [attr.aria-label]="'Show image ' + (i + 1)">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <section class="details-block">
+          <h4>All images</h4>
+          <div class="image-list" *ngIf="images.length; else noGallery">
+            <button
+              type="button"
+              class="image-chip"
+              *ngFor="let image of images; let i = index; trackBy: trackByImageId"
+              [class.active]="i === activeImageIndex"
+              (click)="selectImage(i)">
+              <img [src]="image.image_url" [alt]="product.name">
+              <span>Image {{ i + 1 }}</span>
+            </button>
+          </div>
+
+          <ng-template #noGallery>
+            <div class="empty-note">No extra images were provided for this product.</div>
+          </ng-template>
+        </section>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #loadingState>
+      <div class="state-card">Loading product details...</div>
+    </ng-template>
+
+    <ng-template #emptyState>
+      <div class="state-card">
+        <h3>Select a product</h3>
+        <p>Click any product card to open the full safe details here.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
