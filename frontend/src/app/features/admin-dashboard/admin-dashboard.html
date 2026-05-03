@@ -1,78 +1,20 @@
 <div class="admin-shell">
-  <app-navigation context="admin" (logout)="logout()"></app-navigation>
+  <div class="admin-shell__nav" [class.is-hidden]="!showNavigation">
+    <app-navigation context="admin" (logout)="logout()"></app-navigation>
+  </div>
 
   <div class="layout">
-    <aside class="sidebar">
-      <div class="sidebar-intro">
-        <p class="eyebrow">Admin command center</p>
-        <h1>Cafe operations</h1>
-        <p>
-          Manage the shop with a darker, calmer workspace that matches the rest of the experience.
-        </p>
-      </div>
+    <app-admin-command-center
+      [activeSection]="activeSection"
+      (sectionChange)="setSection($event)">
+    </app-admin-command-center>
 
-      <nav class="sidebar-nav" aria-label="Admin sections">
-        <button [class.active]="activeSection === 'analytics'" (click)="setSection('analytics')">
-          <span>Analytics</span>
-          <small>Sales and trends</small>
-        </button>
-        <button [class.active]="activeSection === 'products'" (click)="setSection('products')">
-          <span>Products</span>
-          <small>Catalog and edits</small>
-        </button>
-        <button [class.active]="activeSection === 'orders'" (click)="setSection('orders')">
-          <span>Orders</span>
-          <small>Queue and status</small>
-        </button>
-        <button [class.active]="activeSection === 'users'" (click)="setSection('users')">
-          <span>Users</span>
-          <small>Accounts and roles</small>
-        </button>
-        <button [class.active]="activeSection === 'settings'" (click)="setSection('settings')">
-          <span>Settings</span>
-          <small>Admin profile</small>
-        </button>
-        <button [class.active]="activeSection === 'site-links'" (click)="setSection('site-links')">
-          <span>Footer Links</span>
-          <small>Site content</small>
-        </button>
-      </nav>
-    </aside>
-
-    <main class="content">
-      <section class="content-hero">
-        <div class="hero-copy">
-          <p class="eyebrow">Current view</p>
-          <h2>{{ activeSectionLabel }}</h2>
-          <p>{{ activeSectionDescription }}</p>
-        </div>
-
-        <div class="hero-metrics" *ngIf="analytics$ | async as analytics">
-          <article class="metric">
-            <span class="label">Sales</span>
-            <strong>PHP {{ analytics.totalSales | number:'1.2-2' }}</strong>
-            <small>{{ analytics.salesGrowth | number:'1.0-0' }}% vs yesterday</small>
-          </article>
-
-          <article class="metric">
-            <span class="label">Today</span>
-            <strong>{{ analytics.ordersToday }}</strong>
-            <small>{{ analytics.ordersYesterday }} yesterday</small>
-          </article>
-
-          <article class="metric">
-            <span class="label">Users</span>
-            <strong>{{ analytics.activeUsers }}</strong>
-            <small>Active customer base</small>
-          </article>
-
-          <article class="metric">
-            <span class="label">Average</span>
-            <strong>PHP {{ analytics.avgOrderValue | number:'1.2-2' }}</strong>
-            <small>{{ analytics.conversionRate | number:'1.1-1' }}% conversion</small>
-          </article>
-        </div>
-      </section>
+    <main class="content" (scroll)="onContentScroll($event)">
+      <app-admin-content-hero
+        [activeSectionLabel]="activeSectionLabel"
+        [activeSectionDescription]="activeSectionDescription"
+        [analytics$]="analytics$">
+      </app-admin-content-hero>
 
       <div class="workspace">
         <app-admin-analytics *ngIf="activeSection === 'analytics'"></app-admin-analytics>
@@ -94,6 +36,8 @@
         <app-admin-settings *ngIf="activeSection === 'settings'"></app-admin-settings>
 
         <app-admin-site-links *ngIf="activeSection === 'site-links'"></app-admin-site-links>
+
+        <app-admin-chat-support *ngIf="activeSection === 'chat-support'"></app-admin-chat-support>
       </div>
     </main>
   </div>

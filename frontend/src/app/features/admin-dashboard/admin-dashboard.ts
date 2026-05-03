@@ -11,6 +11,10 @@ import { ProductListItem } from '@common/models/product';
 import { ProductManager } from '@common/services/managers/product/product';
 import { OrderManager } from '@common/services/managers/order/order';
 import { AdminSiteLinksComponent } from './site-links/site-links';
+import { AdminChatSupportComponent } from './chat-support/chat-support';
+import { AdminCommandCenterComponent } from './command-center/admin-command-center';
+import { AdminContentHeroComponent } from './content-hero/admin-content-hero';
+import { AdminSection } from './admin-dashboard.types';
 
 import { AdminAnalyticsComponent } from './analytics/analytics';
 import { AdminOrdersComponent } from './orders/orders';
@@ -18,26 +22,21 @@ import { AdminProductsComponent } from './products/products';
 import { AdminSettingsComponent } from './settings/settings';
 import { AdminUsersComponent } from './users/users';
 
-type AdminSection =
-  | 'analytics'
-  | 'products'
-  | 'orders'
-  | 'users'
-  | 'settings'
-  | 'site-links';
-
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
   imports: [
     CommonModule,
     NavigationComponent,
+    AdminCommandCenterComponent,
+    AdminContentHeroComponent,
     AdminAnalyticsComponent,
     AdminProductsComponent,
     AdminOrdersComponent,
     AdminUsersComponent,
     AdminSettingsComponent,
     AdminSiteLinksComponent,
+    AdminChatSupportComponent,
   ],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.scss',
@@ -48,6 +47,7 @@ export class AdminDashboard implements OnInit {
 
   isLoading = false;
   errorMessage = '';
+  showNavigation = true;
 
   activeSection: AdminSection = 'analytics';
 
@@ -72,6 +72,15 @@ export class AdminDashboard implements OnInit {
     this.activeSection = section;
   }
 
+  onContentScroll(event: Event): void {
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+
+    this.showNavigation = target.scrollTop <= 8;
+  }
+
   get activeSectionLabel(): string {
     switch (this.activeSection) {
       case 'analytics':
@@ -86,6 +95,8 @@ export class AdminDashboard implements OnInit {
         return 'Settings';
       case 'site-links':
         return 'Footer Links';
+      case 'chat-support':
+        return 'Chat Support';
       default:
         return 'Analytics';
     }
@@ -105,6 +116,8 @@ export class AdminDashboard implements OnInit {
         return 'Update admin security settings.';
       case 'site-links':
         return 'Manage footer links and branding.';
+      case 'chat-support':
+        return 'Respond to customer questions and close resolved chats.';
       default:
         return 'Monitor the coffee shop dashboard.';
     }
