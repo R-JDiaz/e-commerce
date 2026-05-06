@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://your-production-api-url.com/api'
+  apiBaseUrl: 'https://your-production-api-url.com/api',
+  imagePath: 'src/assets/images/'
 };
