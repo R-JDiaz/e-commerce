@@ -1,50 +1,29 @@
 INSERT INTO product_images (product_id, image_url, is_primary)
 VALUES
--- Espresso Drinks
-(1, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(2, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
+-- ☕ HOT COFFEE (1–5)
+(1, 'assets/images/golden_caramel_latte.jpg', TRUE),
+(2, 'assets/images/classic_cappuccino.jpg', TRUE),
+(3, 'assets/images/vanilla_bean_latte.jpg', TRUE),
+(4, 'assets/images/hazelnut_mocha.jpg', TRUE),
+(5, 'assets/images/espresso_shot.jpg', TRUE),
 
--- Americano & Black Coffee
-(3, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(4, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
+-- 🧊 ICED COFFEE (6–10)
+(6, 'assets/images/iced_caramel_macchiato.jpg', TRUE),
+(7, 'assets/images/iced_vanilla_latte.jpg', TRUE),
+(8, 'assets/images/iced_americano.jpg', TRUE),
+(9, 'assets/images/cold_brew_black.jpg', TRUE),
+(10, 'assets/images/iced_mocha_delight.jpg', TRUE),
 
--- Latte & Milk-Based Drinks
-(5, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(6, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(7, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
+-- 🍫 NON-COFFEE (11–15)
+(11, 'assets/images/classic_hot_chocolate.jpg', TRUE),
+(12, 'assets/images/matcha_latte.jpg', TRUE),
+(13, 'assets/images/chai_latte.jpg', TRUE),
+(14, 'assets/images/strawberry_milk_drink.jpg', TRUE),
+(15, 'assets/images/cookies_and_cream_frappe.jpg', TRUE),
 
--- Iced Coffee
-(8, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(9, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-
--- Cold Brew
-(10, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(11, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-
--- Frappes & Blended Drinks
-(12, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(13, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-
--- Tea & Non-Coffee Drinks
-(14, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(15, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-
--- Pastries
-(16, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(17, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-
--- Cakes & Desserts
-(18, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(19, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-
--- Sandwiches
-(20, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(21, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-
--- Breakfast Meals
-(22, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(23, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-
--- Add-ons
-(24, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE),
-(25, 'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3', TRUE);
+-- 🥐 FOOD & PASTRIES (16–20)
+(16, 'assets/images/butter_croissant.jpg', TRUE),
+(17, 'assets/images/chocolate_muffin.jpg', TRUE),
+(18, 'assets/images/blueberry_cheesecake_slice.jpg', TRUE),
+(19, 'assets/images/cinnamon_roll.jpg', TRUE),
+(20, 'assets/images/club_sandwich.jpg', TRUE);
