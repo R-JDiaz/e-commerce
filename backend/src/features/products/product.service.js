@@ -1,6 +1,43 @@
 import { categoryDTO } from "../../common/dtos/category.js";
 import { productListDTO, productDetailDTO, productDTO } from "../../common/dtos/product.js";
+import AppError from "../../common/utilities/error.js";
+import { withTransaction } from "../../common/utilities/handler.js";
 import ProductRepository from "./product.repository.js";
+
+const normalizeImageUrl = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = String(value).trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  if (/^(https?:\/\/|\/assets\/)/i.test(trimmed)) {
+    return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  }
+
+  if (/^assets\//i.test(trimmed)) {
+    return `/${trimmed}`;
+  }
+
+  if (/^images\//i.test(trimmed)) {
+    return `/assets/${trimmed}`;
+  }
+
+  const cleaned = trimmed.replace(/^\.?\/*/, '');
+  return `/assets/images/${cleaned}`;
+};
+
+const mapDuplicateProductError = (err) => {
+  if (err?.code === "ER_DUP_ENTRY" || err?.errno === 1062) {
+    throw new AppError("Product name already exists", 409);
+  }
+
+  throw err;
+};
 
 export const ProductService = {
   async getAllProducts() {
@@ -58,14 +95,59 @@ export const ProductService = {
     },
 
   async createProduct(data) {
-    return await ProductRepository.create(data);
+    const existing = await ProductRepository.findByName(data.name);
+
+    if (existing) {
+      throw new AppError("Product name already exists", 409);
+    }
+
+    try {
+      return await withTransaction(ProductRepository.pool, async (conn) => {
+        const productResult = await ProductRepository.create(
+          {
+            name: data.name,
+            description: data.description,
+            price: data.price,
+            stock: data.stock,
+            category_id: data.category_id,
+          },
+          conn
+        );
+
+        const imageUrl = normalizeImageUrl(data.image_url);
+
+        if (imageUrl) {
+          await conn.query(
+            `INSERT INTO product_images (product_id, image_url, is_primary)
+             VALUES (?, ?, TRUE)`,
+            [productResult.insertId, imageUrl]
+          );
+        }
+
+        return ProductService.getProductById(productResult.insertId);
+      });
+    } catch (err) {
+      mapDuplicateProductError(err);
+    }
   },
 
   async updateProduct(id, data) {
     const product = await ProductRepository.findById(id);
     if (!product) throw new Error("Product not found");
 
-    return await ProductRepository.update(id, data);
+    if (Object.prototype.hasOwnProperty.call(data, "name")) {
+      const existing = await ProductRepository.findByNameExceptId(data.name, id);
+
+      if (existing) {
+        throw new AppError("Product name already exists", 409);
+      }
+    }
+
+    try {
+      return await ProductRepository.update(id, data);
+    } catch (err) {
+      mapDuplicateProductError(err);
+    }
   },
 
   async deleteProduct(id) {

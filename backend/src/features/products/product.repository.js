@@ -3,6 +3,28 @@ import BaseModel from "../../common/model/orm/base.js";
 export default class ProductRepository extends BaseModel {
   static table = "products";
 
+  static async findByName(name, db = null) {
+    const conn = db ?? this.pool;
+
+    const [rows] = await conn.query(
+      `SELECT * FROM ${this.table} WHERE name = ? LIMIT 1`,
+      [name]
+    );
+
+    return rows[0] ?? null;
+  }
+
+  static async findByNameExceptId(name, id, db = null) {
+    const conn = db ?? this.pool;
+
+    const [rows] = await conn.query(
+      `SELECT * FROM ${this.table} WHERE name = ? AND id <> ? LIMIT 1`,
+      [name, id]
+    );
+
+    return rows[0] ?? null;
+  }
+
   static async findStocksForUpdate(productIds, db = null) {
     if (!productIds.length) return [];
 

@@ -25,16 +25,20 @@ export const validateCreateProduct = (body) => {
     min: 10,
     max: 5000,
   });
+  const image_url = optionalString("image_url", body.image_url, {
+    max: 1000,
+  });
   const price = requiredNumber("price", body.price, { min: 0 });
   const stock = requiredNumber("stock", body.stock, { integer: true, min: 0 });
   const category_id = requiredPositiveInteger("category_id", body.category_id);
 
-  errors.push(...name.errors, ...description.errors, ...price.errors, ...stock.errors, ...category_id.errors);
+  errors.push(...name.errors, ...description.errors, ...image_url.errors, ...price.errors, ...stock.errors, ...category_id.errors);
 
   return {
     value: {
       name: name.value,
       description: description.value,
+      image_url: image_url.value,
       price: price.value,
       stock: stock.value,
       category_id: category_id.value,
@@ -88,4 +92,3 @@ export const validateUpdateProduct = (body) => {
 
   return { value, errors };
 };
-
