@@ -1,0 +1,60 @@
+<section class="product-create">
+  <header class="product-create__header">
+    <div>
+      <p class="eyebrow">New item</p>
+      <h3>Create product</h3>
+      <p>Add the product details, choose a category, and save it to the catalog.</p>
+    </div>
+
+    <button type="button" class="close" (click)="cancel()">Close</button>
+  </header>
+
+  <form class="product-create__form" [formGroup]="productForm" (ngSubmit)="submit()">
+    <label>
+      <span>Name</span>
+      <input type="text" formControlName="name" placeholder="Product name" />
+    </label>
+
+    <label>
+      <span>Description</span>
+      <textarea rows="4" formControlName="description" placeholder="Short product description"></textarea>
+    </label>
+
+    <div class="grid two-up">
+      <label>
+        <span>Price</span>
+        <input type="number" formControlName="price" min="0" step="0.01" />
+      </label>
+
+      <label>
+        <span>Stock</span>
+        <input type="number" formControlName="stock" min="0" step="1" />
+        </label>
+      </div>
+
+    <label>
+      <span>Image path</span>
+      <input type="text" formControlName="imagePath" placeholder="images/sample.jpg or /assets/images/sample.jpg" />
+      <small class="hint">Use a path inside the app assets folder. We will normalize it into `/assets/images/...`.</small>
+    </label>
+
+    <label>
+      <span>Category</span>
+      <select formControlName="categoryId">
+        <option [ngValue]="null">Select a category</option>
+        <ng-container *ngIf="categories$ | async as categories">
+          <option *ngFor="let category of categories; trackBy: trackByCategory" [ngValue]="category.id">
+            {{ category.name }}
+          </option>
+        </ng-container>
+      </select>
+    </label>
+
+    <div class="product-create__actions">
+      <button type="button" class="ghost" (click)="cancel()">Cancel</button>
+      <button type="submit" class="save" [disabled]="isSaving">
+        {{ isSaving ? 'Creating...' : 'Create product' }}
+      </button>
+    </div>
+  </form>
+</section>

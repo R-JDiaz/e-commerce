@@ -1,0 +1,132 @@
+.product-create {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(227, 186, 140, 0.1);
+  background: linear-gradient(180deg, rgba(33, 23, 19, 0.98), rgba(22, 16, 13, 0.96));
+  color: #f7e8dc;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
+}
+
+.product-create__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+
+  p {
+    margin: 0.35rem 0 0;
+    color: rgba(245, 231, 219, 0.72);
+    line-height: 1.6;
+  }
+}
+
+.eyebrow {
+  margin: 0;
+  color: #d9a980;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.product-create__header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.close,
+.ghost,
+.save {
+  border: none;
+  border-radius: 0.85rem;
+  padding: 0.78rem 1rem;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.close,
+.ghost {
+  background: rgba(255, 255, 255, 0.04);
+  color: #f7e8dc;
+  border: 1px solid rgba(227, 186, 140, 0.12);
+}
+
+.save {
+  background: linear-gradient(135deg, #d9a980, #7b4d3a);
+  color: #130c0a;
+}
+
+.product-create__form {
+  display: grid;
+  gap: 0.9rem;
+
+  label {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  span {
+    color: rgba(241, 217, 196, 0.92);
+    font-size: 0.88rem;
+    font-weight: 650;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    border: 1px solid rgba(227, 186, 140, 0.12);
+    border-radius: 0.85rem;
+    padding: 0.82rem 0.9rem;
+    background: rgba(15, 10, 8, 0.72);
+    color: #f7e8dc;
+    font: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: rgba(212, 165, 125, 0.65);
+      box-shadow: 0 0 0 3px rgba(212, 165, 125, 0.14);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 6rem;
+  }
+
+  .hint {
+    color: rgba(245, 231, 219, 0.56);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.two-up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.product-create__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+  .product-create__header,
+  .product-create__actions {
+    flex-direction: column;
+  }
+
+  .two-up {
+    grid-template-columns: 1fr;
+  }
+}
