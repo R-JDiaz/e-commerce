@@ -1,6 +1,6 @@
 <header class="nav-shell" [class.compact]="context !== 'landing'">
-  <div class="brand">
-    <span class="brand-mark">CD</span>
+  <div class="brand" [routerLink]="['/']">
+    <span class="brand-mark"><img src="assets/images/logo.png" alt="Cafe Delight Logo"></span>
     <div class="brand-copy">
       <p>Cafe Delight</p>
       <span>{{ brandNote }}</span>
