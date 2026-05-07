@@ -43,6 +43,23 @@ export class OrderCardComponent {
     );
   }
 
+  get paymentMethodLabel(): string {
+    switch (this.order.paymentMethod) {
+      case 'cod':
+        return 'COD';
+      case 'online':
+        return 'Online';
+      case 'cash':
+        return 'Cash';
+      case 'card':
+        return 'Card';
+      case 'gcash':
+        return 'GCash';
+      default:
+        return 'Not selected';
+    }
+  }
+
   receivedOrder() : void {
     return this.updateOrder('completed');
   }

@@ -16,6 +16,7 @@ export const getFullPaymentDTO = (data) => {
       id: data.payment_id,
       order_id: data.order_id,
       amount: data.amount,
+      payment_method: data.payment_method,
       status: data.payment_status,
       transaction_id: data.transaction_id,
       created_at: data.payment_created_at

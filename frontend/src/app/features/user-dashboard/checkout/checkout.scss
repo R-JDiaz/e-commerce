@@ -92,63 +92,50 @@
   background: rgba(255, 255, 255, 0.03);
 }
 
-.cash-panel {
+.payment-options {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.9rem 1rem;
-  align-items: end;
-  padding: 0.2rem 0 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
 
-  label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    color: #f7e8dc;
-    font-size: 0.92rem;
-    font-weight: 600;
+.payment-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-height: 5.4rem;
+  padding: 0.95rem;
+  border: 1px solid rgba(227, 186, 140, 0.1);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f7e8dc;
+  cursor: pointer;
+
+  &.active {
+    border-color: rgba(212, 165, 125, 0.44);
+    background: rgba(212, 165, 125, 0.1);
+    box-shadow: 0 0 0 4px rgba(212, 165, 125, 0.08);
   }
 
   input {
-    min-height: 3.1rem;
-    border: 1px solid rgba(227, 186, 140, 0.12);
-    border-radius: 0.95rem;
-    padding: 0.75rem 0.95rem;
-    background: rgba(255, 255, 255, 0.04);
-    color: #f7e8dc;
-
-    &:focus {
-      outline: none;
-      border-color: rgba(227, 186, 140, 0.26);
-      box-shadow: 0 0 0 4px rgba(212, 165, 125, 0.1);
-    }
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.18rem;
+    accent-color: #d4a57d;
   }
 
-  .cash-note {
-    min-width: 180px;
+  span {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    justify-content: center;
     gap: 0.2rem;
-    padding: 0.9rem 1rem;
-    border-radius: 0.95rem;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(227, 186, 140, 0.08);
-    color: #f7e8dc;
+  }
 
-    strong {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: rgba(246, 228, 214, 0.66);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
+  strong {
+    font-size: 0.95rem;
+  }
 
-    span {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: #d4a57d;
-    }
+  small {
+    color: rgba(246, 228, 214, 0.68);
+    line-height: 1.35;
   }
 }
 
@@ -189,12 +176,7 @@
     align-items: stretch;
   }
 
-  .cash-panel {
+  .payment-options {
     grid-template-columns: 1fr;
-
-    .cash-note {
-      min-width: 0;
-      align-items: flex-start;
-    }
   }
 }

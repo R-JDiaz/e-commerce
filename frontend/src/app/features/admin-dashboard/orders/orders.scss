@@ -124,7 +124,8 @@
   font-size: 1.1rem;
 }
 
-.status-chip {
+.status-chip,
+.payment-chip {
   display: inline-flex;
   width: fit-content;
   align-items: center;
@@ -137,6 +138,9 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.status-chip {
 
   &.pending {
     color: #ffd7a7;
@@ -153,6 +157,12 @@
   &.cancelled {
     color: #f4b0b0;
   }
+}
+
+.payment-chip {
+  background: rgba(212, 165, 125, 0.12);
+  border: 1px solid rgba(212, 165, 125, 0.16);
+  color: #e7c8ae;
 }
 
 .items {

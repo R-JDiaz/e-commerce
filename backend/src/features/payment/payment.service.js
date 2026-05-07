@@ -31,7 +31,7 @@ export default class PaymentService {
 
     // 4. Check duplicate payment
     const existingPayment = await PaymentsRepository.findByOrderId(order_id);
-    if (existingPayment) {
+    if (existingPayment && existingPayment.status !== "pending") {
       throw new AppError("Payment already exists for this order", 400);
     }
 
@@ -46,30 +46,49 @@ export default class PaymentService {
       }
     }
 
-    // 6. Generate transaction id (mock/system-generated)
-    const transaction_id = `TXN-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    const isCod = payment_method === "cod";
 
-    // 7. Decide status (future gateway-ready)
-    const status = payment_method === "cash" ? "paid" : "pending";
+    // 6. Generate transaction id only for paid payments.
+    const transaction_id = isCod
+      ? null
+      : `TXN-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
-    // 8. Create payment
-    const paymentResult = await PaymentsRepository.create({
-      order_id: order.id,
-      amount: order.total_amount,
-      payment_method,
-      status,
-      transaction_id
-    });
+    // 7. COD is paid when the customer receives the order.
+    const status = isCod ? "pending" : "paid";
 
-    const paymentId = paymentResult.insertId;
+    // 8. Create or complete payment
+    let paymentId = existingPayment?.id;
+
+    if (existingPayment) {
+      await PaymentsRepository.updateCheckoutFields(existingPayment.id, {
+        payment_method,
+        status,
+        transaction_id,
+      });
+    } else {
+      const paymentResult = await PaymentsRepository.create({
+        order_id: order.id,
+        amount: order.total_amount,
+        payment_method,
+        status,
+        transaction_id
+      });
+
+      paymentId = paymentResult.insertId;
+    }
 
     // 9. Update order status
-    await OrdersRepository.updateStatus(order.id, "paid");
+    if (status === "paid" || isCod) {
+      await OrdersRepository.updateStatus(order.id, "paid");
+    }
+
+    if (status === "paid") {
+      await createPaymentNotif(order.id, userId);
+    }
 
     // 10. Fetch full payment details (JOIN)
     const fullPayment = await PaymentsRepository.findFullById(paymentId);
 
-    await createPaymentNotif(order.id, userId);
     return getFullPaymentDTO(fullPayment);
   }
 

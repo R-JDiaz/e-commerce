@@ -48,6 +48,8 @@ export interface Order {
   review?: OrderReview | null;
   total: number;
   status: OrderStatus;
+  paymentMethod?: string | null;
+  paymentStatus?: string | null;
   createdAt: string;
   shippingAddr?: string;
 }
@@ -75,8 +77,8 @@ export class OrderManager {
   constructor(private api: OrderApiService, private notifManager: NotificationManager) {}
 
   // INITITALIZE THE SOURCE OF TRUTHS
-  adminLoad(): void {
-    if (this.isLoaded) return;
+  adminLoad(forceRefresh = false): void {
+    if (this.isLoaded && !forceRefresh) return;
 
     this.api.getAllOrders().pipe(
       tap(orders => {
@@ -101,9 +103,9 @@ export class OrderManager {
     ).subscribe();
   }
   
-  userLoad(): void {
+  userLoad(forceRefresh = false): void {
     
-    if (this.isLoaded) return;
+    if (this.isLoaded && !forceRefresh) return;
     this.api.getOrders().pipe(
       tap(orders => {
         const mapped = orders.map(order => this.mapSummary(order));
@@ -170,6 +172,8 @@ export class OrderManager {
       items: order.items,
       total: order.total_amount,
       status: order.status,
+      paymentMethod: order.payment_method ?? null,
+      paymentStatus: order.payment_status ?? null,
       createdAt: order.created_at,
     };
   }
@@ -188,6 +192,8 @@ export class OrderManager {
       tracking: createTracker(order.status),
       total: order.total_amount,
       status: order.status,
+      paymentMethod: order.payment_method ?? null,
+      paymentStatus: order.payment_status ?? null,
       createdAt: order.created_at,
       shippingAddr: order.shipping_addr,
     };

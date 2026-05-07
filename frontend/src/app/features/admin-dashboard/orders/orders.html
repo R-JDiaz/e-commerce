@@ -46,8 +46,15 @@
           <div class="amount">₱{{ order.total }}</div>
         </div>
 
-        <div class="status-chip" [ngClass]="order.status">
+        <div
+          class="status-chip"
+          *ngIf="!(order.paymentMethod === 'cod' && order.paymentStatus !== 'paid')"
+          [ngClass]="order.status">
           {{ order.status }}
+        </div>
+
+        <div class="payment-chip">
+          Payment: {{ paymentMethodLabel(order.paymentMethod) }} - {{ paymentStatusLabel(order) }}
         </div>
 
         <div class="items">

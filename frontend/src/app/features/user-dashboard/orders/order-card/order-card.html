@@ -6,7 +6,13 @@
     </div>
 
     <div class="header-controls">
-      <span class="status-badge" [ngClass]="order.status">
+      <span class="payment-badge">
+        Payment: {{ paymentMethodLabel }}
+      </span>
+      <span
+        class="status-badge"
+        *ngIf="!(order.paymentMethod === 'cod' && order.paymentStatus !== 'paid')"
+        [ngClass]="order.status">
         {{ order.status }}
       </span>
       <button

@@ -1,6 +1,6 @@
 export interface CheckoutPaymentRequestDTO {
   order_id: number | string;
-  payment_method: 'cash' | 'card' | 'gcash';
+  payment_method: 'cod' | 'online' | 'cash' | 'card' | 'gcash';
   cash?: number;
 }
 
