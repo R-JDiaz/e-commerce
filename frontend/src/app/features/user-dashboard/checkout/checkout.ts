@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { finalize, map, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { finalize, map, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { CartItem, CartManager } from '@common/services/managers/cart/cart';
 import { AuthManager } from '@common/services/managers/auth/auth';
@@ -12,6 +12,9 @@ import { CheckoutSummaryComponent } from './checkout-summary/checkout-summary';
 import { CheckoutShippingComponent } from './checkout-shipping/checkout-shipping';
 import { PaymentManager } from '@common/services/managers/payment/payment';
 import { ToastManager } from '@common/services/managers/toast/toast.manager';
+import { CheckoutPaymentRequestDTO } from '@common/dtos/payment.dto';
+
+type CheckoutPaymentMethod = 'cod' | 'online';
 
 @Component({
   selector: 'app-checkout',
@@ -53,7 +56,7 @@ export class Checkout implements OnInit, OnDestroy {
       city: ['', [Validators.required]],
       state: ['', [Validators.required]],
       postalCode: ['', [Validators.required, Validators.minLength(3)]],
-      cashAmount: [''],
+      paymentMethod: ['cod' satisfies CheckoutPaymentMethod, [Validators.required]],
     });
   }
 
@@ -96,12 +99,18 @@ export class Checkout implements OnInit, OnDestroy {
     return this.subtotal + this.shippingFee;
   }
 
-  get cashAmount(): number {
-    return Number(this.checkoutForm.value.cashAmount || 0);
+  get selectedPaymentMethod(): CheckoutPaymentMethod {
+    return this.checkoutForm.value.paymentMethod || 'cod';
   }
 
-  get changeDue(): number {
-    return Math.max(this.cashAmount - this.total, 0);
+  get submitLabel(): string {
+    if (this.isSubmitting) {
+      return 'Placing order...';
+    }
+
+    return this.selectedPaymentMethod === 'online'
+      ? 'Place order and pay online'
+      : 'Place COD order';
   }
 
   get totalQuantity(): number {
@@ -158,38 +167,30 @@ export class Checkout implements OnInit, OnDestroy {
       .filter(Boolean)
       .join(', ');
 
-    const cash = Number(form.cashAmount || 0);
-    
-    this.isSubmitting = true;
-
     this.orderManager.placeOrder(user.id, this.cartItems, shippingAddr).pipe(
-
       switchMap((order) => {
-        // ✅ No payment needed
-        if (cash <= 0) {
-          return of({ order, payment: null });
-        }
-
-        // ✅ Cash payment flow
-        return this.paymentManager.checkoutPayment({
+        const paymentRequest: CheckoutPaymentRequestDTO = {
           order_id: order.id,
-          payment_method: 'cash',
-          cash: cash
-        }).pipe(
-          map((payment) => ({ order, payment }))
+          payment_method: form.paymentMethod,
+        };
+
+        return this.paymentManager.checkoutPayment(paymentRequest).pipe(
+          switchMap((payment) =>
+            this.orderManager.refreshOrder(order.id).pipe(
+              map((updatedOrder) => ({ order: updatedOrder, payment }))
+            )
+          )
         );
       }),
-
       finalize(() => {
         this.isSubmitting = false;
       })
-
     ).subscribe({
       next: ({ order, payment }) => {
-
-        if (payment) {
+        if (payment.payment.status === 'paid') {
           this.toastManager.success('Payment successful');
-          this.orderManager.refreshOrder(order.id).subscribe();
+        } else {
+          this.toastManager.success('COD order placed. Payment will be marked paid when received.');
         }
 
         this.CartManager.refreshCart();

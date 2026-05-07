@@ -7,6 +7,8 @@ export const orderListDTO = (rows) => {
     user_id: first.user_id,
     total_amount: first.total_amount,
     status: first.status,
+    payment_method: first.payment_method ?? null,
+    payment_status: first.payment_status ?? null,
     created_at: first.created_at
   };
 };
@@ -38,6 +40,8 @@ export const orderDetailDTO = (rows) => {
     user_id: first.user_id,
     total_amount: first.total_amount,
     status: first.status,
+    payment_method: first.payment_method ?? null,
+    payment_status: first.payment_status ?? null,
     shipping_addr: first.shipping_addr,
     items,
     review, // clean injection

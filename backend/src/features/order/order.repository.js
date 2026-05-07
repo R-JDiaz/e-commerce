@@ -38,6 +38,8 @@ export default class OrderRepository extends BaseModel {
                 o.status,
                 o.shipping_addr,
                 o.created_at,
+                pay.payment_method,
+                pay.status AS payment_status,
 
                 oi.id AS order_item_id,
                 oi.product_id,
@@ -60,6 +62,7 @@ export default class OrderRepository extends BaseModel {
 
             -- 🔥 REVIEW JOIN
             LEFT JOIN order_reviews r ON r.order_id = o.id
+            LEFT JOIN payments pay ON pay.order_id = o.id
 
             WHERE o.id = ?`,
             [orderId]
@@ -78,6 +81,8 @@ export default class OrderRepository extends BaseModel {
                 o.status,
                 o.shipping_addr,
                 o.created_at,
+                pay.payment_method,
+                pay.status AS payment_status,
 
                 oi.id AS order_item_id,
                 oi.product_id,
@@ -100,6 +105,7 @@ export default class OrderRepository extends BaseModel {
 
             -- 🔥 REVIEW JOIN
             LEFT JOIN order_reviews r ON r.order_id = o.id
+            LEFT JOIN payments pay ON pay.order_id = o.id
 
             WHERE o.user_id = ?`,
             [userId]
@@ -118,6 +124,8 @@ export default class OrderRepository extends BaseModel {
                 o.status,
                 o.shipping_addr,
                 o.created_at,
+                pay.payment_method,
+                pay.status AS payment_status,
 
                 oi.id AS order_item_id,
                 oi.product_id,
@@ -139,7 +147,8 @@ export default class OrderRepository extends BaseModel {
             LEFT JOIN product_images pi ON pi.product_id = p.id
 
             -- 🔥 REVIEW JOIN
-            LEFT JOIN order_reviews r ON r.order_id = o.id`
+            LEFT JOIN order_reviews r ON r.order_id = o.id
+            LEFT JOIN payments pay ON pay.order_id = o.id`
         );
 
         return rows;

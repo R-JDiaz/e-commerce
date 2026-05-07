@@ -7,6 +7,7 @@ export default class PaymentsRepository extends BaseModel {
     "id",
     "order_id",
     "amount",
+    "payment_method",
     "status",
     "transaction_id",
     "created_at"
@@ -30,6 +31,7 @@ export default class PaymentsRepository extends BaseModel {
         p.id AS payment_id,
         p.order_id,
         p.amount,
+        p.payment_method,
         p.status AS payment_status,
         p.transaction_id,
         p.created_at AS payment_created_at,
@@ -50,6 +52,25 @@ export default class PaymentsRepository extends BaseModel {
     );
 
     return rows[0];
+  }
+
+  static async updateCheckoutFields(paymentId, data) {
+    const fields = [];
+    const values = [];
+
+    for (const [key, value] of Object.entries(data)) {
+      fields.push(`${key} = ?`);
+      values.push(value);
+    }
+
+    if (fields.length === 0) return false;
+
+    const [result] = await this.pool.query(
+      `UPDATE ${this.table} SET ${fields.join(", ")} WHERE id = ?`,
+      [...values, paymentId]
+    );
+
+    return result.affectedRows > 0;
   }
 
   // UPDATE PAYMENT STATUS
