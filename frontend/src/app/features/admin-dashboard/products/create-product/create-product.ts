@@ -71,8 +71,8 @@ export class AdminProductCreateComponent implements OnInit {
         this.isSaving = false;
       })
     ).subscribe({
-      next: () => {
-        this.toastManager.success('Product created successfully');
+      next: (product) => {
+        this.toastManager.success('Product created successfully' + product.name);
         this.productForm.reset({
           name: '',
           description: '',
@@ -82,7 +82,6 @@ export class AdminProductCreateComponent implements OnInit {
           categoryId: null,
         });
         this.created.emit();
-        console.log('Product created and form reset');
       },
       error: (error: any) => {
         console.error('Error creating product:', error);
