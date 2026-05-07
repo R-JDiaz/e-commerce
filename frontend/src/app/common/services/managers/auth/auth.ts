@@ -11,7 +11,7 @@ import {
 export interface User {
   id: string;
   email: string;
-  type: 'user' | 'admin';
+  type: 'customer' | 'admin';
   name: string;
   phone?: string;
   addressLine1?: string;
@@ -36,7 +36,7 @@ export class AuthManager {
     this.restoreSession();
   }
 
-  login(email: string, password: string, type: 'user' | 'admin'): Observable<User> {
+  login(email: string, password: string, type: 'customer' | 'admin'): Observable<User> {
     const request: LoginRequest = { email, password };
 
     return this.authApi.login(request).pipe(
@@ -48,7 +48,7 @@ export class AuthManager {
   register(data: RegisterRequest): Observable<User> {
     return this.authApi.register(data).pipe(
       tap(session => this.persistSession(session)),
-      map(session => this.mapSessionUser(session, 'user'))
+      map(session => this.mapSessionUser(session, 'customer'))
     );
   }
 
@@ -63,7 +63,7 @@ export class AuthManager {
 
     return this.authApi.refresh(request).pipe(
       tap(session => this.persistSession(session)),
-      map(session => this.mapSessionUser(session, this.getUserType() ?? 'user'))
+      map(session => this.mapSessionUser(session, this.getUserType() ?? 'customer'))
     );
   }
 
@@ -103,7 +103,7 @@ export class AuthManager {
     return this.currentUserSubject.value;
   }
 
-  getUserType(): 'user' | 'admin' | null {
+  getUserType(): 'customer' | 'admin' | null {
     return this.currentUserSubject.value?.type || null;
   }
 
@@ -128,7 +128,7 @@ export class AuthManager {
   }
 
   private persistSession(session: AuthSession): void {
-    const user = this.mapSessionUser(session, session.user.role === 'admin' ? 'admin' : 'user');
+    const user = this.mapSessionUser(session, session.user.role === 'admin' ? 'admin' : 'customer');
 
     localStorage.setItem(ACCESS_TOKEN_KEY, session.access_token);
     localStorage.setItem(REFRESH_TOKEN_KEY, session.refresh_token);
@@ -137,7 +137,7 @@ export class AuthManager {
     this.dispatchAuthEvent('session-changed');
   }
 
-  private mapSessionUser(session: AuthSession, fallbackType: 'user' | 'admin'): User {
+  private mapSessionUser(session: AuthSession, fallbackType: 'customer' | 'admin'): User {
     const mappedType = session.user.role === 'admin' ? 'admin' : fallbackType;
 
     return {
@@ -164,7 +164,7 @@ export class AuthManager {
   public getRole(): 'customer' | 'admin' | null {
     console.log('currentUser', this.currentUserSubject.value);
     console.log('user',localStorage.getItem(CURRENT_USER_KEY));
-    return this.currentUserSubject.value?.type === 'admin' ? 'admin' : this.currentUserSubject.value?.type === 'user' ? 'customer' : null;
+    return this.currentUserSubject.value?.type === 'admin' ? 'admin' : this.currentUserSubject.value?.type === 'customer' ? 'customer' : null;
   }
 
 }

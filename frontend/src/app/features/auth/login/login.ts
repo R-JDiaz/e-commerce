@@ -42,7 +42,7 @@ export class Login implements OnInit {
     this.isLoading = true;
     this.loadingMessage = 'Signing in...';
 
-     this.authService.login(this.email, this.password, 'user').pipe(
+     this.authService.login(this.email, this.password, 'customer').pipe(
       finalize(() => {
         this.isLoading = false;
       })
