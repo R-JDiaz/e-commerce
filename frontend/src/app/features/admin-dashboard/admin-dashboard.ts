@@ -193,6 +193,7 @@ export class AdminDashboard implements OnInit, OnDestroy {
   logout(): void {
     this.notifManager.clearNotifications();
     this.orderManager.clearState();
+    this.supportManager.resetSupportState();
     this.authService.logout();
     this.router.navigate(['/login']);
   }
