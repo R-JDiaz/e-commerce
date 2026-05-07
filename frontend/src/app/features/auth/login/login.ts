@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { finalize, switchMap, timer } from 'rxjs';
 import { AuthManager, User } from '@common/services/managers/auth/auth';
 import { ToastManager } from '@common/services/managers/toast/toast.manager';
+import { SupportManager } from '@common/services/managers/support/support';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,8 @@ export class Login implements OnInit {
   constructor(
     private router: Router, 
     private authService: AuthManager, 
-    private toastManager: ToastManager) {}
+    private toastManager: ToastManager,
+    private supportManager: SupportManager) {}
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
@@ -47,14 +49,16 @@ export class Login implements OnInit {
     ).subscribe({
       next: (user: User) => {
         this.toastManager.success('Login successful');
+        this.supportManager.resetSupportState();
         setTimeout(() => {
           this.routeByUserType(user);
         }, 700);
       },
       error: (error: any) => {
+        console.log(error);
         this.toastManager.error(
-          error.error.errors[0] || 'Login failed',
-        );
+        error?.error?.errors?.[0] || error?.error?.message || 'Login failed'
+      );
       }
     });
   }

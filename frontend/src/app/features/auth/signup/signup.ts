@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ToastManager } from '@common/services/managers/toast/toast.manager';
 import { AuthManager, User } from '@common/services/managers/auth/auth';
 import { delay, finalize } from 'rxjs';
+import { SupportManager } from '@common/services/managers/support/support';
 
 @Component({
   selector: 'app-signup',
@@ -25,7 +26,8 @@ export class Signup implements OnInit {
     private authService: AuthManager,
     private router: Router,
     private toastManager: ToastManager,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private supportManager: SupportManager
   ) {}
 
   ngOnInit(): void {
@@ -62,7 +64,7 @@ export class Signup implements OnInit {
       next: (user: User) => {
         this.isLoading = false;
         this.toastManager.success('Signup Successful');
-
+        this.supportManager.logoutOrSwitchAccount();
         setTimeout(() => {
           this.routeByUserType(user);
         }, 100);

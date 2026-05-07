@@ -111,7 +111,7 @@ export class Orders implements OnInit {
 
     this.paymentManager.checkoutPayment(data).subscribe({
       next: (result) => {
-        this.toastManager.success(String(result));
+        this.toastManager.success('Payment Successfull');
 
         // refresh order AFTER successful payment
         this.orderManager.refreshOrder(event.id).subscribe({
