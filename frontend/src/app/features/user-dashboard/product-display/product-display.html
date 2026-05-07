@@ -1,84 +1,184 @@
 <div class="product-display-overlay">
   <div class="product-display modal-style">
-    <ng-container *ngIf="!isLoading; else loadingState">
-      <ng-container *ngIf="product; else emptyState">
-        <div class="display-content">
-          <div class="details-section">
-            <h3>{{ product.name }}</h3>
-            <p class="description">{{ product.description }}</p>
 
-            <div class="price-row">
-              <strong>PHP {{ product.price | number:'1.2-2' }}</strong>
-              <span [class.out]="product.stock === 0">
-                {{ product.stock > 0 ? product.stock + ' in stock' : 'Sold out' }}
-              </span>
+    <div class="top-bar">
+      <button class="back-button" (click)="onBack()">
+        ← Back
+      </button>
+    </div>
+
+    <div class="display-scroll">
+
+      <!-- LOADING -->
+      <ng-container *ngIf="isLoading; else loadedState">
+
+        <div class="state-wrapper">
+          <div class="state-card loading-card">
+
+            <div class="loading-image shimmer"></div>
+
+            <div class="loading-content">
+              <div class="loading-line shimmer large"></div>
+              <div class="loading-line shimmer"></div>
+              <div class="loading-line shimmer short"></div>
+
+              <div class="loading-price shimmer"></div>
+
+              <div class="loading-button shimmer"></div>
             </div>
 
-            <div class="quantity-row">
-              <label for="quantity">Quantity:</label>
-              <input id="quantity" type="number" min="1" max="{{ product.stock }}" [(ngModel)]="quantity" />
-            </div>
-
-            <button class="add-to-cart" (click)="addToCart(product, quantity)">Add to Cart</button>
-          </div>
-
-          <div class="image-section">
-            <div class="image-frame" [class.empty]="!currentImageUrl">
-              <img *ngIf="currentImageUrl; else noImage" [src]="currentImageUrl" [alt]="product.name">
-
-              <ng-template #noImage>
-                <div class="image-empty">No product image available</div>
-              </ng-template>
-
-              <div class="image-controls" *ngIf="hasMultipleImages">
-                <button type="button" class="nav" (click)="previousImage()">‹</button>
-                <button type="button" class="nav" (click)="nextImage()">›</button>
-              </div>
-            </div>
-
-            <div class="image-dots" *ngIf="hasMultipleImages">
-              <button
-                type="button"
-                class="dot"
-                *ngFor="let image of images; let i = index; trackBy: trackByImageId"
-                [class.active]="i === activeImageIndex"
-                (click)="selectImage(i)"
-                [attr.aria-label]="'Show image ' + (i + 1)">
-              </button>
-            </div>
           </div>
         </div>
 
-        <section class="details-block">
-          <h4>All images</h4>
-          <div class="image-list" *ngIf="images.length; else noGallery">
-            <button
-              type="button"
-              class="image-chip"
-              *ngFor="let image of images; let i = index; trackBy: trackByImageId"
-              [class.active]="i === activeImageIndex"
-              (click)="selectImage(i)">
-              <img [src]="image.image_url" [alt]="product.name">
-              <span>Image {{ i + 1 }}</span>
-            </button>
+      </ng-container>
+
+      <!-- LOADED -->
+      <ng-template #loadedState>
+
+        <!-- PRODUCT EXISTS -->
+        <ng-container *ngIf="product; else emptyState">
+
+          <div class="display-content">
+
+            <div class="image-section">
+
+              <div class="image-frame">
+
+                <img
+                  *ngIf="currentImageUrl"
+                  [src]="currentImageUrl"
+                  [alt]="product.name">
+
+                <div
+                  *ngIf="!currentImageUrl"
+                  class="image-empty">
+
+                  No image available
+                </div>
+
+                <div
+                  class="image-controls"
+                  *ngIf="hasMultipleImages">
+
+                  <button
+                    class="nav"
+                    (click)="previousImage()">
+
+                    &#8249;
+                  </button>
+
+                  <button
+                    class="nav"
+                    (click)="nextImage()">
+
+                    &#8250;
+                  </button>
+                </div>
+              </div>
+
+              <div
+                class="image-dots"
+                *ngIf="hasMultipleImages">
+
+                <button
+                  *ngFor="let image of images; let i = index"
+                  class="dot"
+                  [class.active]="i === activeImageIndex"
+                  (click)="selectImage(i)">
+                </button>
+
+              </div>
+            </div>
+
+            <div class="details-section">
+
+              <h3>{{ product.name }}</h3>
+
+              <p class="description">
+                {{ product.description }}
+              </p>
+
+              <div class="price-row">
+
+                <strong>
+                  {{ product.price | currency:'PHP':'symbol':'1.2-2' }}
+                </strong>
+
+                <span *ngIf="product.stock > 0; else outOfStock">
+                  {{ product.stock }} in stock
+                </span>
+
+                <ng-template #outOfStock>
+                  <span class="out">
+                    Out of Stock
+                  </span>
+                </ng-template>
+
+              </div>
+
+              <div class="quantity-row">
+
+                <label for="quantity">
+                  Quantity:
+                </label>
+
+                <input
+                  id="quantity"
+                  type="number"
+                  [(ngModel)]="quantity"
+                  [max]="product.stock"
+                  min="1" />
+
+              </div>
+
+              <button
+                class="add-to-cart"
+                [disabled]="product.stock === 0"
+                (click)="addToCart(product, quantity)">
+
+                Add to Cart
+              </button>
+
+            </div>
+
           </div>
 
-          <ng-template #noGallery>
-            <div class="empty-note">No extra images were provided for this product.</div>
-          </ng-template>
-        </section>
-      </ng-container>
-    </ng-container>
+        </ng-container>
 
-    <ng-template #loadingState>
-      <div class="state-card">Loading product details...</div>
-    </ng-template>
+      </ng-template>
 
-    <ng-template #emptyState>
-      <div class="state-card">
-        <h3>Select a product</h3>
-        <p>Click any product card to open the full safe details here.</p>
-      </div>
-    </ng-template>
+      <!-- EMPTY -->
+      <ng-template #emptyState>
+
+        <div class="state-wrapper">
+
+          <div class="state-card empty-card">
+
+            <div class="empty-icon">
+              ☕
+            </div>
+
+            <h2>No Product Selected</h2>
+
+            <p>
+              Browse the catalog and select a product
+              to view full details, images, pricing,
+              and stock availability.
+            </p>
+
+            <button
+              class="back-button secondary"
+              (click)="onBack()">
+
+              Browse Products
+            </button>
+
+          </div>
+
+        </div>
+
+      </ng-template>
+
+    </div>
   </div>
 </div>
