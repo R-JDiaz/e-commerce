@@ -90,19 +90,20 @@ export const ProductService = {
                 id: r.image_id,
                 image_url: r.image_url
             }));
-
         return productDetailDTO(product, category, images);
     },
 
   async createProduct(data) {
-    const existing = await ProductRepository.findByName(data.name);
+  const existing = await ProductRepository.findByName(data.name);
 
-    if (existing) {
-      throw new AppError("Product name already exists", 409);
-    }
+  if (existing) {
+    throw new AppError("Product name already exists", 409);
+  }
 
-    try {
-      return await withTransaction(ProductRepository.pool, async (conn) => {
+  try {
+    const productId = await withTransaction(
+      ProductRepository.pool,
+      async (conn) => {
         const productResult = await ProductRepository.create(
           {
             name: data.name,
@@ -124,12 +125,19 @@ export const ProductService = {
           );
         }
 
-        return ProductService.getProductById(productResult.insertId);
-      });
-    } catch (err) {
-      mapDuplicateProductError(err);
-    }
-  },
+        return productResult.insertId; // 👈 return only ID
+      }
+    );
+
+    console.log("Product created with ID:", productId);
+
+    // 👇 fetch AFTER transaction is committed
+    return ProductService.getProductById(productId);
+
+  } catch (err) {
+    mapDuplicateProductError(err);
+  }
+},
 
   async updateProduct(id, data) {
     const product = await ProductRepository.findById(id);
