@@ -48,6 +48,23 @@
     cursor: pointer;
     box-shadow: 0 12px 20px rgba(184, 95, 52, 0.16);
   }
+
+  .create {
+    border: 1px solid rgba(227, 186, 140, 0.12);
+    border-radius: 0.85rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    color: #f7e8dc;
+    font-weight: 800;
+    cursor: pointer;
+  }
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
 }
 
 .state,
@@ -74,6 +91,11 @@
   gap: 1rem;
   min-height: 0;
   align-items: start;
+}
+
+.create-drawer {
+  display: block;
+  margin-bottom: 1rem;
 }
 
 .table-wrap {

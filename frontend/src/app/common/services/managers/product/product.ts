@@ -3,7 +3,11 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, shareReplay, tap } from 'rxjs/operators';
 import { ProductApiService } from '../../api/product/product-api.service';
 import { ProductListItem } from '@common/models/product';
-import { ProductDetailDTO, UpdateProductRequestDTO } from '@common/dtos/product.dto';
+import {
+  CreateProductRequestDTO,
+  ProductDetailDTO,
+  UpdateProductRequestDTO,
+} from '@common/dtos/product.dto';
 import { toListItem } from './mapper';
 
 @Injectable({
@@ -38,12 +42,27 @@ export class ProductManager {
   getProducts(): Observable<ProductListItem[]> {
     this.load();
     
+    console.log('Products loaded:', this.productSubject.value);
     return this.product$;
   }
 
   selectProduct(id: number): Observable<ProductDetailDTO> {
+    console.log('Selecting product with ID:', id);
     return this.api.getProduct(id).pipe(
       tap(product => this.selectedProductSubject.next(product))
+    );
+  }
+
+  createProduct(productData: CreateProductRequestDTO): Observable<ProductDetailDTO> {
+    return this.api.createProduct(productData).pipe(
+      tap((createdProduct) => {
+        const current = this.productSubject.value;
+        const mapped = toListItem(createdProduct);
+
+        this.productSubject.next([mapped, ...current]);
+        this.selectedProductSubject.next(createdProduct);
+      }),
+      shareReplay(1)
     );
   }
 
@@ -137,4 +156,8 @@ export class ProductManager {
 
   deleteProduct(id: number): Observable<void> {
     return this.api.deleteProduct(id);}
+
+  deselectProduct(): void {
+    this.selectedProductSubject.next(null);
+  }
 }

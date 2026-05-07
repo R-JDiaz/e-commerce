@@ -37,6 +37,7 @@ export interface CreateProductRequestDTO {
   price: number;
   stock: number;
   category_id: number;
+  image_url?: string | null;
 }
 
 export interface UpdateProductRequestDTO extends Partial<CreateProductRequestDTO> {}

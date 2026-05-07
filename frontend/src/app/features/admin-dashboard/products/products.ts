@@ -15,11 +15,12 @@ import { finalize, Observable, switchMap, tap } from 'rxjs';
 import { ProductManager } from '@common/services/managers/product/product';
 import { ProductDetailDTO } from '@common/dtos/product.dto';
 import { ToastManager } from '@common/services/managers/toast/toast.manager';
+import { AdminProductCreateComponent } from './create-product/create-product';
 
 @Component({
   selector: 'app-admin-products',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AdminProductCreateComponent],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
@@ -35,6 +36,7 @@ export class AdminProductsComponent implements OnInit {
   selectedProduct: ProductDetailDTO | null = null;
   isSaving = false;
   isDeleting = false;
+  showCreateForm = false;
 
   readonly productForm: FormGroup;
 
@@ -67,6 +69,19 @@ export class AdminProductsComponent implements OnInit {
         this.toastManager.error('Categories Failed to Load');
       },
     });
+  }
+
+  openCreateForm(): void {
+    this.showCreateForm = true;
+  }
+
+  closeCreateForm(): void {
+    this.showCreateForm = false;
+  }
+
+  handleProductCreated(): void {
+    this.showCreateForm = false;
+    this.refreshRequested.emit();
   }
 
   selectProduct(product: ProductListItem): void {
@@ -134,9 +149,11 @@ saveProduct(): void {
     })
   ).subscribe({
     next: (updatedProduct) => {
+      console.log('Product updated successfully:', updatedProduct);
+      this.toastManager.success("Product updated successfully");
       this.selectedProduct = updatedProduct;
       this.selectProduct(this.mapDetailToList(updatedProduct)); // reuse updated data directly
-      this.toastManager.success("Product updated successfully");
+      
     },
     error: () => {
       this.toastManager.error("Failed to update product");

@@ -5,8 +5,18 @@
       <h2>Products</h2>
       <p>Click a row to inspect and edit the full product record.</p>
     </div>
-    <button class="refresh" type="button" (click)="refreshRequested.emit()">Refresh</button>
+    <div class="panel-actions">
+      <button class="refresh" type="button" (click)="refreshRequested.emit()">Refresh</button>
+      <button class="create" type="button" (click)="openCreateForm()">Create product</button>
+    </div>
   </div>
+
+  <app-admin-product-create
+    class="create-drawer"
+    *ngIf="showCreateForm"
+    (close)="closeCreateForm()"
+    (created)="handleProductCreated()">
+  </app-admin-product-create>
 
   <div *ngIf="isLoading" class="state">Loading products...</div>
 
