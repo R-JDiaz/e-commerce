@@ -5,7 +5,8 @@
 .dashboard {
   min-height: calc(100vh - 64px);
   position: relative;
-  overflow: clip;
+  overflow-x: hidden;
+  overflow-y: visible; /* Allow overlays to extend beyond the container */
   color: #f6e4d6;
   background:
     radial-gradient(circle at 12% 8%, rgba(184, 95, 52, 0.12), transparent 24%),
