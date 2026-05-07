@@ -20,6 +20,9 @@ export class SupportManager {
   private readonly activeThreadSubject = new BehaviorSubject<SupportThreadDTO | null>(null);
   readonly activeThread$ = this.activeThreadSubject.asObservable();
 
+  private readonly currentUserSubject = new BehaviorSubject<SupportThreadDTO | null>(null);
+  readonly currentUser$ = this.currentUserSubject.asObservable();
+
   constructor(
     private api: SupportApiService,
     private auth: AuthManager
@@ -150,4 +153,18 @@ export class SupportManager {
     localStorage.setItem(VISITOR_KEY_STORAGE, nextValue);
     return nextValue;
   }
+
+  logoutOrSwitchAccount(): void {
+  this.resetSupportState();
+  this.auth.logout?.();
 }
+
+  public resetSupportState(): void {
+    this.threadsSubject.next([]);
+    this.activeThreadSubject.next(null);
+
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(VISITOR_KEY_STORAGE);
+    }
+  }
+  }
