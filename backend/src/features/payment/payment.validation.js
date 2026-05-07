@@ -4,7 +4,7 @@ import {
   requiredPositiveInteger,
 } from "../../common/validation/fields.js";
 
-const paymentMethods = ["cash", "card", "gcash"];
+const paymentMethods = ["cod", "online", "cash", "card", "gcash"];
 
 export const validatePaymentId = (params) => {
   const { value, errors } = requiredPositiveInteger("id", params.id);

@@ -40,6 +40,19 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .payment-badge {
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(212, 165, 125, 0.1);
+      border: 1px solid rgba(212, 165, 125, 0.18);
+      color: #e7c8ae;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
     }
 
     .status-badge {

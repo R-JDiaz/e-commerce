@@ -8,10 +8,11 @@ import {
 } from "../../common/dtos/order.js";
 
 import { requiredOneOf } from "../../common/validation/fields.js";
-import { createOrderNotif, handleAdminUpdateNotification, handleCustomerUpdateNotification, customNotification} from "../notification/notification.service.js";
+import { createOrderNotif, createPaymentNotif, handleAdminUpdateNotification, handleCustomerUpdateNotification, customNotification} from "../notification/notification.service.js";
 import OrderRepository from "./order.repository.js";
 import OrderItemRepository from "./order_items/order_items.repository.js";
 import ProductRepository from "../products/product.repository.js";
+import PaymentsRepository from "../payment/payment.repository.js";
 import { withTransaction } from "../../common/utilities/handler.js";
 
 export default class OrderService {
@@ -214,7 +215,20 @@ export default class OrderService {
             throw new AppError("Order not found", 404);
         }
 
-        const rows = await OrderRepository.findFullById(orderId);
+        let rows = await OrderRepository.findFullById(orderId);
+
+        if (status === "completed") {
+            const payment = await PaymentsRepository.findByOrderId(orderId);
+
+            if (payment?.payment_method === "cod" && payment.status !== "paid") {
+                await PaymentsRepository.updateCheckoutFields(payment.id, {
+                    status: "paid",
+                    transaction_id: `TXN-${Date.now()}-${Math.floor(Math.random() * 10000)}`
+                });
+                await createPaymentNotif(orderId, rows[0].user_id);
+                rows = await OrderRepository.findFullById(orderId);
+            }
+        }
         
         await handleCustomerUpdateNotification(orderId, rows[0].user_id, status);
         await handleAdminUpdateNotification(orderId, status);

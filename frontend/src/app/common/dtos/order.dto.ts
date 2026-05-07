@@ -7,6 +7,8 @@ export interface OrderSummaryDTO {
   user_id?: number | string;
   total_amount: number;
   status: OrderStatusDTO;
+  payment_method?: string | null;
+  payment_status?: string | null;
   created_at: string;
   items: OrderItem[];
 }
@@ -34,6 +36,8 @@ export interface OrderDetailDTO {
   user_id: number | string;
   total_amount: number;
   status: OrderStatusDTO;
+  payment_method?: string | null;
+  payment_status?: string | null;
   shipping_addr: string;
   items: OrderItemDTO[];
   review: OrderReviewDTO;

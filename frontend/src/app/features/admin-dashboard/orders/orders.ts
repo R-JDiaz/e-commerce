@@ -32,7 +32,7 @@ export class AdminOrdersComponent implements OnInit {
     private notif: NotificationManager) {}
 
   ngOnInit(): void {
-    this.manager.adminLoad();
+    this.manager.adminLoad(true);
     const base$ = this.manager.orderFull$;
 
     this.orders$ = combineLatest([
@@ -99,5 +99,34 @@ export class AdminOrdersComponent implements OnInit {
 
   onSort(value: SortType) {
     this.sort$.next(value);
+  }
+
+  paymentMethodLabel(method?: string | null): string {
+    switch (method) {
+      case 'cod':
+        return 'COD';
+      case 'online':
+        return 'Online';
+      case 'cash':
+        return 'Cash';
+      case 'card':
+        return 'Card';
+      case 'gcash':
+        return 'GCash';
+      default:
+        return 'Not selected';
+    }
+  }
+
+  paymentStatusLabel(order: Order): string {
+    if (order.paymentMethod === 'cod' && order.paymentStatus !== 'paid') {
+      return 'Unpaid';
+    }
+
+    if (order.paymentStatus === 'paid') {
+      return 'Paid';
+    }
+
+    return order.paymentStatus ? order.paymentStatus : 'Unpaid';
   }
 }

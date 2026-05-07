@@ -79,7 +79,7 @@ export class Orders implements OnInit {
   }
 
   loadOrders(): void {
-    this.orderManager.userLoad();
+    this.orderManager.userLoad(true);
     this.orders$ = this.orderManager.orderFull$;
   }
 

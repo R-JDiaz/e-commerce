@@ -71,7 +71,7 @@ export const CartService = {
       cart_item = await CartItemRepository.updateItemQuantityByCartId(
         cart.id,
         productId,
-        quantity + existingItem.quantity
+        quantity
       );
     }
 
