@@ -36,7 +36,7 @@ An e-commerce platform with a customer storefront, admin dashboard, authenticati
 
 ## Tech Stack
 
-- Frontend: Angular 21, TypeScript, Tailwind CSS, Chart.js
+- Frontend: Angular 21, TypeScript, SCSS, Chart.js
 - Backend: Node.js, Express, MySQL
 - Tooling: Vitest, Angular CLI, dotenv
 
